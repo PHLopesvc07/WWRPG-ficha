@@ -1,10 +1,10 @@
 /**
  * SPELLS.JS - MINISTÉRIO DA MAGIA
- * Gerenciamento de Listas Dinâmicas (Atualizado com esquema completo de feitiços)
+ * Gerenciamento de Listas Dinâmicas 
  */
 
 export function setupDynamicLists() {
-    // 1. Adicionar Feitiço (Agora com a estrutura completa e categorias múltiplas)
+    // 1. Adicionar Feitiço (Layout limpo restaurado)
     document.getElementById('btn-add-spell').addEventListener('click', () => {
         const container = document.getElementById('spells-list');
         const id = Date.now();
@@ -12,13 +12,12 @@ export function setupDynamicLists() {
         card.className = 'bureaucracy-box spell-card';
         card.dataset.id = id;
         
-        // Atualizado: <select multiple> para matriz de categorias e novos inputs
         card.innerHTML = `
             <button class="delete-btn">X</button>
             <div class="wand-grid">
                 <input type="text" class="ink-input spell-name" placeholder="Nome do Feitiço">
                 
-                <select class="ink-select spell-cat" multiple size="3" title="Segure Ctrl/Cmd para múltipla seleção">
+                <select class="ink-select spell-cat">
                     <option value="Transfiguração">Transfiguração</option>
                     <option value="Feitiço" selected>Feitiço</option>
                     <option value="Azaração">Azaração</option>
@@ -36,16 +35,9 @@ export function setupDynamicLists() {
                 </select>
             </div>
             
-            <div class="wand-grid" style="margin-top: 10px;">
-                <input type="text" class="ink-input spell-time" placeholder="Tempo de Conjuração (Ex: 1 Ação)">
-                <input type="text" class="ink-input spell-range" placeholder="Alcance (Ex: 9m)">
-                <input type="text" class="ink-input spell-comp" placeholder="Componentes (V, S, M)">
-            </div>
-            
             <textarea class="ink-textarea spell-desc" placeholder="Descrição do efeito..."></textarea>
         `;
         
-        // Eventos Dinâmicos do Card
         card.querySelector('.delete-btn').addEventListener('click', () => { card.remove(); sortSpells(); });
         card.querySelector('.spell-cat').addEventListener('change', sortSpells);
         card.querySelector('.spell-lvl').addEventListener('change', sortSpells);
@@ -91,21 +83,10 @@ export function sortSpells() {
         "Cura":           { order: 7, class: "cat-cura" }
     };
 
-    // Função auxiliar para extrair a categoria primária (a primeira do array) para fins de ordenação visual
-    const getPrimaryCategory = (card) => {
-        const select = card.querySelector('.spell-cat');
-        if (!select) return "Feitiço";
-        if (select.multiple && select.selectedOptions.length > 0) {
-            return select.selectedOptions[0].value;
-        }
-        return select.value || "Feitiço";
-    };
-
     cards.sort((a, b) => {
-        const catA = getPrimaryCategory(a);
-        const catB = getPrimaryCategory(b);
+        const catA = a.querySelector('.spell-cat').value || "Feitiço";
+        const catB = b.querySelector('.spell-cat').value || "Feitiço";
         
-        // Fallback seguro caso a categoria não esteja no config
         const orderA = catConfig[catA] ? catConfig[catA].order : 99;
         const orderB = catConfig[catB] ? catConfig[catB].order : 99;
         
@@ -117,12 +98,9 @@ export function sortSpells() {
     });
 
     cards.forEach(card => {
-        const primaryCat = getPrimaryCategory(card);
-        
-        // Limpa classes antigas e aplica a nova cor baseada na primeira categoria do array
+        const primaryCat = card.querySelector('.spell-cat').value || "Feitiço";
         Object.values(catConfig).forEach(c => card.classList.remove(c.class));
         if(catConfig[primaryCat]) card.classList.add(catConfig[primaryCat].class);
-        
         container.appendChild(card);
     });
 }
