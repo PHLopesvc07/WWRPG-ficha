@@ -1,10 +1,10 @@
 /**
  * SPELLS.JS - MINISTÉRIO DA MAGIA
- * Gerenciamento de Listas Dinâmicas: Feitiços, Ferimentos Customizados e Inventário
+ * Gerenciamento de Listas Dinâmicas (Atualizado com esquema completo de feitiços)
  */
 
 export function setupDynamicLists() {
-    // 1. Adicionar Feitiço
+    // 1. Adicionar Feitiço (Agora com a estrutura completa e categorias múltiplas)
     document.getElementById('btn-add-spell').addEventListener('click', () => {
         const container = document.getElementById('spells-list');
         const id = Date.now();
@@ -12,19 +12,22 @@ export function setupDynamicLists() {
         card.className = 'bureaucracy-box spell-card';
         card.dataset.id = id;
         
+        // Atualizado: <select multiple> para matriz de categorias e novos inputs
         card.innerHTML = `
             <button class="delete-btn">X</button>
             <div class="wand-grid">
                 <input type="text" class="ink-input spell-name" placeholder="Nome do Feitiço">
-                <select class="ink-select spell-cat">
+                
+                <select class="ink-select spell-cat" multiple size="3" title="Segure Ctrl/Cmd para múltipla seleção">
                     <option value="Transfiguração">Transfiguração</option>
-                    <option value="Feitiço">Feitiço</option>
+                    <option value="Feitiço" selected>Feitiço</option>
                     <option value="Azaração">Azaração</option>
                     <option value="Maldição Menor">Maldição Menor</option>
                     <option value="Maldição">Maldição</option>
                     <option value="Contra-feitiço">Contra-feitiço</option>
                     <option value="Cura">Cura</option>
                 </select>
+                
                 <select class="ink-select spell-lvl">
                     <option value="1">Nível 1</option><option value="2">Nível 2</option>
                     <option value="3">Nível 3</option><option value="4">Nível 4</option>
@@ -32,6 +35,13 @@ export function setupDynamicLists() {
                     <option value="7">Nível 7</option>
                 </select>
             </div>
+            
+            <div class="wand-grid" style="margin-top: 10px;">
+                <input type="text" class="ink-input spell-time" placeholder="Tempo de Conjuração (Ex: 1 Ação)">
+                <input type="text" class="ink-input spell-range" placeholder="Alcance (Ex: 9m)">
+                <input type="text" class="ink-input spell-comp" placeholder="Componentes (V, S, M)">
+            </div>
+            
             <textarea class="ink-textarea spell-desc" placeholder="Descrição do efeito..."></textarea>
         `;
         
@@ -64,7 +74,6 @@ export function setupDynamicLists() {
         addInventoryContainer("Novo Recipiente");
     });
 
-    // Inicia a ficha com 1 container padrão
     addInventoryContainer("Mochila Principal");
 }
 
@@ -72,22 +81,33 @@ export function sortSpells() {
     const container = document.getElementById('spells-list');
     const cards = Array.from(container.children);
     
-    // Configuração das Cores de Tinta (Arquivística do Ministério)
     const catConfig = {
-        "Transfiguração": { order: 1, class: "cat-transfiguracao" }, // Vermelho
-        "Feitiço":        { order: 2, class: "cat-feitico" },        // Laranja
-        "Azaração":       { order: 3, class: "cat-azaracao" },       // Amarelo
-        "Maldição Menor": { order: 4, class: "cat-maldicao-menor" }, // Verde
-        "Maldição":       { order: 5, class: "cat-maldicao" },       // Azul
-        "Contra-feitiço": { order: 6, class: "cat-contra-feitico" }, // Anil
-        "Cura":           { order: 7, class: "cat-cura" }            // Violeta
+        "Transfiguração": { order: 1, class: "cat-transfiguracao" },
+        "Feitiço":        { order: 2, class: "cat-feitico" },
+        "Azaração":       { order: 3, class: "cat-azaracao" },
+        "Maldição Menor": { order: 4, class: "cat-maldicao-menor" },
+        "Maldição":       { order: 5, class: "cat-maldicao" },
+        "Contra-feitiço": { order: 6, class: "cat-contra-feitico" },
+        "Cura":           { order: 7, class: "cat-cura" }
+    };
+
+    // Função auxiliar para extrair a categoria primária (a primeira do array) para fins de ordenação visual
+    const getPrimaryCategory = (card) => {
+        const select = card.querySelector('.spell-cat');
+        if (!select) return "Feitiço";
+        if (select.multiple && select.selectedOptions.length > 0) {
+            return select.selectedOptions[0].value;
+        }
+        return select.value || "Feitiço";
     };
 
     cards.sort((a, b) => {
-        const catA = a.querySelector('.spell-cat').value;
-        const catB = b.querySelector('.spell-cat').value;
-        const orderA = catConfig[catA].order;
-        const orderB = catConfig[catB].order;
+        const catA = getPrimaryCategory(a);
+        const catB = getPrimaryCategory(b);
+        
+        // Fallback seguro caso a categoria não esteja no config
+        const orderA = catConfig[catA] ? catConfig[catA].order : 99;
+        const orderB = catConfig[catB] ? catConfig[catB].order : 99;
         
         if (orderA !== orderB) return orderA - orderB; 
         
@@ -97,16 +117,19 @@ export function sortSpells() {
     });
 
     cards.forEach(card => {
-        const cat = card.querySelector('.spell-cat').value;
+        const primaryCat = getPrimaryCategory(card);
+        
+        // Limpa classes antigas e aplica a nova cor baseada na primeira categoria do array
         Object.values(catConfig).forEach(c => card.classList.remove(c.class));
-        if(catConfig[cat]) card.classList.add(catConfig[cat].class);
+        if(catConfig[primaryCat]) card.classList.add(catConfig[primaryCat].class);
+        
         container.appendChild(card);
     });
 }
 
 export function addInventoryContainer(name = "Novo Recipiente") {
     const container = document.getElementById('inventory-list');
-    const id = Date.now() + Math.floor(Math.random() * 1000); // Garante ID único
+    const id = Date.now() + Math.floor(Math.random() * 1000);
     const card = document.createElement('div');
     card.className = 'bureaucracy-box inventory-container-card';
     card.dataset.id = id;
@@ -139,7 +162,6 @@ export function addInventoryItem(containerId) {
         <button class="btn-danger" style="padding: 2px 8px;">X</button>
     `;
     
-    // Validação de quantidade limite (100)
     div.querySelector('.item-qtd').addEventListener('change', function() {
         if(this.value > 100) this.value = 100;
     });
