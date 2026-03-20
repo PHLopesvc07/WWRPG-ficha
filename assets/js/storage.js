@@ -64,6 +64,15 @@ async function exportData() {
                 document.getElementById('rule-5').value
             ],
             
+            // NOVO: Salvando se a caixinha está marcada (true) ou não (false)
+            rulesState: [
+                document.getElementById('rule-check-1').checked,
+                document.getElementById('rule-check-2').checked,
+                document.getElementById('rule-check-3').checked,
+                document.getElementById('rule-check-4').checked,
+                document.getElementById('rule-check-5').checked
+            ],
+            
             traits: document.getElementById('traits-text').value,
             spells: Array.from(document.querySelectorAll('.spell-card')).map(card => ({
                 name: card.querySelector('.spell-name').value,
@@ -197,6 +206,15 @@ function importData(e) {
                 document.getElementById('rule-3').value = data.magic.rules[2] || "";
                 document.getElementById('rule-4').value = data.magic.rules[3] || "";
                 document.getElementById('rule-5').value = data.magic.rules[4] || "";
+            }
+
+            // NOVO: Restaurando o estado das caixinhas (checkbox)
+            if (data.magic.rulesState) {
+                document.getElementById('rule-check-1').checked = data.magic.rulesState[0] || false;
+                document.getElementById('rule-check-2').checked = data.magic.rulesState[1] || false;
+                document.getElementById('rule-check-3').checked = data.magic.rulesState[2] || false;
+                document.getElementById('rule-check-4').checked = data.magic.rulesState[3] || false;
+                document.getElementById('rule-check-5').checked = data.magic.rulesState[4] || false;
             }
 
             document.getElementById('traits-text').value = data.magic.traits || "";
