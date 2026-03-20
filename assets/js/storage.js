@@ -54,49 +54,12 @@ function exportData() {
         magic: {
             wand: { l: document.getElementById('wand-length').value, w: document.getElementById('wand-wood').value, c: document.getElementById('wand-core').value },
             traits: document.getElementById('traits-text').value,
-            magic: {
-            wand: { l: document.getElementById('wand-length').value, w: document.getElementById('wand-wood').value, c: document.getElementById('wand-core').value },
-            traits: document.getElementById('traits-text').value,
-            
-            // NOVO MAPEAMENTO DE FEITIÇOS
-            spells: Array.from(document.querySelectorAll('.spell-card')).map(card => {
-                // 1. Captura da Matriz de Categorias
-                const catSelect = card.querySelector('.spell-cat');
-                let categoriesArray = [];
-                
-                if (catSelect) {
-                    // Verifica se a UI foi atualizada para um <select multiple>
-                    if (catSelect.multiple) {
-                        categoriesArray = Array.from(catSelect.selectedOptions).map(opt => opt.value);
-                    } else {
-                        // Fallback de segurança se ainda for um select simples
-                        categoriesArray = [catSelect.value];
-                    }
-                }
-
-                // 2. Validação de Esquema (Garante que nunca retorne null ou vazio)
-                if (!categoriesArray || categoriesArray.length === 0) {
-                    categoriesArray = ["Indefinido"];
-                }
-
-                // 3. Captura segura dos novos campos (com fallback para string vazia caso a UI falhe)
-                const safeVal = (selector) => {
-                    const el = card.querySelector(selector);
-                    return el ? el.value : "";
-                };
-
-                // 4. Retorno do Objeto Spell validado
-                return {
-                    name: safeVal('.spell-name'),
-                    cat: categoriesArray, // Garantidamente uma Matriz/Array
-                    lvl: safeVal('.spell-lvl') || "1",
-                    castingTime: safeVal('.spell-time'), // Tempo de Conjuração
-                    range: safeVal('.spell-range'),      // Alcance
-                    components: safeVal('.spell-comp'),  // Componentes
-                    desc: safeVal('.spell-desc')
-                };
-            })
-        },
+            spells: Array.from(document.querySelectorAll('.spell-card')).map(card => ({
+                name: card.querySelector('.spell-name').value,
+                cat: card.querySelector('.spell-cat').value,
+                lvl: card.querySelector('.spell-lvl').value,
+                desc: card.querySelector('.spell-desc').value
+            }))
         },
         inventory: {
             coins: { g: document.getElementById('coin-g').value, s: document.getElementById('coin-s').value, k: document.getElementById('coin-k').value },
@@ -189,38 +152,12 @@ function importData(e) {
 
             document.getElementById('spells-list').innerHTML = '';
             data.magic.spells.forEach(sp => {
-                document.getElementById('btn-add-spell').click(); // Cria o card na tela
+                document.getElementById('btn-add-spell').click();
                 const last = document.getElementById('spells-list').lastElementChild;
-                
-                const setVal = (selector, val) => {
-                    if (last.querySelector(selector)) last.querySelector(selector).value = val || "";
-                };
-
-                // Restaura campos antigos e novos
-                setVal('.spell-name', sp.name);
-                setVal('.spell-lvl', sp.lvl);
-                setVal('.spell-desc', sp.desc);
-                setVal('.spell-time', sp.castingTime);
-                setVal('.spell-range', sp.range);
-                setVal('.spell-comp', sp.components);
-
-                // Restaura a Matriz de Categorias
-                const catSelect = last.querySelector('.spell-cat');
-                if (catSelect && sp.cat && Array.isArray(sp.cat)) {
-                    if (catSelect.multiple) {
-                        // Se for um select múltiplo, itera e marca as opções corretas
-                        Array.from(catSelect.options).forEach(opt => {
-                            opt.selected = sp.cat.includes(opt.value);
-                        });
-                    } else {
-                        // Fallback se a UI for simples: pega apenas a categoria principal (índice 0)
-                        catSelect.value = sp.cat[0] || "Feitiço";
-                    }
-                }
-            });
-            
-            // Ordena e colore após montar tudo
-            sortSpells();
+                last.querySelector('.spell-name').value = sp.name;
+                last.querySelector('.spell-cat').value = sp.cat;
+                last.querySelector('.spell-lvl').value = sp.lvl;
+                last.querySelector('.spell-desc').value = sp.desc;
             });
             sortSpells();
 
