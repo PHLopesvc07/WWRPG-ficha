@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Pessoas Mágicas - Ministério da Magia</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+
+<body>
+
+    <header class="ministry-header">
+        <div class="header-titles">
+            <h1>Ministério da Magia</h1>
+            <h2>Departamento de Execução das Leis da Magia</h2>
+            <p>Formulário Padrão de Identificação Mágica</p>
+        </div>
+        <div class="sys-controls">
+            <button id="btn-export" class="btn-gold">Carimbar & Exportar (.json)</button>
+            <label for="file-import" class="btn-gold">Anexar Arquivo (.json)</label>
+            <input type="file" id="file-import" accept=".json" style="display: none;">
+            <button id="btn-reset" class="btn-danger">Incendiar Registro (Limpar)</button>
+        </div>
+    </header>
+
+    <nav class="tabs-nav">
+        <button class="tab-btn active" data-target="tab-status">I. Registro Pessoal</button>
+        <button class="tab-btn" data-target="tab-magic">II. Feitiços & Encantamentos</button>
+        <button class="tab-btn" data-target="tab-inventory">III. Inventário & Economia</button>
+        <button class="tab-btn" data-target="tab-notes">IV. Diário de Campo</button>
+    </nav>
+
+    <div class="layout-wrapper">
+        <main class="main-content">
+
+            <section id="tab-status" class="tab-panel active">
+                <div class="panel-grid">
+
+                    <div class="bureaucracy-box profile-section">
+                        <div class="photo-upload">
+                            <img id="char-photo-preview" src="" alt="Retrato Mágico" style="display:none;">
+                            <label for="char-photo" class="upload-label">Anexar Retrato</label>
+                            <input type="file" id="char-photo" accept="image/*">
+                        </div>
+                        <div class="basic-info">
+                            <label>Nome Completo: <input type="text" id="char-name" class="ink-input"></label>
+                            <label>Status de Sangue:
+                                <select id="blood-status" class="ink-select">
+                                    <option value="puro">Puro-Sangue</option>
+                                    <option value="mestico">Mestiço</option>
+                                    <option value="nascido-trouxa">Nascido-Trouxa</option>
+                                    <option value="meio-humano">Meio-Humano</option>
+                                </select>
+                            </label>
+                            <label>Escola de Origem: <input type="text" id="school" class="ink-input"></label>
+                            <label>Idade: <input type="number" id="age" class="ink-input short-input"></label>
+                            <label>Altura / Peso: <input type="text" id="height-weight" class="ink-input"></label>
+                            <label>Idiomas: <input type="text" id="languages" class="ink-input"></label>
+                            <label>Profissão: <input type="text" id="profession" class="ink-input"></label>
+                        </div>
+                    </div>
+
+                    <div class="bureaucracy-box family-section">
+                        <h3>Linhagem Familiar</h3>
+                        <label>Família:
+                            <select id="family-select" class="ink-select">
+                                <option value="">Aguardando Registros...</option>
+                            </select>
+                        </label>
+                        <div class="status-row">
+                            <label>Preconceito: <input type="number" id="prejudice" class="ink-input short-input"
+                                    readonly></label>
+                            <label>Influência: <input type="number" id="influence" class="ink-input short-input"
+                                    readonly></label>
+                        </div>
+                    </div>
+
+                    <div class="bureaucracy-box stats-section">
+                        <h3>Atributos Base</h3>
+                        <div class="stats-grid">
+                            <label><span class="rollable stat-roll" data-stat="corpo">Corpo</span> <input type="number"
+                                    id="stat-corpo" class="ink-input" value="0"></label>
+                            <label><span class="rollable stat-roll" data-stat="destreza">Destreza</span> <input
+                                    type="number" id="stat-destreza" class="ink-input" value="0"></label>
+                            <label><span class="rollable stat-roll" data-stat="inteligencia">Inteligência</span> <input
+                                    type="number" id="stat-inteligencia" class="ink-input" value="0"></label>
+                            <label><span class="rollable stat-roll" data-stat="sabedoria">Sabedoria</span> <input
+                                    type="number" id="stat-sabedoria" class="ink-input" value="0"></label>
+                            <label><span class="rollable stat-roll" data-stat="vitalidade">Vitalidade</span> <input
+                                    type="number" id="stat-vitalidade" class="ink-input" value="0"></label>
+                            <label><span class="rollable stat-roll" data-stat="carisma">Carisma</span> <input
+                                    type="number" id="stat-carisma" class="ink-input" value="0"></label>
+                        </div>
+                    </div>
+
+                    <div class="bureaucracy-box skills-section">
+                        <h3>Perícias Registradas</h3>
+                        <div id="skills-container" class="skills-grid">
+                        </div>
+                    </div>
+
+                    <div class="bureaucracy-box injuries-section">
+                        <h3>Prontuário Médico (Injúrias)</h3>
+                        <div class="injury-row"><label>Leve (Atual/Máx):</label> <input type="number" id="inj-leve-curr"
+                                class="ink-input short-input"> / <input type="number" id="inj-leve-max"
+                                class="ink-input short-input"></div>
+                        <div class="injury-row"><label>Média (Atual/Máx):</label> <input type="number"
+                                id="inj-media-curr" class="ink-input short-input"> / <input type="number"
+                                id="inj-media-max" class="ink-input short-input"></div>
+                        <div class="injury-row"><label>Pesada (Atual/Máx):</label> <input type="number"
+                                id="inj-pesada-curr" class="ink-input short-input"> / <input type="number"
+                                id="inj-pesada-max" class="ink-input short-input"></div>
+                        <div id="custom-injuries-container"></div>
+                        <button id="btn-add-injury" class="btn-teal">+ Adicionar Condição Médica</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-magic" class="tab-panel">
+
+                <div class="bureaucracy-box wand-section">
+                    <h3>Registro da Varinha</h3>
+                    <div class="wand-grid">
+                        <label>Comprimento: <input type="text" id="wand-length" class="ink-input"></label>
+                        <label>Madeira: <input type="text" id="wand-wood" class="ink-input"></label>
+                        <label>Núcleo: <input type="text" id="wand-core" class="ink-input"></label>
+                    </div>
+                </div>
+
+                <div class="bureaucracy-box traits-section">
+                    <h3>Dons e Maldições</h3>
+                    <textarea id="traits-text" class="ink-textarea"
+                        placeholder="Descreva anomalias mágicas, bênçãos ou maldições..."></textarea>
+                </div>
+
+                <div class="bureaucracy-box spells-section">
+                    <h3>Catálogo de Feitiços Autorizados</h3>
+                    <button id="btn-add-spell" class="btn-teal">+ Registrar Novo Feitiço</button>
+                    <div id="spells-list" class="spells-container">
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-inventory" class="tab-panel">
+
+                <div class="bureaucracy-box economy-section">
+                    <h3>Cofre de Gringotes (Economia)</h3>
+                    <div class="coins-grid">
+                        <div class="coin-group">
+                            <label>Galeões</label>
+                            <input type="number" id="coin-g" class="ink-input" value="0">
+                        </div>
+                        <div class="coin-group">
+                            <label>Sicles</label>
+                            <input type="number" id="coin-s" class="ink-input" value="0">
+                        </div>
+                        <div class="coin-group">
+                            <label>Nuques</label>
+                            <input type="number" id="coin-k" class="ink-input" value="0">
+                        </div>
+                    </div>
+                    <div class="economy-controls">
+                        <input type="number" id="calc-amount" class="ink-input short-input" placeholder="Qtd">
+                        <select id="calc-type" class="ink-select">
+                            <option value="g">Galeões</option>
+                            <option value="s">Sicles</option>
+                            <option value="k">Nuques</option>
+                        </select>
+                        <button id="btn-add-coin" class="btn-teal">Somar</button>
+                        <button id="btn-sub-coin" class="btn-teal">Subtrair</button>
+                        <button id="btn-convert-coins" class="btn-gold">Converter Tudo p/ Padrão</button>
+                    </div>
+                </div>
+
+                <div class="bureaucracy-box gringotts-exchange">
+                    <h3>Balcão de Câmbio de Gringotes <span class="subtitle">Conversão de Moedas</span></h3>
+                    <div class="exchange-cards">
+                        <div class="exchange-card">
+                            <div class="exchange-inputs">
+                                <div class="input-col">
+                                    <label>Galeões</label>
+                                    <input type="number" id="exc-g-val" class="ink-input short-input" value="1" min="1">
+                                </div>
+                                <span class="exchange-arrow">→</span>
+                                <div class="input-col">
+                                    <label>Sicles</label>
+                                    <input type="number" id="exc-s-res" class="ink-input short-input" value="17"
+                                        readonly tabindex="-1">
+                                </div>
+                            </div>
+                            <button id="btn-exc-gs" class="btn-gold btn-exchange">Trocar</button>
+                        </div>
+
+                        <div class="exchange-card">
+                            <div class="exchange-inputs">
+                                <div class="input-col">
+                                    <label>Sicles</label>
+                                    <input type="number" id="exc-s-val" class="ink-input short-input" value="1" min="1">
+                                </div>
+                                <span class="exchange-arrow">→</span>
+                                <div class="input-col">
+                                    <label>Nuques</label>
+                                    <input type="number" id="exc-k-res" class="ink-input short-input" value="29"
+                                        readonly tabindex="-1">
+                                </div>
+                            </div>
+                            <button id="btn-exc-sk" class="btn-gold btn-exchange"
+                                style="background-color: #c96e2e; color: #fff;">Trocar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bureaucracy-box inventory-section">
+                    <h3>Registro de Bens Materiais</h3>
+                    <button id="btn-add-container" class="btn-teal">+ Adicionar Recipiente/Bolso</button>
+                    <div id="inventory-list">
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-notes" class="tab-panel">
+                <div class="bureaucracy-box notes-section">
+                    <h3>Registros Oficiais e Relatórios Livres</h3>
+
+                    <div class="editor-toolbar">
+                        <button type="button" class="btn-format" data-cmd="bold" title="Negrito"><b>B</b></button>
+                        <button type="button" class="btn-format" data-cmd="italic" title="Itálico"><i>I</i></button>
+                        <button type="button" class="btn-format" data-cmd="underline"
+                            title="Sublinhado"><u>U</u></button>
+                        <button type="button" class="btn-format" data-cmd="insertUnorderedList"
+                            title="Lista de Tópicos">• Lista</button>
+                        <button type="button" class="btn-format" data-cmd="removeFormat"
+                            title="Remover Formatação">Limpar</button>
+                    </div>
+
+                    <div id="notes-editor" class="ink-textarea rich-editor" contenteditable="true" spellcheck="false"
+                        placeholder="Comece a redigir seu relatório aqui..."></div>
+                </div>
+            </section>
+        </main>
+
+        <aside class="dice-widget bureaucracy-box">
+            <h3 class="stamp-title">Mesa de Rolagem</h3>
+
+            <div class="dice-controls">
+                <label>Qtd: <input type="number" id="dice-qty" class="ink-input short-input" value="1" min="1"
+                        max="20"></label>
+                <label>Dado:
+                    <select id="dice-type" class="ink-select">
+                        <option value="20">d20</option>
+                        <option value="4">d4</option>
+                        <option value="6">d6</option>
+                        <option value="8">d8</option>
+                        <option value="10">d10</option>
+                        <option value="12">d12</option>
+                        <option value="100">d100</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </label>
+                <input type="number" id="dice-custom" class="ink-input short-input" placeholder="Ex: 3"
+                    style="display:none;">
+            </div>
+
+            <div class="dice-modifiers">
+                <label>Modificador: <input type="number" id="dice-mod" class="ink-input short-input" value="0"></label>
+                <div class="adv-disadv-toggles">
+                    <label><input type="radio" name="adv-disadv" value="normal" checked> Normal</label>
+                    <label><input type="radio" name="adv-disadv" value="adv"> Vantagem</label>
+                    <label><input type="radio" name="adv-disadv" value="disadv"> Desvantagem</label>
+                </div>
+            </div>
+
+            <button id="btn-roll" class="btn-gold roll-action-btn">Lançar Dados</button>
+
+            <div class="dice-log-container">
+                <div class="log-header">
+                    <h4>Registro Oficial</h4>
+                    <button id="btn-clear-log" class="btn-clear-log" title="Apagar histórico">Limpar</button>
+                </div>
+                <ul id="dice-log"></ul>
+            </div>
+        </aside>
+    </div>
+
+    <script type="module" src="assets/js/main.js"></script>
+</body>
+
+</html>
