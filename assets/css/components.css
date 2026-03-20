@@ -350,3 +350,8 @@ label[for="file-import"]:active {
     margin-bottom: 20px;
     font-family: var(--font-serif);
 }
+
+/* Esconde os inputs de arquivo originais feios, mantendo apenas os labels estilizados */
+input[type="file"] {
+    display: none;
+}
