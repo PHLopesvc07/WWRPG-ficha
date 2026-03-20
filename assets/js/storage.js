@@ -54,6 +54,16 @@ async function exportData() {
         },
         magic: {
             wand: { l: document.getElementById('wand-length').value, w: document.getElementById('wand-wood').value, c: document.getElementById('wand-core').value },
+            
+            // Salvando as Regras Pessoais
+            rules: [
+                document.getElementById('rule-1').value,
+                document.getElementById('rule-2').value,
+                document.getElementById('rule-3').value,
+                document.getElementById('rule-4').value,
+                document.getElementById('rule-5').value
+            ],
+            
             traits: document.getElementById('traits-text').value,
             spells: Array.from(document.querySelectorAll('.spell-card')).map(card => ({
                 name: card.querySelector('.spell-name').value,
@@ -179,6 +189,16 @@ function importData(e) {
             document.getElementById('wand-length').value = data.magic.wand.l || "";
             document.getElementById('wand-wood').value = data.magic.wand.w || "";
             document.getElementById('wand-core').value = data.magic.wand.c || "";
+            
+            // Carregando as Regras Pessoais (com fallback se o arquivo antigo não as tiver)
+            if (data.magic.rules) {
+                document.getElementById('rule-1').value = data.magic.rules[0] || "";
+                document.getElementById('rule-2').value = data.magic.rules[1] || "";
+                document.getElementById('rule-3').value = data.magic.rules[2] || "";
+                document.getElementById('rule-4').value = data.magic.rules[3] || "";
+                document.getElementById('rule-5').value = data.magic.rules[4] || "";
+            }
+
             document.getElementById('traits-text').value = data.magic.traits || "";
 
             document.getElementById('spells-list').innerHTML = '';
@@ -196,7 +216,6 @@ function importData(e) {
 
                 const catSelect = last.querySelector('.spell-cat');
                 if (catSelect) {
-                    // Mantém compatibilidade com arquivos antigos que salvaram matrizes
                     if (Array.isArray(sp.cat)) {
                         catSelect.value = sp.cat[0] || "Feitiço";
                     } else {
