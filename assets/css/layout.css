@@ -132,6 +132,23 @@
     margin-top: 15px;
 }
 
+/* Correção de Responsividade dos Atributos Base */
+.stats-grid {
+    display: grid;
+    /* Reduz o tamanho mínimo para permitir que os 6 caibam em telas maiores, 
+       ou quebrem para a linha de baixo com elegância em telas menores */
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Força os inputs de atributos a encolherem e não "quebrarem" a tela */
+.stats-grid .ink-input {
+    flex: none;
+    width: 55px;
+    text-align: center;
+}
+
 /* Grid fixo de 2 colunas para as perícias */
 .skills-grid {
     display: grid;
