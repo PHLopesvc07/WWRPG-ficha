@@ -124,12 +124,16 @@ export function addInventoryContainer(name = "Novo Recipiente") {
     card.className = 'bureaucracy-box inventory-container-card';
     card.dataset.id = id;
     
+    // O atributo value="${name}" foi removido do input abaixo para evitar conflito com aspas
     card.innerHTML = `
         <button class="delete-btn">X</button>
-        <input type="text" class="ink-input container-name" value="${name}" style="font-size: 1.2em; font-weight: bold; width: 80%; margin-bottom: 10px;">
+        <input type="text" class="ink-input container-name" style="font-size: 1.2em; font-weight: bold; width: 80%; margin-bottom: 10px;">
         <div class="items-list"></div>
         <button class="btn-teal add-item-btn">+ Adicionar Item</button>
     `;
+    
+    // O valor do nome é injetado nativamente de forma segura via JavaScript
+    card.querySelector('.container-name').value = name;
     
     card.querySelector('.delete-btn').addEventListener('click', () => card.remove());
     card.querySelector('.add-item-btn').addEventListener('click', () => addInventoryItem(id));
