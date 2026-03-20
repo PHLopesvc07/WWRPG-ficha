@@ -189,14 +189,13 @@ function importData(e) {
 
             document.getElementById('spells-list').innerHTML = '';
             data.magic.spells.forEach(sp => {
-                document.getElementById('btn-add-spell').click(); // Cria o card na tela
+                document.getElementById('btn-add-spell').click();
                 const last = document.getElementById('spells-list').lastElementChild;
                 
                 const setVal = (selector, val) => {
                     if (last.querySelector(selector)) last.querySelector(selector).value = val || "";
                 };
 
-                // Restaura campos antigos e novos
                 setVal('.spell-name', sp.name);
                 setVal('.spell-lvl', sp.lvl);
                 setVal('.spell-desc', sp.desc);
@@ -204,23 +203,16 @@ function importData(e) {
                 setVal('.spell-range', sp.range);
                 setVal('.spell-comp', sp.components);
 
-                // Restaura a Matriz de Categorias
                 const catSelect = last.querySelector('.spell-cat');
                 if (catSelect && sp.cat && Array.isArray(sp.cat)) {
                     if (catSelect.multiple) {
-                        // Se for um select múltiplo, itera e marca as opções corretas
                         Array.from(catSelect.options).forEach(opt => {
                             opt.selected = sp.cat.includes(opt.value);
                         });
                     } else {
-                        // Fallback se a UI for simples: pega apenas a categoria principal (índice 0)
                         catSelect.value = sp.cat[0] || "Feitiço";
                     }
                 }
-            });
-            
-            // Ordena e colore após montar tudo
-            sortSpells();
             });
             sortSpells();
 
@@ -247,10 +239,11 @@ function importData(e) {
             // 7. Notes
             if (data.notes !== undefined) {
                 document.getElementById('notes-editor').innerHTML = data.notes;
-            };
+            }
 
             updateSkillBonuses();
             alert('Registros importados com sucesso dos arquivos do Ministério.');
+            
         } catch (error) {
             console.error(error);
             alert('Erro na leitura do arquivo. O pergaminho parece corrompido ou sob efeito de magia negra.');
