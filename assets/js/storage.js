@@ -17,7 +17,7 @@ export function setupPersistence() {
 }
 
 async function exportData() {
-    // 1. Coleta todos os dados da ficha (Mantive a sua estrutura intacta)
+    // 1. Coleta todos os dados da ficha
     const data = {
         profile: {
             photo: document.getElementById('char-photo-preview').src,
@@ -80,7 +80,7 @@ async function exportData() {
     const suggestedFileName = `${data.profile.name || 'Bruxo'}_Ficha.json`;
 
     try {
-        // 2. Tenta usar a API moderna para "Salvar e Substituir" (Desktop/Chromium)
+        // 2. Tenta usar a API moderna para "Salvar e Substituir"
         if ('showSaveFilePicker' in window) {
             const handle = await window.showSaveFilePicker({
                 suggestedName: suggestedFileName,
@@ -95,7 +95,7 @@ async function exportData() {
             await writable.write(jsonString);
             await writable.close();
             
-            alert('Ficha carimbada e salva com sucesso!');
+            alert('Ficha carimbada e atualizada com sucesso!');
         } else {
             // 3. Fallback (Plano B) para celulares ou navegadores antigos
             const blob = new Blob([jsonString], { type: 'application/json' });
@@ -115,15 +115,6 @@ async function exportData() {
     }
 }
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${data.profile.name || 'Bruxo'}_Ficha.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
 function importData(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -141,25 +132,25 @@ function importData(e) {
                 img.style.maxWidth = '150px';
                 img.style.border = '2px solid var(--ink)';
             }
-            document.getElementById('char-name').value = data.profile.name;
-            document.getElementById('blood-status').value = data.profile.blood;
-            document.getElementById('school').value = data.profile.school;
-            document.getElementById('age').value = data.profile.age;
-            document.getElementById('height-weight').value = data.profile.hw;
-            document.getElementById('languages').value = data.profile.languages;
-            document.getElementById('profession').value = data.profile.profession;
+            document.getElementById('char-name').value = data.profile.name || "";
+            document.getElementById('blood-status').value = data.profile.blood || "puro";
+            document.getElementById('school').value = data.profile.school || "";
+            document.getElementById('age').value = data.profile.age || "";
+            document.getElementById('height-weight').value = data.profile.hw || "";
+            document.getElementById('languages').value = data.profile.languages || "";
+            document.getElementById('profession').value = data.profile.profession || "";
             
             const famSelect = document.getElementById('family-select');
-            famSelect.value = data.profile.family;
+            famSelect.value = data.profile.family || "";
             famSelect.dispatchEvent(new Event('change'));
 
             // 2. Stats
-            document.getElementById('stat-corpo').value = data.stats.corpo;
-            document.getElementById('stat-destreza').value = data.stats.destreza;
-            document.getElementById('stat-inteligencia').value = data.stats.inteligencia;
-            document.getElementById('stat-sabedoria').value = data.stats.sabedoria;
-            document.getElementById('stat-vitalidade').value = data.stats.vitalidade;
-            document.getElementById('stat-carisma').value = data.stats.carisma;
+            document.getElementById('stat-corpo').value = data.stats.corpo || 0;
+            document.getElementById('stat-destreza').value = data.stats.destreza || 0;
+            document.getElementById('stat-inteligencia').value = data.stats.inteligencia || 0;
+            document.getElementById('stat-sabedoria').value = data.stats.sabedoria || 0;
+            document.getElementById('stat-vitalidade').value = data.stats.vitalidade || 0;
+            document.getElementById('stat-carisma').value = data.stats.carisma || 0;
 
             // 3. Skills
             data.skills.forEach(sk => {
@@ -168,12 +159,12 @@ function importData(e) {
             });
 
             // 4. Injuries
-            document.getElementById('inj-leve-curr').value = data.injuries.leve.c;
-            document.getElementById('inj-leve-max').value = data.injuries.leve.m;
-            document.getElementById('inj-media-curr').value = data.injuries.media.c;
-            document.getElementById('inj-media-max').value = data.injuries.media.m;
-            document.getElementById('inj-pesada-curr').value = data.injuries.pesada.c;
-            document.getElementById('inj-pesada-max').value = data.injuries.pesada.m;
+            document.getElementById('inj-leve-curr').value = data.injuries.leve.c || "";
+            document.getElementById('inj-leve-max').value = data.injuries.leve.m || "";
+            document.getElementById('inj-media-curr').value = data.injuries.media.c || "";
+            document.getElementById('inj-media-max').value = data.injuries.media.m || "";
+            document.getElementById('inj-pesada-curr').value = data.injuries.pesada.c || "";
+            document.getElementById('inj-pesada-max').value = data.injuries.pesada.m || "";
             
             document.getElementById('custom-injuries-container').innerHTML = '';
             data.injuries.custom.forEach(inj => {
@@ -185,10 +176,10 @@ function importData(e) {
             });
 
             // 5. Magic
-            document.getElementById('wand-length').value = data.magic.wand.l;
-            document.getElementById('wand-wood').value = data.magic.wand.w;
-            document.getElementById('wand-core').value = data.magic.wand.c;
-            document.getElementById('traits-text').value = data.magic.traits;
+            document.getElementById('wand-length').value = data.magic.wand.l || "";
+            document.getElementById('wand-wood').value = data.magic.wand.w || "";
+            document.getElementById('wand-core').value = data.magic.wand.c || "";
+            document.getElementById('traits-text').value = data.magic.traits || "";
 
             document.getElementById('spells-list').innerHTML = '';
             data.magic.spells.forEach(sp => {
@@ -202,27 +193,23 @@ function importData(e) {
                 setVal('.spell-name', sp.name);
                 setVal('.spell-lvl', sp.lvl);
                 setVal('.spell-desc', sp.desc);
-                setVal('.spell-time', sp.castingTime);
-                setVal('.spell-range', sp.range);
-                setVal('.spell-comp', sp.components);
 
                 const catSelect = last.querySelector('.spell-cat');
-                if (catSelect && sp.cat && Array.isArray(sp.cat)) {
-                    if (catSelect.multiple) {
-                        Array.from(catSelect.options).forEach(opt => {
-                            opt.selected = sp.cat.includes(opt.value);
-                        });
-                    } else {
+                if (catSelect) {
+                    // Mantém compatibilidade com arquivos antigos que salvaram matrizes
+                    if (Array.isArray(sp.cat)) {
                         catSelect.value = sp.cat[0] || "Feitiço";
+                    } else {
+                        catSelect.value = sp.cat || "Feitiço";
                     }
                 }
             });
             sortSpells();
 
             // 6. Inventory
-            document.getElementById('coin-g').value = data.inventory.coins.g;
-            document.getElementById('coin-s').value = data.inventory.coins.s;
-            document.getElementById('coin-k').value = data.inventory.coins.k;
+            document.getElementById('coin-g').value = data.inventory.coins.g || 0;
+            document.getElementById('coin-s').value = data.inventory.coins.s || 0;
+            document.getElementById('coin-k').value = data.inventory.coins.k || 0;
 
             document.getElementById('inventory-list').innerHTML = '';
             data.inventory.containers.forEach(cont => {
