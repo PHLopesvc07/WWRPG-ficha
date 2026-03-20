@@ -4,7 +4,7 @@
  */
 
 export function setupDynamicLists() {
-    // 1. Adicionar Feitiço (Layout limpo restaurado)
+    // 1. Adicionar Feitiço (Layout limpo restaurado e sem campos excedentes)
     document.getElementById('btn-add-spell').addEventListener('click', () => {
         const container = document.getElementById('spells-list');
         const id = Date.now();
@@ -28,9 +28,12 @@ export function setupDynamicLists() {
                 </select>
                 
                 <select class="ink-select spell-lvl">
-                    <option value="1">Nível 1</option><option value="2">Nível 2</option>
-                    <option value="3">Nível 3</option><option value="4">Nível 4</option>
-                    <option value="5">Nível 5</option><option value="6">Nível 6</option>
+                    <option value="1">Nível 1</option>
+                    <option value="2">Nível 2</option>
+                    <option value="3">Nível 3</option>
+                    <option value="4">Nível 4</option>
+                    <option value="5">Nível 5</option>
+                    <option value="6">Nível 6</option>
                     <option value="7">Nível 7</option>
                 </select>
             </div>
@@ -38,7 +41,11 @@ export function setupDynamicLists() {
             <textarea class="ink-textarea spell-desc" placeholder="Descrição do efeito..."></textarea>
         `;
         
-        card.querySelector('.delete-btn').addEventListener('click', () => { card.remove(); sortSpells(); });
+        // Adiciona os ouvintes de evento diretamente aos elementos recém-criados
+        card.querySelector('.delete-btn').addEventListener('click', () => { 
+            card.remove(); 
+            sortSpells(); 
+        });
         card.querySelector('.spell-cat').addEventListener('change', sortSpells);
         card.querySelector('.spell-lvl').addEventListener('change', sortSpells);
         
@@ -66,6 +73,7 @@ export function setupDynamicLists() {
         addInventoryContainer("Novo Recipiente");
     });
 
+    // Inicia a ficha com a mochila padrão
     addInventoryContainer("Mochila Principal");
 }
 
@@ -73,6 +81,7 @@ export function sortSpells() {
     const container = document.getElementById('spells-list');
     const cards = Array.from(container.children);
     
+    // Configuração das Cores de Tinta Arquivística
     const catConfig = {
         "Transfiguração": { order: 1, class: "cat-transfiguracao" },
         "Feitiço":        { order: 2, class: "cat-feitico" },
@@ -99,8 +108,11 @@ export function sortSpells() {
 
     cards.forEach(card => {
         const primaryCat = card.querySelector('.spell-cat').value || "Feitiço";
+        
+        // Remove cores antigas e aplica a nova
         Object.values(catConfig).forEach(c => card.classList.remove(c.class));
         if(catConfig[primaryCat]) card.classList.add(catConfig[primaryCat].class);
+        
         container.appendChild(card);
     });
 }
