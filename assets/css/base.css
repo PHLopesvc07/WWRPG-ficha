@@ -1,0 +1,76 @@
+/* ==========================================================================
+   BASE.CSS - MINISTÉRIO DA MAGIA
+   Variáveis Globais, Reset e Tipografia
+   ========================================================================== */
+
+/* Importação das Fontes Oficiais do Ministério */
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:wght@700&display=swap');
+
+:root {
+    /* Paleta Oficial Obrigatória (Restaurada do seu código original) */
+    --parchment: #F2EBBF;
+    /* Fundo principal / Papel envelhecido (Fallback) */
+    --ink: #5C4B51;
+    /* Tinta escura / Texto e Bordas */
+    --stamp-red: #F06060;
+    /* Carimbos, alertas e erros */
+    --magic-gold: #F3B562;
+    /* Destaques e magia */
+    --muted-teal: #8CBEB2;
+    /* Fundos secundários / Abas inativas */
+
+    /* Tipografia Burocrática */
+    --font-typewriter: 'Special Elite', monospace;
+    /* Fonte de máquina de escrever */
+    --font-serif: 'Playfair Display', serif;
+    /* Fonte oficial para cabeçalhos pesados */
+
+    /* Ativos Visuais Estáticos */
+    --bg-pergaminho: url('../img/FundoPerg.jpg');
+}
+
+/* ==========================================================================
+   RESET E CONFIGURAÇÕES GLOBAIS
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    /* Configuração de Fundo */
+    background-color: var(--parchment);
+    /* Fallback caso a imagem não carregue rápido */
+    background-image: var(--bg-pergaminho);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    /* O fundo fica estático enquanto a ficha rola */
+
+    /* Para dar um leve escurecimento e misturar melhor o texto com a imagem, 
+       podemos sobrepor um leve gradiente caso a imagem seja muito clara:
+       background-image: linear-gradient(rgba(242, 235, 191, 0.4), rgba(242, 235, 191, 0.4)), var(--bg-pergaminho); 
+    */
+
+    /* Tipografia e Espaçamento Base */
+    color: var(--ink);
+    font-family: var(--font-typewriter);
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   TIPOGRAFIA DE CABEÇALHOS
+   ========================================================================== */
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-serif);
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}

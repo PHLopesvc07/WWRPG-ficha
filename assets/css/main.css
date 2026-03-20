@@ -1,0 +1,13 @@
+/* ==========================================================================
+   MAIN.CSS - MINISTÉRIO DA MAGIA
+   Arquivo Agregador (Entry Point do CSS)
+   ========================================================================== */
+
+@import url('base.css');
+/* Variáveis, fontes e resets globais */
+@import url('layout.css');
+/* Cabeçalho, grids e estrutura principal */
+@import url('components.css');
+/* Botões, formulários e abas */
+@import url('modules.css');
+/* Widgets específicos (Gringotes, Diário, Dados) */

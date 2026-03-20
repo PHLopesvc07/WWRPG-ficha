@@ -1,0 +1,183 @@
+/* ==========================================================================
+   MODULES.CSS - MINISTÉRIO DA MAGIA
+   Widgets e Componentes Específicos Isolados
+   ========================================================================== */
+
+/* ==========================================================================
+   MESA LATERAL: HISTÓRICO DE ROLAGENS (LOG)
+   ========================================================================== */
+.dice-log-container {
+    height: 280px;
+    overflow-y: auto;
+    border: 2px solid var(--ink);
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--ink);
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+}
+
+.log-header h4 {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#dice-log li {
+    list-style: none;
+    border-bottom: 1px dotted var(--ink);
+    padding: 8px 0;
+    font-size: 0.9em;
+}
+
+.btn-clear-log {
+    background: transparent;
+    color: var(--stamp-red);
+    border: 1px dashed var(--stamp-red);
+    font-family: var(--font-typewriter);
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: none;
+    transition: all 0.2s;
+    border-radius: 2px;
+}
+
+.btn-clear-log:hover {
+    background-color: var(--stamp-red);
+    color: var(--parchment);
+}
+
+.btn-clear-log:active {
+    transform: scale(0.95);
+}
+
+/* ==========================================================================
+   ECONOMIA: BALCÃO DE CÂMBIO DE GRINGOTES
+   ========================================================================== */
+.gringotts-exchange h3 {
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.gringotts-exchange .subtitle {
+    font-size: 0.7rem;
+    font-family: var(--font-typewriter);
+    text-transform: none;
+    opacity: 0.6;
+    margin-left: 10px;
+    font-weight: normal;
+}
+
+.exchange-cards {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.exchange-card {
+    flex: 1;
+    min-width: 280px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(92, 75, 81, 0.3);
+    border-radius: 4px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.exchange-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-col label {
+    font-size: 0.7rem;
+    font-family: var(--font-serif);
+    color: var(--ink);
+    margin-bottom: -5px;
+}
+
+.input-col input {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    background: transparent;
+    border: 1px solid rgba(92, 75, 81, 0.2);
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+.input-col input[readonly] {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.exchange-arrow {
+    font-size: 1.5rem;
+    color: var(--ink);
+    opacity: 0.5;
+    margin: 0 5px;
+}
+
+.btn-exchange {
+    font-size: 0.8rem;
+    padding: 10px 15px;
+    box-shadow: none;
+    border-radius: 4px;
+}
+
+.btn-exchange:active {
+    transform: scale(0.95);
+}
+
+/* ==========================================================================
+   DIÁRIO DE CAMPO (EDITOR DE TEXTO RICO)
+   ========================================================================== */
+.editor-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed rgba(92, 75, 81, 0.4);
+    flex-wrap: wrap;
+}
+
+.rich-editor {
+    min-height: 500px;
+    padding: 10px 15px;
+    overflow-y: auto;
+    outline: none;
+    /* Mantém as linhas de caderno perfeitas */
+    background-image: repeating-linear-gradient(transparent, transparent 30px, rgba(92, 75, 81, 0.2) 30px, rgba(92, 75, 81, 0.2) 31px);
+    line-height: 31px;
+}
+
+/* Garante que listas fiquem indentadas corretamente dentro das linhas */
+.rich-editor ul {
+    margin-left: 25px;
+    margin-bottom: 0;
+}
+
+.rich-editor li {
+    line-height: 31px;
+}
