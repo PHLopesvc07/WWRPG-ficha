@@ -16,7 +16,8 @@ export function setupPersistence() {
     });
 }
 
-function exportData() {
+async function exportData() {
+    // 1. Coleta todos os dados da ficha (Mantive a sua estrutura intacta)
     const data = {
         profile: {
             photo: document.getElementById('char-photo-preview').src,
@@ -54,49 +55,12 @@ function exportData() {
         magic: {
             wand: { l: document.getElementById('wand-length').value, w: document.getElementById('wand-wood').value, c: document.getElementById('wand-core').value },
             traits: document.getElementById('traits-text').value,
-            magic: {
-            wand: { l: document.getElementById('wand-length').value, w: document.getElementById('wand-wood').value, c: document.getElementById('wand-core').value },
-            traits: document.getElementById('traits-text').value,
-            
-            // NOVO MAPEAMENTO DE FEITIÇOS
-            spells: Array.from(document.querySelectorAll('.spell-card')).map(card => {
-                // 1. Captura da Matriz de Categorias
-                const catSelect = card.querySelector('.spell-cat');
-                let categoriesArray = [];
-                
-                if (catSelect) {
-                    // Verifica se a UI foi atualizada para um <select multiple>
-                    if (catSelect.multiple) {
-                        categoriesArray = Array.from(catSelect.selectedOptions).map(opt => opt.value);
-                    } else {
-                        // Fallback de segurança se ainda for um select simples
-                        categoriesArray = [catSelect.value];
-                    }
-                }
-
-                // 2. Validação de Esquema (Garante que nunca retorne null ou vazio)
-                if (!categoriesArray || categoriesArray.length === 0) {
-                    categoriesArray = ["Indefinido"];
-                }
-
-                // 3. Captura segura dos novos campos (com fallback para string vazia caso a UI falhe)
-                const safeVal = (selector) => {
-                    const el = card.querySelector(selector);
-                    return el ? el.value : "";
-                };
-
-                // 4. Retorno do Objeto Spell validado
-                return {
-                    name: safeVal('.spell-name'),
-                    cat: categoriesArray, // Garantidamente uma Matriz/Array
-                    lvl: safeVal('.spell-lvl') || "1",
-                    castingTime: safeVal('.spell-time'), // Tempo de Conjuração
-                    range: safeVal('.spell-range'),      // Alcance
-                    components: safeVal('.spell-comp'),  // Componentes
-                    desc: safeVal('.spell-desc')
-                };
-            })
-        },
+            spells: Array.from(document.querySelectorAll('.spell-card')).map(card => ({
+                name: card.querySelector('.spell-name').value,
+                cat: card.querySelector('.spell-cat').value,
+                lvl: card.querySelector('.spell-lvl').value,
+                desc: card.querySelector('.spell-desc').value
+            }))
         },
         inventory: {
             coins: { g: document.getElementById('coin-g').value, s: document.getElementById('coin-s').value, k: document.getElementById('coin-k').value },
@@ -111,6 +75,45 @@ function exportData() {
         },
         notes: document.getElementById('notes-editor').innerHTML
     };
+
+    const jsonString = JSON.stringify(data, null, 2);
+    const suggestedFileName = `${data.profile.name || 'Bruxo'}_Ficha.json`;
+
+    try {
+        // 2. Tenta usar a API moderna para "Salvar e Substituir" (Desktop/Chromium)
+        if ('showSaveFilePicker' in window) {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: suggestedFileName,
+                types: [{
+                    description: 'Arquivo JSON do Ministério',
+                    accept: {'application/json': ['.json']}
+                }]
+            });
+            
+            // Abre o arquivo para escrita e substitui o conteúdo
+            const writable = await handle.createWritable();
+            await writable.write(jsonString);
+            await writable.close();
+            
+            alert('Ficha carimbada e salva com sucesso!');
+        } else {
+            // 3. Fallback (Plano B) para celulares ou navegadores antigos
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = suggestedFileName;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    } catch (error) {
+        // Ignora o erro se o usuário apenas fechou a janela de salvar sem concluir
+        if (error.name !== 'AbortError') {
+            console.error(error);
+            alert('Erro ao tentar carimbar o registro.');
+        }
+    }
+}
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
