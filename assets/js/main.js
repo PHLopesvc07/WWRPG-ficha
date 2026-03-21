@@ -11,6 +11,7 @@ import { setupEconomy, setupGringottsExchange } from './economy.js';
 import { setupDynamicLists } from './spells.js';
 import { setupPersistence } from './storage.js';
 import { setupPets } from './pets.js';
+import { setupTheme } from './theme.js'; // <-- NOVO IMPORT
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inicializa UI Básica
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGringottsExchange();
     setupDynamicLists();
     setupPets();
+    setupTheme(); // <-- NOVA CHAMADA AQUI
     
     // 4. Inicializa o Sistema de Save/Load
     setupPersistence();

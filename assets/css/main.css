@@ -11,3 +11,5 @@
 /* Botões, formulários e abas */
 @import url('modules.css');
 /* Widgets específicos (Gringotes, Diário, Dados) */
+@import url('theme.css');
+/* NOVO: Sobrescrições do Modo Escuro */

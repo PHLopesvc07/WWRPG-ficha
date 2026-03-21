@@ -1,0 +1,68 @@
+/* ==========================================================================
+   THEME.CSS - MINISTÉRIO DA MAGIA
+   Modo Escuro (Dark Mode) - Sobrescrita de Variáveis e Cores
+   ========================================================================== */
+
+body.dark-mode {
+    /* 1. Imagem de Fundo Escura */
+    --bg-pergaminho: url('../img/FundoPergPreto.jpg');
+
+    /* 2. Inversão Semântica (Tinta fica clara, Pergaminho fica escuro) */
+    --ink: #f4e4c1; /* Texto assume uma cor clara (tipo pergaminho original) para contraste */
+    
+    /* Paleta Solicitada */
+    --parchment: #011526; /* Cor mais escura de fundo para as 'bureaucracy-box' */
+    --muted-teal: #025959; /* Fundo de botões e abas inativas */
+    --magic-gold: #038C65; /* Substitui o dourado por este tom esverdeado/azulado */
+    --stamp-red: #a62c2c;  /* Um vermelho ligeiramente mais escuro para não ofuscar a visão */
+
+    /* 3. Ajustes Base */
+    background-color: #000; /* Fallback atrás da imagem */
+    color: var(--ink);
+}
+
+/* Ajustes de UI para inputs e caixas no Modo Escuro */
+body.dark-mode .ink-input, 
+body.dark-mode .ink-select, 
+body.dark-mode .ink-textarea,
+body.dark-mode .exchange-card,
+body.dark-mode .dice-log-container {
+    background-color: rgba(1, 46, 64, 0.6) !important; /* Cor intermediária da paleta #012E40 */
+    color: var(--ink) !important;
+    border-color: rgba(244, 228, 193, 0.3) !important;
+}
+
+body.dark-mode .input-col input {
+    color: var(--ink);
+    border-color: rgba(244, 228, 193, 0.3);
+}
+
+body.dark-mode .ink-input::placeholder,
+body.dark-mode .ink-textarea::placeholder {
+    color: rgba(244, 228, 193, 0.5);
+}
+
+body.dark-mode select option {
+    background-color: #011526;
+    color: var(--ink);
+}
+
+/* Inversão dos brasões e carimbos (de preto para branco/claro) */
+body.dark-mode .ministry-header,
+body.dark-mode .bureaucracy-box.stamped::after {
+    filter: invert(90%) sepia(20%) saturate(500%) hue-rotate(150deg) brightness(110%);
+}
+
+/* Reverte o filtro nos botões e inputs dentro do header para que não fiquem com as cores erradas */
+body.dark-mode .ministry-header .sys-controls,
+body.dark-mode .ministry-header h1,
+body.dark-mode .ministry-header h2,
+body.dark-mode .ministry-header p {
+    filter: invert(100%) hue-rotate(-150deg);
+}
+
+body.dark-mode .tab-btn.active {
+    background-color: var(--parchment);
+    color: var(--ink);
+    border-bottom-color: var(--parchment);
+}
