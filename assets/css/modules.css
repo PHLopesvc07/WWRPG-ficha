@@ -181,3 +181,33 @@
 .rich-editor li {
     line-height: 31px;
 }
+
+/* ==========================================================================
+   WWRRPG - ANIMAÇÕES DE MAGIA
+   ========================================================================== */
+
+/* Definição da Animação de Entrada do Feitiço */
+@keyframes spellSlideEntrance {
+    0% {
+        opacity: 0;
+        /* Começa 50px acima da sua posição final */
+        transform: translateY(-50px) scale(0.95); 
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Classe que aplica a animação */
+.spell-animate-entrance {
+    /* ease-out para uma desaceleração suave ao chegar na posição final */
+    animation: spellSlideEntrance 0.5s ease-out forwards;
+    
+    /* Garante que o card fique acima dos separadores durante o deslize */
+    z-index: 1; 
+    position: relative;
+    
+    /* Evita cliques acidentais enquanto anima */
+    pointer-events: none; 
+}

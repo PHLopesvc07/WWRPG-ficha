@@ -1,6 +1,6 @@
 /**
  * SPELLS.JS - MINISTÉRIO DA MAGIA
- * Gerenciamento de Listas Dinâmicas 
+ * Gerenciamento de Listas Dinâmicas, Ordenação e Animações
  */
 
 export function setupDynamicLists() {
@@ -12,6 +12,9 @@ export function setupDynamicLists() {
         card.className = 'bureaucracy-box spell-card';
         card.dataset.id = id;
         
+        // NOVO: Marca temporariamente o card como "novo" para ser animado após a ordenação
+        card.dataset.newlyCreated = 'true';
+
         card.innerHTML = `
             <button class="delete-btn">X</button>
             <div class="wand-grid">
@@ -49,23 +52,23 @@ export function setupDynamicLists() {
         card.querySelector('.spell-lvl').addEventListener('change', sortSpells);
         
         container.appendChild(card);
+        
+        // A função de ordenação agora é responsável por ativar a animação
         sortSpells();
     });
 
-    // Eventos de clique nas Badges de Navegação (Índice Antigo Mantido)
+    // Eventos de clique nas Badges de Navegação (Índice Superior)
     document.querySelectorAll('.spell-badge').forEach(badge => {
         badge.addEventListener('click', () => {
             const targetCat = badge.dataset.filter;
             const container = document.getElementById('spells-list');
             const cards = Array.from(container.querySelectorAll('.spell-card'));
             
-            // Procura o primeiro card de feitiço que tenha a categoria clicada
             const targetSpell = cards.find(card => {
                 return (card.querySelector('.spell-cat').value || "Feitiço") === targetCat;
             });
 
             if (targetSpell) {
-                // Encontra o cabeçalho imediatamente anterior ao card para um scroll mais elegante
                 const header = targetSpell.previousElementSibling;
                 if (header && header.classList.contains('spell-category-header')) {
                     header.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -73,7 +76,6 @@ export function setupDynamicLists() {
                     targetSpell.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
                 
-                // Pisca o feitiço para o usuário saber qual é
                 targetSpell.style.transition = 'transform 0.3s, box-shadow 0.3s';
                 targetSpell.style.transform = 'scale(1.02)';
                 targetSpell.style.boxShadow = '0 0 15px rgba(0,0,0,0.3)';
@@ -106,7 +108,6 @@ export function setupDynamicLists() {
         addInventoryContainer("Novo Recipiente");
     });
 
-    // Inicia a ficha com a mochila padrão
     addInventoryContainer("Mochila Principal");
 }
 
@@ -116,11 +117,10 @@ export function sortSpells() {
     // Seleciona APENAS os cards (ignorando os cabeçalhos atuais)
     const cards = Array.from(container.querySelectorAll('.spell-card'));
     
-    // Remove todos os cabeçalhos de categoria antigos para recriá-los limpos na nova ordem
+    // Remove todos os cabeçalhos antigos
     const currentHeaders = container.querySelectorAll('.spell-category-header');
     currentHeaders.forEach(header => header.remove());
     
-    // Configuração das Cores e Rótulos de Tinta Arquivística
     const catConfig = {
         "Transfiguração": { order: 1, class: "cat-transfiguracao", label: "Transfiguração", color: "#D9534F" },
         "Feitiço":        { order: 2, class: "cat-feitico", label: "Charme", color: "#e69622" },
@@ -146,7 +146,6 @@ export function sortSpells() {
         return lvlA - lvlB;
     });
 
-    // Contadores para as Badges do Índice Superior
     const counts = {
         "Transfiguração": 0, "Feitiço": 0, "Azaração": 0, "Maldição Menor": 0,
         "Maldição": 0, "Contra-feitiço": 0, "Cura": 0
@@ -158,14 +157,11 @@ export function sortSpells() {
     cards.forEach(card => {
         const primaryCat = card.querySelector('.spell-cat').value || "Feitiço";
         
-        // Remove cores antigas e aplica a nova borda colorida
         Object.values(catConfig).forEach(c => card.classList.remove(c.class));
         if(catConfig[primaryCat]) card.classList.add(catConfig[primaryCat].class);
         
-        // Adiciona +1 ao contador desta categoria
         if(counts[primaryCat] !== undefined) counts[primaryCat]++;
         
-        // INJEÇÃO DE CABEÇALHO: Se a categoria mudou, cria um separador visual
         if (primaryCat !== currentCategory) {
             currentCategory = primaryCat;
             const headerData = catConfig[primaryCat];
@@ -183,21 +179,38 @@ export function sortSpells() {
             header.style.letterSpacing = '1px';
             header.style.textTransform = 'uppercase';
             
-            // Ícone "✦" igual ao mockup que você enviou
             header.innerHTML = `✦ ${headerData.label}`;
             container.appendChild(header);
         }
         
         container.appendChild(card);
+
+        // NOVO: Lógica de ativação da animação após o reposicionamento no DOM
+        if (card.dataset.newlyCreated === 'true') {
+            // 1. Remove a marcação para não re-animar na próxima ordenação
+            delete card.dataset.newlyCreated;
+
+            // 2. Força um reflow do navegador.
+            // Isso garante que o navegador reconheça a posição final do elemento
+            // antes de aplicarmos a animação de deslize.
+            void card.offsetHeight;
+
+            // 3. Adiciona a classe que engatilha a animação CSS
+            card.classList.add('spell-animate-entrance');
+
+            // 4. Clean Code: Remove a classe de animação e ouvinte após o término (0.5s)
+            // para evitar conflitos de estilo futuros.
+            card.addEventListener('animationend', () => {
+                card.classList.remove('spell-animate-entrance');
+            }, { once: true });
+        }
     });
 
-    // Atualiza o contador total no título
     const countElement = document.getElementById('total-spells-count');
     if (countElement) {
         countElement.innerText = `${cards.length} registrado(s)`;
     }
 
-    // Atualiza os números nas pílulas coloridas do Índice Superior e "apaga" as vazias
     document.querySelectorAll('.spell-badge').forEach(badge => {
         const cat = badge.dataset.filter;
         const countSpan = badge.querySelector('.count');
