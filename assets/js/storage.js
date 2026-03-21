@@ -5,6 +5,7 @@
 
 import { updateSkillBonuses } from './sheet.js';
 import { sortSpells, addInventoryContainer, addInventoryItem } from './spells.js';
+import { addPet } from './pets.js';
 
 export function setupPersistence() {
     document.getElementById('btn-export').addEventListener('click', exportData);
@@ -36,7 +37,7 @@ async function exportData() {
             inteligencia: document.getElementById('stat-inteligencia').value,
             sabedoria: document.getElementById('stat-sabedoria').value,
             vitalidade: document.getElementById('stat-vitalidade').value,
-            carisma: document.getElementById('stat-carisma').value,
+            carisma: document.getElementById('stat-carisma').value
         },
         skills: Array.from(document.querySelectorAll('.skill-prof')).map(s => ({
             name: s.dataset.skill,
@@ -54,8 +55,6 @@ async function exportData() {
         },
         magic: {
             wand: { l: document.getElementById('wand-length').value, w: document.getElementById('wand-wood').value, c: document.getElementById('wand-core').value },
-            
-            // Salvando as Regras Pessoais
             rules: [
                 document.getElementById('rule-1').value,
                 document.getElementById('rule-2').value,
@@ -63,8 +62,6 @@ async function exportData() {
                 document.getElementById('rule-4').value,
                 document.getElementById('rule-5').value
             ],
-            
-            // NOVO: Salvando se a caixinha está marcada (true) ou não (false)
             rulesState: [
                 document.getElementById('rule-check-1').checked,
                 document.getElementById('rule-check-2').checked,
@@ -72,7 +69,6 @@ async function exportData() {
                 document.getElementById('rule-check-4').checked,
                 document.getElementById('rule-check-5').checked
             ],
-            
             traits: document.getElementById('traits-text').value,
             spells: Array.from(document.querySelectorAll('.spell-card')).map(card => ({
                 name: card.querySelector('.spell-name').value,
@@ -92,6 +88,24 @@ async function exportData() {
                 }))
             }))
         },
+        pets: Array.from(document.querySelectorAll('.pet-card')).map(card => ({
+            photo: card.querySelector('.pet-photo-preview').src,
+            name: card.querySelector('.pet-name').value,
+            age: card.querySelector('.pet-age').value,
+            size: card.querySelector('.pet-size').value,
+            species: card.querySelector('.pet-species').value,
+            origin: card.querySelector('.pet-origin').value,
+            sex: card.querySelector('.pet-sex').value,
+            classification: card.querySelector('.pet-class').value,
+            license: card.querySelector('.pet-license').value,
+            stats: {
+                corpo: card.querySelector('.pet-corpo').value,
+                destreza: card.querySelector('.pet-destreza').value,
+                vitalidade: card.querySelector('.pet-vitalidade').value,
+                instinto: card.querySelector('.pet-instinto').value
+            },
+            description: card.querySelector('.pet-desc').value
+        })),
         notes: document.getElementById('notes-editor').innerHTML
     };
 
@@ -99,7 +113,6 @@ async function exportData() {
     const suggestedFileName = `${data.profile.name || 'Bruxo'}_Ficha.json`;
 
     try {
-        // 2. Tenta usar a API moderna para "Salvar e Substituir"
         if ('showSaveFilePicker' in window) {
             const handle = await window.showSaveFilePicker({
                 suggestedName: suggestedFileName,
@@ -108,15 +121,11 @@ async function exportData() {
                     accept: {'application/json': ['.json']}
                 }]
             });
-            
-            // Abre o arquivo para escrita e substitui o conteúdo
             const writable = await handle.createWritable();
             await writable.write(jsonString);
             await writable.close();
-            
             alert('Ficha carimbada e atualizada com sucesso!');
         } else {
-            // 3. Fallback (Plano B) para celulares ou navegadores antigos
             const blob = new Blob([jsonString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -126,7 +135,6 @@ async function exportData() {
             URL.revokeObjectURL(url);
         }
     } catch (error) {
-        // Ignora o erro se o usuário apenas fechou a janela de salvar sem concluir
         if (error.name !== 'AbortError') {
             console.error(error);
             alert('Erro ao tentar carimbar o registro.');
@@ -199,7 +207,6 @@ function importData(e) {
             document.getElementById('wand-wood').value = data.magic.wand.w || "";
             document.getElementById('wand-core').value = data.magic.wand.c || "";
             
-            // Carregando as Regras Pessoais (com fallback se o arquivo antigo não as tiver)
             if (data.magic.rules) {
                 document.getElementById('rule-1').value = data.magic.rules[0] || "";
                 document.getElementById('rule-2').value = data.magic.rules[1] || "";
@@ -208,7 +215,6 @@ function importData(e) {
                 document.getElementById('rule-5').value = data.magic.rules[4] || "";
             }
 
-            // NOVO: Restaurando o estado das caixinhas (checkbox)
             if (data.magic.rulesState) {
                 document.getElementById('rule-check-1').checked = data.magic.rulesState[0] || false;
                 document.getElementById('rule-check-2').checked = data.magic.rulesState[1] || false;
@@ -262,6 +268,14 @@ function importData(e) {
                     lastItem.querySelector('.item-desc').value = item.desc;
                 });
             });
+
+            // 6.5 Pets
+            document.getElementById('pets-container').innerHTML = ''; 
+            if (data.pets && Array.isArray(data.pets)) {
+                data.pets.forEach(petData => {
+                    addPet(petData);
+                });
+            }
 
             // 7. Notes
             if (data.notes !== undefined) {

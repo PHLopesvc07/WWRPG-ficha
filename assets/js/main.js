@@ -10,6 +10,7 @@ import { setupDiceRoller } from './dice.js';
 import { setupEconomy, setupGringottsExchange } from './economy.js';
 import { setupDynamicLists } from './spells.js';
 import { setupPersistence } from './storage.js';
+import { setupPets } from './pets.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inicializa UI Básica
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEconomy();
     setupGringottsExchange();
     setupDynamicLists();
+    setupPets();
     
     // 4. Inicializa o Sistema de Save/Load
     setupPersistence();

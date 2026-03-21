@@ -32,6 +32,7 @@
         <button class="tab-btn" data-target="tab-magic">II. Feitiços & Encantamentos</button>
         <button class="tab-btn" data-target="tab-inventory">III. Inventário & Economia</button>
         <button class="tab-btn" data-target="tab-notes">IV. Diário de Campo</button>
+        <button class="tab-btn" data-target="tab-pets">V. Animais Mágicos</button>
     </nav>
 
     <div class="layout-wrapper">
@@ -280,6 +281,20 @@
                         placeholder="Comece a redigir seu relatório aqui..."></div>
                 </div>
             </section>
+
+            <section id="tab-pets" class="tab-panel">
+                <div class="bureaucracy-box">
+                    <h3>Registro de Criaturas e Familiares</h3>
+                    <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px;">
+                        De acordo com o Artigo 73 do Estatuto de Sigilo em Magia, bruxos têm permissão para portar até 3 criaturas devidamente registradas.
+                    </p>
+                    <button id="btn-add-pet" class="btn-teal">+ Adicionar Animal de Estimação</button>
+                    
+                    <div id="pets-container" style="margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+                    </div>
+                </div>
+            </section>
+
         </main>
 
         <aside class="dice-widget bureaucracy-box">
