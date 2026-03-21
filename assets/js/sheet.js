@@ -52,11 +52,13 @@ export function populateSkills() {
             const div = document.createElement('div');
             div.className = 'skill-item';
             
-            // Note que mantivemos as classes .rollable para o sistema de dados funcionar depois
+            // Correção Aplicada: O bônus (.skill-total) foi retirado de dentro do (.rollable)
+            // e colocado ao lado usando um container flexível.
             div.innerHTML = `
-                <span class="rollable skill-roll" data-stat="${stat}" data-skill="${skillName}">
-                    ${skillName} <span class="skill-total" data-skill="${skillName}" style="color:var(--stamp-red); font-family:var(--font-typewriter); font-weight:bold; font-size:0.9em;">(+0)</span>
-                </span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span class="rollable skill-roll" data-stat="${stat}" data-skill="${skillName}">${skillName}</span> 
+                    <span class="skill-total" data-skill="${skillName}" style="color:var(--stamp-red); font-family:var(--font-typewriter); font-weight:bold; font-size:0.9em;">(+0)</span>
+                </div>
                 <select class="ink-select short-input skill-prof" data-skill="${skillName}">
                     ${profOptions}
                 </select>
