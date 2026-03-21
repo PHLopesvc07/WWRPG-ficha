@@ -29,7 +29,7 @@ export function setupEconomy() {
         return {g, s, k};
     };
 
-    // Botão "Converter Tudo p/ Padrão" (Mantém o comportamento de conversão total)
+    // Botão "Converter Tudo p/ Padrão"
     document.getElementById('btn-convert-coins').addEventListener('click', () => {
         const c = getCoins();
         const total = toKnuts(c.g, c.s, c.k);
@@ -37,35 +37,38 @@ export function setupEconomy() {
         setCoins(std.g, std.s, std.k);
     });
 
-    // NOVA LÓGICA: Soma/Subtrai apenas no campo selecionado, sem auto-converter
-    const modifyCoins = (isAdding) => {
-        const amountStr = document.getElementById('calc-amount').value;
-        const amount = parseInt(amountStr) || 0;
+    // LÓGICA CORRIGIDA: Somar Moedas
+    document.getElementById('btn-add-coin').addEventListener('click', () => {
+        const amount = parseInt(document.getElementById('calc-amount').value) || 0;
+        if (amount <= 0) return; // Se estiver vazio ou for zero, não faz nada
         
-        // Evita rodar se o campo estiver vazio ou for 0
-        if (!amountStr || amount === 0) return;
-
         const type = document.getElementById('calc-type').value;
         const current = getCoins();
         
-        // Define qual campo será alterado baseado na seleção do usuário
-        if (type === 'g') {
-            current.g = isAdding ? current.g + amount : Math.max(0, current.g - amount);
-        } else if (type === 's') {
-            current.s = isAdding ? current.s + amount : Math.max(0, current.s - amount);
-        } else if (type === 'k') {
-            current.k = isAdding ? current.k + amount : Math.max(0, current.k - amount);
-        }
-
-        // Aplica os novos valores
-        setCoins(current.g, current.s, current.k);
+        if (type === 'g') current.g += amount;
+        if (type === 's') current.s += amount;
+        if (type === 'k') current.k += amount;
         
-        // Limpa a caixinha de input após a operação
-        document.getElementById('calc-amount').value = '';
-    };
+        setCoins(current.g, current.s, current.k);
+        document.getElementById('calc-amount').value = ''; // Limpa o campo
+    });
 
-    document.getElementById('btn-add-coin').addEventListener('click', () => modifyCoins(true));
-    document.getElementById('btn-sub-coin').addEventListener('click', () => modifyCoins(false));
+    // LÓGICA CORRIGIDA: Subtrair Moedas
+    document.getElementById('btn-sub-coin').addEventListener('click', () => {
+        const amount = parseInt(document.getElementById('calc-amount').value) || 0;
+        if (amount <= 0) return; // Se estiver vazio ou for zero, não faz nada
+        
+        const type = document.getElementById('calc-type').value;
+        const current = getCoins();
+        
+        // Math.max garante que o valor nunca fique negativo
+        if (type === 'g') current.g = Math.max(0, current.g - amount);
+        if (type === 's') current.s = Math.max(0, current.s - amount);
+        if (type === 'k') current.k = Math.max(0, current.k - amount);
+        
+        setCoins(current.g, current.s, current.k);
+        document.getElementById('calc-amount').value = ''; // Limpa o campo
+    });
 }
 
 export function setupGringottsExchange() {
