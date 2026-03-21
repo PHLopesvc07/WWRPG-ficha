@@ -37,8 +37,12 @@ export function setupEconomy() {
         setCoins(std.g, std.s, std.k);
     });
 
+<<<<<<< HEAD
     // LÓGICA CORRIGIDA: Somar Moedas
     document.getElementById('btn-add-coin').addEventListener('click', () => {
+=======
+    const modifyCoins = (isAdding) => {
+>>>>>>> parent of f688988 (Refactor coin modification logic in economy.js)
         const amount = parseInt(document.getElementById('calc-amount').value) || 0;
         if (amount <= 0) return; // Se estiver vazio ou for zero, não faz nada
         
