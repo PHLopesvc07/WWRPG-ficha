@@ -19,7 +19,7 @@ export function setupDynamicLists() {
                 
                 <select class="ink-select spell-cat">
                     <option value="Transfiguração">Transfiguração</option>
-                    <option value="Feitiço" selected>Feitiço</option>
+                    <option value="Feitiço" selected>Charme</option>
                     <option value="Azaração">Azaração</option>
                     <option value="Maldição Menor">Maldição Menor</option>
                     <option value="Maldição">Maldição</option>
