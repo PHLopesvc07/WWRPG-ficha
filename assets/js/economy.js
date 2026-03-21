@@ -37,13 +37,8 @@ export function setupEconomy() {
         setCoins(std.g, std.s, std.k);
     });
 
-    // LÓGICA: Somar Moedas (Adiciona de forma limpa)
-<<<<<<< HEAD
     // LÓGICA CORRIGIDA: Somar Moedas
     document.getElementById('btn-add-coin').addEventListener('click', () => {
-=======
-    const modifyCoins = (isAdding) => {
->>>>>>> parent of f688988 (Refactor coin modification logic in economy.js)
         const amount = parseInt(document.getElementById('calc-amount').value) || 0;
         if (amount <= 0) return;
         
@@ -121,7 +116,7 @@ export function setupEconomy() {
             setCoins(g, s, k);
             document.getElementById('calc-amount').value = '';
         } else {
-            alert('Aviso de Gringotes: Seu dinheiro é insuficiente para realizar esta transação!');
+            alert('Aviso de Gringotes: O seu dinheiro é insuficiente para realizar esta transação!');
         }
     });
 }
@@ -156,7 +151,7 @@ export function setupGringottsExchange() {
             document.getElementById('coin-s').value = currentS + gainS;
             gVal.value = 1; sRes.value = 17;
         } else {
-            alert('Aviso de Gringotes: Você não tem Galeões suficientes no cofre!');
+            alert('Aviso de Gringotes: Não tem Galeões suficientes no cofre!');
         }
     });
 
@@ -173,7 +168,7 @@ export function setupGringottsExchange() {
             document.getElementById('coin-k').value = currentK + gainK;
             sVal.value = 1; kRes.value = 29;
         } else {
-            alert('Aviso de Gringotes: Você não tem Sicles suficientes no cofre!');
+            alert('Aviso de Gringotes: Não tem Sicles suficientes no cofre!');
         }
     });
 }
