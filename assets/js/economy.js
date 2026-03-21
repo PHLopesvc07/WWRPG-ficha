@@ -37,6 +37,7 @@ export function setupEconomy() {
         setCoins(std.g, std.s, std.k);
     });
 
+    // LÓGICA: Somar Moedas (Adiciona de forma limpa)
 <<<<<<< HEAD
     // LÓGICA CORRIGIDA: Somar Moedas
     document.getElementById('btn-add-coin').addEventListener('click', () => {
@@ -44,7 +45,7 @@ export function setupEconomy() {
     const modifyCoins = (isAdding) => {
 >>>>>>> parent of f688988 (Refactor coin modification logic in economy.js)
         const amount = parseInt(document.getElementById('calc-amount').value) || 0;
-        if (amount <= 0) return; // Se estiver vazio ou for zero, não faz nada
+        if (amount <= 0) return;
         
         const type = document.getElementById('calc-type').value;
         const current = getCoins();
@@ -54,24 +55,74 @@ export function setupEconomy() {
         if (type === 'k') current.k += amount;
         
         setCoins(current.g, current.s, current.k);
-        document.getElementById('calc-amount').value = ''; // Limpa o campo
+        document.getElementById('calc-amount').value = '';
     });
 
-    // LÓGICA CORRIGIDA: Subtrair Moedas
+    // LÓGICA: Subtrair Moedas com "Empréstimo em Cascata" e Trava de Segurança
     document.getElementById('btn-sub-coin').addEventListener('click', () => {
         const amount = parseInt(document.getElementById('calc-amount').value) || 0;
-        if (amount <= 0) return; // Se estiver vazio ou for zero, não faz nada
+        if (amount <= 0) return;
         
         const type = document.getElementById('calc-type').value;
-        const current = getCoins();
-        
-        // Math.max garante que o valor nunca fique negativo
-        if (type === 'g') current.g = Math.max(0, current.g - amount);
-        if (type === 's') current.s = Math.max(0, current.s - amount);
-        if (type === 'k') current.k = Math.max(0, current.k - amount);
-        
-        setCoins(current.g, current.s, current.k);
-        document.getElementById('calc-amount').value = ''; // Limpa o campo
+        let { g, s, k } = getCoins();
+        let success = true;
+
+        if (type === 'k') {
+            if (k >= amount) {
+                // Tem Nuques suficientes, apenas subtrai
+                k -= amount;
+            } else {
+                // Faltam Nuques, precisa pedir emprestado aos Sicles
+                let deficit = amount - k;
+                let s_needed = Math.ceil(deficit / 29); // Quantos Sicles precisa quebrar?
+                
+                if (s >= s_needed) {
+                    s -= s_needed;
+                    k = (k + s_needed * 29) - amount;
+                } else {
+                    // Faltam Sicles, precisa pedir emprestado aos Galeões primeiro
+                    let s_deficit = s_needed - s;
+                    let g_needed = Math.ceil(s_deficit / 17); // Quantos Galeões precisa quebrar?
+                    
+                    if (g >= g_needed) {
+                        g -= g_needed;
+                        s = (s + g_needed * 17) - s_needed;
+                        k = (k + s_needed * 29) - amount;
+                    } else {
+                        success = false; // Não tem dinheiro nenhum cobrindo
+                    }
+                }
+            }
+        } else if (type === 's') {
+            if (s >= amount) {
+                s -= amount;
+            } else {
+                // Faltam Sicles, precisa pedir emprestado aos Galeões
+                let deficit = amount - s;
+                let g_needed = Math.ceil(deficit / 17);
+                
+                if (g >= g_needed) {
+                    g -= g_needed;
+                    s = (s + g_needed * 17) - amount;
+                } else {
+                    success = false; // Não tem Galeões suficientes
+                }
+            }
+        } else if (type === 'g') {
+            if (g >= amount) {
+                g -= amount;
+            } else {
+                success = false; // Galeão é o limite, se faltar aqui, não tem de onde tirar
+            }
+        }
+
+        // Executa a transação ou barra a operação com um alerta
+        if (success) {
+            setCoins(g, s, k);
+            document.getElementById('calc-amount').value = '';
+        } else {
+            alert('Aviso de Gringotes: Seu dinheiro é insuficiente para realizar esta transação!');
+        }
     });
 }
 
@@ -103,7 +154,6 @@ export function setupGringottsExchange() {
         if (currentG >= costG && costG > 0) {
             document.getElementById('coin-g').value = currentG - costG;
             document.getElementById('coin-s').value = currentS + gainS;
-            // Efeito visual rápido resetando os inputs
             gVal.value = 1; sRes.value = 17;
         } else {
             alert('Aviso de Gringotes: Você não tem Galeões suficientes no cofre!');
@@ -121,7 +171,6 @@ export function setupGringottsExchange() {
         if (currentS >= costS && costS > 0) {
             document.getElementById('coin-s').value = currentS - costS;
             document.getElementById('coin-k').value = currentK + gainK;
-            // Efeito visual rápido resetando os inputs
             sVal.value = 1; kRes.value = 29;
         } else {
             alert('Aviso de Gringotes: Você não tem Sicles suficientes no cofre!');
