@@ -1,277 +1,99 @@
 /**
-
  * SHEET.JS - MINISTÉRIO DA MAGIA
-
- * Gestão de Atributos Básicos e Perícias Registradas
-
+ * Lógica central da Ficha (Famílias, Perícias e Cálculos de Atributos)
  */
 
-
-
-export function setupSheet() {
-
-    setupSkills();
-
-
-
-    // Sempre que um atributo base for alterado, recalcula as perícias atreladas
-
-    document.querySelectorAll('input[id^="stat-"]').forEach(inp => {
-
-        inp.addEventListener('input', updateSkillBonuses);
-
-    });
-
-}
-
-
-
-function setupSkills() {
-
-    const container = document.getElementById('skills-container');
-
-    if (!container) return;
-
-
-
-    // Dicionário Mestre de Perícias (Fácil de escalar e dar manutenção)
-
-    const skillsDef = {
-
-        "sabedoria": [
-
-            { id: "clarividencia", name: "Clarividência" },
-
-            { id: "intuicao", name: "Intuição" },
-
-            { id: "dcat", name: "D.C.A.T." },
-
-            { id: "medicina", name: "Cura Mágica" }
-
-        ],
-
-        "inteligencia": [
-
-            { id: "logica", name: "Lógica e Enigmas" },
-
-            { id: "herbologia", name: "Herbologia" },
-
-            { id: "pocoes", name: "Poções" },
-
-            { id: "astronomia", name: "Astronomia" },
-
-            { id: "trouxas", name: "Estudo dos Trouxas" },
-
-            { id: "percepcao", name: "Percepção" }
-
-        ],
-
-        "vitalidade": [
-
-            { id: "resistencia", name: "Persistência Mágica" },
-
-            { id: "transfiguracao", name: "Transfiguração" }
-
-        ],
-
-        "destreza": [
-
-            { id: "trato", name: "Trato das Criaturas" },
-
-            { id: "furtividade", name: "Furtividade" }
-
-        ],
-
-        "corpo": [
-
-            { id: "voo", name: "Voo de Vassoura" },
-
-            { id: "atletismo", name: "Atletismo Mágico" }
-
-        ],
-
-        "carisma": [
-
-            { id: "persuasao", name: "Persuasão Mágica" },
-
-            { id: "diplomacia", name: "Diplomacia" }
-
-        ]
-
-    };
-
-
-
-    const attrNames = {
-
-        "sabedoria": "Sabedoria", "inteligencia": "Inteligência",
-
-        "vitalidade": "Vitalidade", "destreza": "Destreza",
-
-        "corpo": "Corpo", "carisma": "Carisma"
-
-    };
-
-
-
-    container.innerHTML = '';
-
-    container.className = 'skills-container-grouped';
-
-
-
-    // Roda cada atributo e desenha o bloco dele
-
-    for (const [attr, skills] of Object.entries(skillsDef)) {
-
-        const groupBox = document.createElement('div');
-
-        groupBox.className = 'skill-attr-group bureaucracy-box';
-
+// Precisamos importar o banco de dados estático que criamos antes
+import { db } from './data.js';
+
+export function populateFamilies() {
+    const select = document.getElementById('family-select');
+    select.innerHTML = '<option value="">Selecione uma Linhagem...</option>';
+
+    // Varre o banco de dados e cria os grupos de nacionalidade
+    for (const [nationality, families] of Object.entries(db.families)) {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = nationality;
         
-
-        groupBox.innerHTML = `
-
-            <div class="skill-attr-header">
-
-                <span>${attrNames[attr]}</span>
-
-                <span id="mod-display-${attr}">MOD: 0</span>
-
-            </div>
-
-        `;
-
-
-
-        // Desenha as perícias dentro do bloco
-
-        skills.forEach(sk => {
-
-            const row = document.createElement('div');
-
-            row.className = 'skill-row';
-
-            
-
-            row.innerHTML = `
-
-                <span class="rollable skill-name" data-skill="${sk.id}">${sk.name}</span>
-
-                <div class="skill-controls">
-
-                    <span class="skill-total" id="total-${sk.id}">0</span>
-
-                    <select class="skill-prof" data-skill="${sk.id}" data-attr="${attr}" title="Nível de Proficiência">
-
-                        <option value="-3">MR</option>
-
-                        <option value="-2">R</option>
-
-                        <option value="-1">D</option>
-
-                        <option value="0" selected>N</option>
-
-                        <option value="1">U</option>
-
-                        <option value="2">C</option>
-
-                        <option value="3">E</option>
-
-                    </select>
-
-                </div>
-
-            `;
-
-            groupBox.appendChild(row);
-
+        families.forEach(fam => {
+            const option = document.createElement('option');
+            option.value = JSON.stringify(fam); // Salva os dados como string no value
+            option.textContent = fam.name;
+            optgroup.appendChild(option);
         });
-
-        
-
-        container.appendChild(groupBox);
-
+        select.appendChild(optgroup);
     }
 
-    
-
-    // Adiciona o ouvinte para recalcular as perícias se o dropdown mudar
-
-    document.querySelectorAll('.skill-prof').forEach(sel => {
-
-        sel.addEventListener('change', updateSkillBonuses);
-
+    // Atualiza Influência e Preconceito ao selecionar a família
+    select.addEventListener('change', (e) => {
+        const prejudiceInput = document.getElementById('prejudice');
+        const influenceInput = document.getElementById('influence');
+        if (e.target.value) {
+            const famData = JSON.parse(e.target.value);
+            prejudiceInput.value = famData.prejudice;
+            influenceInput.value = famData.influence;
+        } else {
+            prejudiceInput.value = '';
+            influenceInput.value = '';
+        }
     });
-
-
-
-    // Roda a matemática pela primeira vez
-
-    updateSkillBonuses();
-
 }
 
+export function populateSkills() {
+    const container = document.getElementById('skills-container');
+    container.innerHTML = ''; // Limpa antes de injetar
 
+    const profOptions = db.proficiencyLevels.map(p => 
+        `<option value="${p.value}" ${p.default ? 'selected' : ''}>${p.label}</option>`
+    ).join('');
+
+    for (const [stat, skills] of Object.entries(db.skills)) {
+        skills.forEach(skillName => {
+            const div = document.createElement('div');
+            div.className = 'skill-item';
+            
+            // Note que mantivemos as classes .rollable para o sistema de dados funcionar depois
+            div.innerHTML = `
+                <span class="rollable skill-roll" data-stat="${stat}" data-skill="${skillName}">
+                    ${skillName} <span class="skill-total" data-skill="${skillName}" style="color:var(--stamp-red); font-family:var(--font-typewriter); font-weight:bold; font-size:0.9em;">(+0)</span>
+                </span>
+                <select class="ink-select short-input skill-prof" data-skill="${skillName}">
+                    ${profOptions}
+                </select>
+            `;
+            container.appendChild(div);
+            
+            // Adiciona o ouvinte de evento diretamente no select recém-criado
+            const selectElement = div.querySelector('.skill-prof');
+            selectElement.addEventListener('change', updateSkillBonuses);
+        });
+    }
+
+    // Calcula os bônus iniciais logo após criar a lista
+    updateSkillBonuses();
+}
 
 export function updateSkillBonuses() {
-
-    // 1. Puxa o valor atual dos inputs de atributos base
-
-    const getStat = (attr) => parseInt(document.getElementById(`stat-${attr}`).value) || 0;
-
+    const skillSelects = document.querySelectorAll('.skill-prof');
     
-
-    const stats = {
-
-        "corpo": getStat("corpo"),
-
-        "destreza": getStat("destreza"),
-
-        "inteligencia": getStat("inteligencia"),
-
-        "sabedoria": getStat("sabedoria"),
-
-        "vitalidade": getStat("vitalidade"),
-
-        "carisma": getStat("carisma")
-
-    };
-
-
-
-    // 2. Atualiza os cabeçalhos de cada bloco ("MOD: 3", por exemplo)
-
-    for(let attr in stats) {
-
-        const modDisplay = document.getElementById(`mod-display-${attr}`);
-
-        if(modDisplay) modDisplay.innerText = `MOD: ${stats[attr]}`;
-
-    }
-
-
-
-    // 3. Atualiza o número final (Soma do Atributo + Nível de Proficiência escolhido)
-
-    document.querySelectorAll('.skill-prof').forEach(sel => {
-
-        const attr = sel.dataset.attr;
-
-        const skillId = sel.dataset.skill;
-
-        const profBonus = parseInt(sel.value) || 0;
-
+    skillSelects.forEach(select => {
+        const skillName = select.dataset.skill;
+        const statElement = document.querySelector(`.skill-roll[data-skill="${skillName}"]`);
         
-
-        const total = stats[attr] + profBonus;
-
+        if (!statElement) return; // Evita erros se a DOM não renderizou ainda
         
-
-        const totalSpan = document.getElementById(`total-${skillId}`);
-
-        if(totalSpan) totalSpan.innerText = total;
-
+        const statName = statElement.dataset.stat;
+        const statInput = document.getElementById(`stat-${statName}`);
+        
+        const statValue = statInput ? (parseInt(statInput.value) || 0) : 0;
+        const profValue = parseInt(select.value) || 0;
+        
+        const total = statValue + profValue;
+        const formattedTotal = total >= 0 ? `+${total}` : `${total}`;
+        
+        const displaySpan = document.querySelector(`.skill-total[data-skill="${skillName}"]`);
+        if (displaySpan) {
+            displaySpan.textContent = `(${formattedTotal})`;
+        }
     });
-
 }
