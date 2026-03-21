@@ -37,7 +37,7 @@ export function setupEconomy() {
         setCoins(std.g, std.s, std.k);
     });
 
-    // LÓGICA CORRIGIDA: Somar Moedas
+    // LÓGICA CORRIGIDA E ISOLADA: Somar Moedas
     document.getElementById('btn-add-coin').addEventListener('click', () => {
         const amount = parseInt(document.getElementById('calc-amount').value) || 0;
         if (amount <= 0) return; // Se estiver vazio ou for zero, não faz nada
@@ -53,7 +53,7 @@ export function setupEconomy() {
         document.getElementById('calc-amount').value = ''; // Limpa o campo
     });
 
-    // LÓGICA CORRIGIDA: Subtrair Moedas
+    // LÓGICA CORRIGIDA E ISOLADA: Subtrair Moedas
     document.getElementById('btn-sub-coin').addEventListener('click', () => {
         const amount = parseInt(document.getElementById('calc-amount').value) || 0;
         if (amount <= 0) return; // Se estiver vazio ou for zero, não faz nada
