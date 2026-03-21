@@ -29,12 +29,91 @@ export function setupEconomy() {
         return {g, s, k};
     };
 
-    // Botão "Converter Tudo p/ Padrão"
+    // Botão "Converter Tudo p/ Padrão" (Mantém o comportamento de conversão total)
     document.getElementById('btn-convert-coins').addEventListener('click', () => {
         const c = getCoins();
         const total = toKnuts(c.g, c.s, c.k);
         const std = toStandard(total);
         setCoins(std.g, std.s, std.k);
+    });
+
+    // NOVA LÓGICA: Soma/Subtrai apenas no campo selecionado, sem auto-converter
+    const modifyCoins = (isAdding) => {
+        const amountStr = document.getElementById('calc-amount').value;
+        const amount = parseInt(amountStr) || 0;
+        
+        // Evita rodar se o campo estiver vazio ou for 0
+        if (!amountStr || amount === 0) return;
+
+        const type = document.getElementById('calc-type').value;
+        const current = getCoins();
+        
+        // Define qual campo será alterado baseado na seleção do usuário
+        if (type === 'g') {
+            current.g = isAdding ? current.g + amount : Math.max(0, current.g - amount);
+        } else if (type === 's') {
+            current.s = isAdding ? current.s + amount : Math.max(0, current.s - amount);
+        } else if (type === 'k') {
+            current.k = isAdding ? current.k + amount : Math.max(0, current.k - amount);
+        }
+
+        // Aplica os novos valores
+        setCoins(current.g, current.s, current.k);
+        
+        // Limpa a caixinha de input após a operação
+        document.getElementById('calc-amount').value = '';
+    };
+
+    document.getElementById('btn-add-coin').addEventListener('click', () => modifyCoins(true));
+    document.getElementById('btn-sub-coin').addEventListener('click', () => modifyCoins(false));
+}
+
+export function setupGringottsExchange() {
+    const gVal = document.getElementById('exc-g-val');
+    const sRes = document.getElementById('exc-s-res');
+    const sVal = document.getElementById('exc-s-val');
+    const kRes = document.getElementById('exc-k-res');
+
+    // Atualização visual em tempo real
+    gVal.addEventListener('input', () => {
+        const val = parseInt(gVal.value) || 0;
+        sRes.value = val * 17;
+    });
+
+    sVal.addEventListener('input', () => {
+        const val = parseInt(sVal.value) || 0;
+        kRes.value = val * 29;
+    });
+
+    // Lógica: Quebrar Galeões em Sicles
+    document.getElementById('btn-exc-gs').addEventListener('click', () => {
+        const costG = parseInt(gVal.value) || 0;
+        const gainS = costG * 17;
+        
+        const currentG = parseInt(document.getElementById('coin-g').value) || 0;
+        const currentS = parseInt(document.getElementById('coin-s').value) || 0;
+
+        if (currentG >= costG && costG > 0) {
+            document.getElementById('coin-g').value = currentG - costG;
+            document.getElementById('coin-s').value = currentS + gainS;
+            // Efeito visual rápido resetando os inputs
+            gVal.value = 1; sRes.value = 17;
+        } else {
+            alert('Aviso de Gringotes: Você não tem Galeões suficientes no cofre!');
+        }
+    });
+
+    // Lógica: Quebrar Sicles em Nuques
+    document.getElementById('btn-exc-sk').addEventListener('click', () => {
+        const costS = parseInt(sVal.value) || 0;
+        const gainK = costS * 29;
+        
+        const currentS = parseInt(document.getElementById('coin-s').value) || 0;
+        const currentK = parseInt(document.getElementById('coin-k').value) || 0;
+
+        if (currentS >= costS && costS > 0) {
+            document.getElementById('coin-s').value = currentS - costS;
+            document.getElementById('coin-k').value = current        setCoins(std.g, std.s, std.k);
     });
 
     const modifyCoins = (isAdding) => {
