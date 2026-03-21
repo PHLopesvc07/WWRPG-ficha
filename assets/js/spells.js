@@ -4,7 +4,7 @@
  */
 
 export function setupDynamicLists() {
-    // 1. Adicionar Feitiço (Layout limpo restaurado e sem campos excedentes)
+    // 1. Adicionar Feitiço (Layout limpo restaurado)
     document.getElementById('btn-add-spell').addEventListener('click', () => {
         const container = document.getElementById('spells-list');
         const id = Date.now();
@@ -41,7 +41,6 @@ export function setupDynamicLists() {
             <textarea class="ink-textarea spell-desc" placeholder="Descrição do efeito..."></textarea>
         `;
         
-        // Adiciona os ouvintes de evento diretamente aos elementos recém-criados
         card.querySelector('.delete-btn').addEventListener('click', () => { 
             card.remove(); 
             sortSpells(); 
@@ -51,6 +50,35 @@ export function setupDynamicLists() {
         
         container.appendChild(card);
         sortSpells();
+    });
+
+    // Eventos de clique nas Badges de Navegação (Pílulas Coloridas)
+    document.querySelectorAll('.spell-badge').forEach(badge => {
+        badge.addEventListener('click', () => {
+            const targetCat = badge.dataset.filter;
+            const container = document.getElementById('spells-list');
+            const cards = Array.from(container.children);
+            
+            // Procura o primeiro card de feitiço que tenha a categoria clicada
+            const targetSpell = cards.find(card => {
+                return (card.querySelector('.spell-cat').value || "Feitiço") === targetCat;
+            });
+
+            if (targetSpell) {
+                // Rola a página suavemente até o feitiço
+                targetSpell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Pisca o feitiço para o usuário saber qual é
+                targetSpell.style.transition = 'transform 0.3s, box-shadow 0.3s';
+                targetSpell.style.transform = 'scale(1.02)';
+                targetSpell.style.boxShadow = '0 0 15px rgba(0,0,0,0.3)';
+                
+                setTimeout(() => {
+                    targetSpell.style.transform = 'none';
+                    targetSpell.style.boxShadow = '2px 2px 0 var(--ink)';
+                }, 800);
+            }
+        });
     });
 
     // 2. Adicionar Ferimento Customizado
@@ -106,6 +134,12 @@ export function sortSpells() {
         return lvlA - lvlB;
     });
 
+    // Dicionário para contar os feitiços de cada categoria
+    const counts = {
+        "Transfiguração": 0, "Feitiço": 0, "Azaração": 0, "Maldição Menor": 0,
+        "Maldição": 0, "Contra-feitiço": 0, "Cura": 0
+    };
+
     cards.forEach(card => {
         const primaryCat = card.querySelector('.spell-cat').value || "Feitiço";
         
@@ -113,7 +147,34 @@ export function sortSpells() {
         Object.values(catConfig).forEach(c => card.classList.remove(c.class));
         if(catConfig[primaryCat]) card.classList.add(catConfig[primaryCat].class);
         
+        // Adiciona +1 ao contador desta categoria
+        if(counts[primaryCat] !== undefined) counts[primaryCat]++;
+        
         container.appendChild(card);
+    });
+
+    // Atualiza o contador total no título
+    const countElement = document.getElementById('total-spells-count');
+    if (countElement) {
+        countElement.innerText = `${cards.length} registrado(s)`;
+    }
+
+    // Atualiza os números nas pílulas coloridas e "apaga" as que têm 0 feitiços
+    document.querySelectorAll('.spell-badge').forEach(badge => {
+        const cat = badge.dataset.filter;
+        const countSpan = badge.querySelector('.count');
+        
+        if (countSpan) {
+            countSpan.innerText = `(${counts[cat]})`;
+        }
+        
+        if (counts[cat] === 0) {
+            badge.style.opacity = '0.4';
+            badge.style.filter = 'grayscale(80%)';
+        } else {
+            badge.style.opacity = '1';
+            badge.style.filter = 'none';
+        }
     });
 }
 
@@ -124,7 +185,6 @@ export function addInventoryContainer(name = "Novo Recipiente") {
     card.className = 'bureaucracy-box inventory-container-card';
     card.dataset.id = id;
     
-    // O atributo value="${name}" foi removido do input abaixo para evitar conflito com aspas
     card.innerHTML = `
         <button class="delete-btn">X</button>
         <input type="text" class="ink-input container-name" style="font-size: 1.2em; font-weight: bold; width: 80%; margin-bottom: 10px;">
@@ -132,7 +192,7 @@ export function addInventoryContainer(name = "Novo Recipiente") {
         <button class="btn-teal add-item-btn">+ Adicionar Item</button>
     `;
     
-    // O valor do nome é injetado nativamente de forma segura via JavaScript
+    // Injeção de nome segura contra aspas
     card.querySelector('.container-name').value = name;
     
     card.querySelector('.delete-btn').addEventListener('click', () => card.remove());
