@@ -164,8 +164,21 @@
                 </div>
 
                 <div class="bureaucracy-box spells-section">
-                    <h3>Catálogo de Feitiços Autorizados</h3>
-                    <button id="btn-add-spell" class="btn-teal">+ Registrar Novo Feitiço</button>
+                    <div class="spell-nav-header">
+                        <h3>Feitiços & Encantamentos <span class="total-spells-count" id="total-spells-count">0 registrados</span></h3>
+                        
+                        <div class="spell-nav-badges">
+                            <button class="spell-badge badge-transfiguracao" data-filter="Transfiguração"><span class="dot"></span>Transfiguração <span class="count">(0)</span></button>
+                            <button class="spell-badge badge-feitico" data-filter="Feitiço"><span class="dot"></span>Feitiço <span class="count">(0)</span></button>
+                            <button class="spell-badge badge-azaracao" data-filter="Azaração"><span class="dot"></span>Azaração <span class="count">(0)</span></button>
+                            <button class="spell-badge badge-maldicao-menor" data-filter="Maldição Menor"><span class="dot"></span>Maldição Menor <span class="count">(0)</span></button>
+                            <button class="spell-badge badge-maldicao" data-filter="Maldição"><span class="dot"></span>Maldição <span class="count">(0)</span></button>
+                            <button class="spell-badge badge-contra-feitico" data-filter="Contra-feitiço"><span class="dot"></span>Contra-feitiço <span class="count">(0)</span></button>
+                            <button class="spell-badge badge-cura" data-filter="Cura"><span class="dot"></span>Cura <span class="count">(0)</span></button>
+                        </div>
+                    </div>
+
+                    <button id="btn-add-spell" class="btn-teal" style="margin-top: 15px;">+ Registrar Novo Feitiço</button>
                     <div id="spells-list" class="spells-container">
                     </div>
                 </div>
