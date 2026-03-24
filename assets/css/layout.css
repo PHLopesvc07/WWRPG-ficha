@@ -227,3 +227,15 @@
         margin-left: 58px; /* Alinha a descrição debaixo do nome do item */
     }
 }
+
+/* ==========================================================================
+   CORREÇÃO DE RESPONSIVIDADE - REGISTRO DA VARINHA
+   ========================================================================== */
+.wand-grid label {
+    flex-wrap: wrap; /* Permite que o texto do rótulo e o campo de texto quebrem para linhas separadas se faltar espaço */
+}
+
+.wand-grid .ink-input {
+    min-width: 0; /* Remove a trava nativa de largura do navegador para inputs, permitindo que encolham */
+    flex: 1 1 100%; /* Força o input a se expandir de forma fluida ou ocupar 100% da nova linha quando quebrado */
+}
