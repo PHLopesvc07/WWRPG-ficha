@@ -12,7 +12,7 @@ export function setupDynamicLists() {
         card.className = 'bureaucracy-box spell-card';
         card.dataset.id = id;
         
-        // NOVO: Marca temporariamente o card como "novo" para ser animado após a ordenação
+        // Marca temporariamente o card como "novo" para ser animado após a ordenação
         card.dataset.newlyCreated = 'true';
 
         card.innerHTML = `
@@ -185,21 +185,18 @@ export function sortSpells() {
         
         container.appendChild(card);
 
-        // NOVO: Lógica de ativação da animação após o reposicionamento no DOM
+        // Lógica de ativação da animação após o reposicionamento no DOM
         if (card.dataset.newlyCreated === 'true') {
             // 1. Remove a marcação para não re-animar na próxima ordenação
             delete card.dataset.newlyCreated;
 
-            // 2. Força um reflow do navegador.
-            // Isso garante que o navegador reconheça a posição final do elemento
-            // antes de aplicarmos a animação de deslize.
+            // 2. Força um reflow do navegador para aplicar a animação de deslize
             void card.offsetHeight;
 
             // 3. Adiciona a classe que engatilha a animação CSS
             card.classList.add('spell-animate-entrance');
 
             // 4. Clean Code: Remove a classe de animação e ouvinte após o término (0.5s)
-            // para evitar conflitos de estilo futuros.
             card.addEventListener('animationend', () => {
                 card.classList.remove('spell-animate-entrance');
             }, { once: true });
@@ -233,7 +230,9 @@ export function addInventoryContainer(name = "Novo Recipiente") {
     const container = document.getElementById('inventory-list');
     const id = Date.now() + Math.floor(Math.random() * 1000);
     const card = document.createElement('div');
-    card.className = 'bureaucracy-box inventory-container-card';
+    
+    // Adiciona a classe 'animate-entrance' para animar ao surgir
+    card.className = 'bureaucracy-box inventory-container-card animate-entrance';
     card.dataset.id = id;
     
     card.innerHTML = `
@@ -245,7 +244,15 @@ export function addInventoryContainer(name = "Novo Recipiente") {
     
     card.querySelector('.container-name').value = name;
     
-    card.querySelector('.delete-btn').addEventListener('click', () => card.remove());
+    // Lógica de exclusão com animação
+    card.querySelector('.delete-btn').addEventListener('click', () => {
+        card.classList.remove('animate-entrance'); // Remove a animação de entrada
+        card.classList.add('animate-exit');        // Adiciona a de saída
+        
+        // Aguarda a animação terminar (0.3s) para remover o elemento do DOM
+        card.addEventListener('animationend', () => card.remove(), { once: true });
+    });
+    
     card.querySelector('.add-item-btn').addEventListener('click', () => addInventoryItem(id));
     
     container.appendChild(card);
@@ -256,7 +263,9 @@ export function addInventoryItem(containerId) {
     if (!container) return;
 
     const div = document.createElement('div');
-    div.className = 'item-row';
+    
+    // Adiciona a classe 'animate-entrance'
+    div.className = 'item-row animate-entrance';
     div.style.display = 'flex'; div.style.gap = '10px'; div.style.marginBottom = '5px';
     
     div.innerHTML = `
@@ -270,6 +279,13 @@ export function addInventoryItem(containerId) {
         if(this.value > 100) this.value = 100;
     });
     
-    div.querySelector('.btn-danger').addEventListener('click', () => div.remove());
+    // Lógica de exclusão com animação do item
+    div.querySelector('.btn-danger').addEventListener('click', () => {
+        div.classList.remove('animate-entrance');
+        div.classList.add('animate-exit');
+        
+        div.addEventListener('animationend', () => div.remove(), { once: true });
+    });
+    
     container.appendChild(div);
 }

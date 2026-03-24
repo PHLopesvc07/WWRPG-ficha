@@ -211,3 +211,41 @@
     /* Evita cliques acidentais enquanto anima */
     pointer-events: none; 
 }
+
+/* ==========================================================================
+   ANIMAÇÕES DE INVENTÁRIO (ENTRADA E SAÍDA)
+   ========================================================================== */
+
+/* Animação de surgir de baixo */
+@keyframes slideUpFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animação de cair e desaparecer (para exclusão) */
+@keyframes slideDownFadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+/* Classes utilitárias que o JS vai injetar */
+.animate-entrance {
+    animation: slideUpFadeIn 0.3s ease-out forwards;
+}
+
+.animate-exit {
+    animation: slideDownFadeOut 0.3s ease-in forwards;
+    pointer-events: none; /* Evita cliques enquanto desaparece */
+}
