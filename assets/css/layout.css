@@ -173,3 +173,57 @@
     align-items: center;
     margin-top: 10px;
 }
+/* ==========================================================================
+   GRID DE INVENTÁRIO (COLUNAS) E ITENS
+   ========================================================================== */
+
+/* Organiza os recipientes lado a lado. Se a tela encolher, eles empilham. */
+#inventory-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    align-items: start; /* Impede que uma mochila "estique" acompanhando a altura da mochila vizinha */
+    margin-top: 15px;
+}
+
+/* Ajustes na mochila para funcionar bem no Grid */
+.inventory-container-card {
+    margin-top: 0 !important; /* Retira a margem antiga pois o grid 'gap' já faz isso */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estrutura flexível para a linha de itens */
+.item-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: nowrap; /* Tenta manter tudo na mesma linha */
+}
+
+/* Distribuição de pesos: Qtd (pequeno), Nome (médio), Descrição (grande) */
+.item-row .item-qtd {
+    flex: 0 0 50px; /* Trava a largura da quantidade */
+}
+
+.item-row .item-name {
+    flex: 1.2; /* Ganha um pouco de espaço */
+    min-width: 90px;
+}
+
+.item-row .item-desc {
+    flex: 2; /* Ganha quase o dobro do espaço do nome */
+    min-width: 130px;
+}
+
+/* Responsividade: Se a tela for muito pequena (celular), a descrição desce para a linha de baixo com elegância */
+@media (max-width: 600px) {
+    .item-row {
+        flex-wrap: wrap;
+    }
+    .item-row .item-desc {
+        flex: 1 1 100%;
+        margin-left: 58px; /* Alinha a descrição debaixo do nome do item */
+    }
+}

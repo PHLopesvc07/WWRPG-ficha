@@ -235,21 +235,20 @@ export function addInventoryContainer(name = "Novo Recipiente") {
     card.className = 'bureaucracy-box inventory-container-card animate-entrance';
     card.dataset.id = id;
     
+    // HTML limpo, repassando o trabalho de layout para o CSS
     card.innerHTML = `
-        <button class="delete-btn">X</button>
-        <input type="text" class="ink-input container-name" style="font-size: 1.2em; font-weight: bold; width: 80%; margin-bottom: 10px;">
-        <div class="items-list"></div>
-        <button class="btn-teal add-item-btn">+ Adicionar Item</button>
+        <button class="delete-btn" title="Excluir Recipiente">X</button>
+        <input type="text" class="ink-input container-name" style="font-size: 1.2em; font-weight: bold; width: calc(100% - 30px); margin-bottom: 15px;">
+        <div class="items-list" style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px;"></div>
+        <button class="btn-teal add-item-btn" style="align-self: flex-start; font-size: 0.8rem; padding: 6px 12px;">+ Adicionar Item</button>
     `;
     
     card.querySelector('.container-name').value = name;
     
     // Lógica de exclusão com animação
     card.querySelector('.delete-btn').addEventListener('click', () => {
-        card.classList.remove('animate-entrance'); // Remove a animação de entrada
-        card.classList.add('animate-exit');        // Adiciona a de saída
-        
-        // Aguarda a animação terminar (0.3s) para remover o elemento do DOM
+        card.classList.remove('animate-entrance'); 
+        card.classList.add('animate-exit');        
         card.addEventListener('animationend', () => card.remove(), { once: true });
     });
     
@@ -264,15 +263,14 @@ export function addInventoryItem(containerId) {
 
     const div = document.createElement('div');
     
-    // Adiciona a classe 'animate-entrance'
+    // Removemos os estilos inline 'style="display:flex..."' para usar as classes do CSS puro
     div.className = 'item-row animate-entrance';
-    div.style.display = 'flex'; div.style.gap = '10px'; div.style.marginBottom = '5px';
     
     div.innerHTML = `
         <input type="number" class="ink-input short-input item-qtd" placeholder="Qtd" value="1" min="1" max="100">
-        <input type="text" class="ink-input item-name" placeholder="Nome do Item">
+        <input type="text" class="ink-input item-name" placeholder="Nome">
         <input type="text" class="ink-input item-desc" placeholder="Descrição rápida">
-        <button class="btn-danger" style="padding: 2px 8px;">X</button>
+        <button class="btn-danger" style="padding: 2px 8px;" title="Remover item">X</button>
     `;
     
     div.querySelector('.item-qtd').addEventListener('change', function() {
@@ -283,7 +281,6 @@ export function addInventoryItem(containerId) {
     div.querySelector('.btn-danger').addEventListener('click', () => {
         div.classList.remove('animate-entrance');
         div.classList.add('animate-exit');
-        
         div.addEventListener('animationend', () => div.remove(), { once: true });
     });
     
