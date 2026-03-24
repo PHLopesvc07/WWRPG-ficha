@@ -93,19 +93,13 @@ export function setupDiceRoller() {
                 modifier += profValue;
             }
 
-            // [SEGURANÇA BUROCRÁTICA] Limpa dados extras para evitar que um dado de dano antigo suje a rolagem de atributo
+            // [SEGURANÇA BUROCRÁTICA] Limpa dados extras para evitar que um dado de dano antigo suje a rolagem de atributo.
             document.querySelectorAll('.extra-dice').forEach(el => el.remove());
             if (addDiceBtn) {
                 addDiceBtn.disabled = false;
                 addDiceBtn.style.opacity = '1';
             }
 
-            // Prepara a mesa primária para a rolagem padrão de sistema (1d20)
-            const primaryQty = document.querySelector('.primary-dice .dice-qty');
-            const primaryType = document.querySelector('.primary-dice .dice-type');
-            
-            if (primaryQty) primaryQty.value = 1;
-            if (primaryType) primaryType.value = "20";
 
             const diceMod = document.getElementById('dice-mod');
             if (diceMod) diceMod.value = modifier;
