@@ -3,22 +3,21 @@
  * Ponto de Entrada (Entry Point) e Orquestrador
  */
 
-// Importações dos módulos
-import { initTabs, setupPhotoUpload, setupNotesEditor, setupInjuryValidation } from './ui.js';
+// Importações dos módulos (Vamos criá-los a seguir)
+import { initTabs, setupPhotoUpload, setupNotesEditor } from './ui.js';
 import { populateFamilies, populateSkills, updateSkillBonuses } from './sheet.js';
 import { setupDiceRoller } from './dice.js';
 import { setupEconomy, setupGringottsExchange } from './economy.js';
 import { setupDynamicLists } from './spells.js';
 import { setupPersistence } from './storage.js';
 import { setupPets } from './pets.js';
-import { setupTheme } from './theme.js'; 
+import { setupTheme } from './theme.js'; // <-- NOVO IMPORT
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inicializa UI Básica
     initTabs();
     setupPhotoUpload();
     setupNotesEditor();
-    setupInjuryValidation(); // <-- NOVA CHAMADA DA VALIDAÇÃO AQUI
 
     // 2. Preenche os Dados da Ficha
     populateFamilies();
@@ -30,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGringottsExchange();
     setupDynamicLists();
     setupPets();
-    setupTheme();
+    setupTheme(); // <-- NOVA CHAMADA AQUI
     
     // 4. Inicializa o Sistema de Save/Load
     setupPersistence();
