@@ -4,57 +4,9 @@
  */
 
 export function setupDynamicLists() {
-    // 1. Adicionar Feitiço
+    // 1. Adicionar Feitiço Manualmente
     document.getElementById('btn-add-spell').addEventListener('click', () => {
-        const container = document.getElementById('spells-list');
-        const id = Date.now();
-        const card = document.createElement('div');
-        card.className = 'bureaucracy-box spell-card';
-        card.dataset.id = id;
-        
-        // Marca temporariamente o card como "novo" para ser animado após a ordenação
-        card.dataset.newlyCreated = 'true';
-
-        card.innerHTML = `
-            <button class="delete-btn">X</button>
-            <div class="wand-grid">
-                <input type="text" class="ink-input spell-name" placeholder="Nome do Feitiço">
-                
-                <select class="ink-select spell-cat">
-                    <option value="Transfiguração">Transfiguração</option>
-                    <option value="Feitiço" selected>Charme</option>
-                    <option value="Azaração">Azaração</option>
-                    <option value="Maldição Menor">Maldição Menor</option>
-                    <option value="Maldição">Maldição</option>
-                    <option value="Contra-feitiço">Contra-feitiço</option>
-                    <option value="Cura">Cura</option>
-                </select>
-                
-                <select class="ink-select spell-lvl">
-                    <option value="1">Nível 1</option>
-                    <option value="2">Nível 2</option>
-                    <option value="3">Nível 3</option>
-                    <option value="4">Nível 4</option>
-                    <option value="5">Nível 5</option>
-                    <option value="6">Nível 6</option>
-                    <option value="7">Nível 7</option>
-                </select>
-            </div>
-            
-            <textarea class="ink-textarea spell-desc" placeholder="Descrição do efeito..."></textarea>
-        `;
-        
-        card.querySelector('.delete-btn').addEventListener('click', () => { 
-            card.remove(); 
-            sortSpells(); 
-        });
-        card.querySelector('.spell-cat').addEventListener('change', sortSpells);
-        card.querySelector('.spell-lvl').addEventListener('change', sortSpells);
-        
-        container.appendChild(card);
-        
-        // A função de ordenação agora é responsável por ativar a animação
-        sortSpells();
+        addSpellCard(); // Chama a função sem dados para criar um feitiço em branco
     });
 
     // Eventos de clique nas Badges de Navegação (Índice Superior)
@@ -109,6 +61,72 @@ export function setupDynamicLists() {
     });
 
     addInventoryContainer("Mochila Principal");
+}
+
+// NOVA FUNÇÃO: Cria e injeta um card de feitiço à prova de falhas
+export function addSpellCard(data = null) {
+    const container = document.getElementById('spells-list');
+    const id = Date.now() + Math.floor(Math.random() * 10000); // Garante um ID único
+    const card = document.createElement('div');
+    card.className = 'bureaucracy-box spell-card';
+    card.dataset.id = id;
+    card.dataset.newlyCreated = 'true';
+
+    card.innerHTML = `
+        <button class="delete-btn">X</button>
+        <div class="wand-grid">
+            <input type="text" class="ink-input spell-name" placeholder="Nome do Feitiço">
+            
+            <select class="ink-select spell-cat">
+                <option value="Transfiguração">Transfiguração</option>
+                <option value="Feitiço" selected>Charme</option>
+                <option value="Azaração">Azaração</option>
+                <option value="Maldição Menor">Maldição Menor</option>
+                <option value="Maldição">Maldição</option>
+                <option value="Contra-feitiço">Contra-feitiço</option>
+                <option value="Cura">Cura</option>
+            </select>
+            
+            <select class="ink-select spell-lvl">
+                <option value="1">Nível 1</option>
+                <option value="2">Nível 2</option>
+                <option value="3">Nível 3</option>
+                <option value="4">Nível 4</option>
+                <option value="5">Nível 5</option>
+                <option value="6">Nível 6</option>
+                <option value="7">Nível 7</option>
+            </select>
+        </div>
+        
+        <textarea class="ink-textarea spell-desc" placeholder="Descrição do efeito..."></textarea>
+    `;
+
+    // Se estivermos importando (Load), injeta as informações ANTES de ir para a tela
+    if (data) {
+        card.querySelector('.spell-name').value = data.name || "";
+        card.querySelector('.spell-desc').value = data.desc || "";
+        card.querySelector('.spell-lvl').value = data.lvl || "1";
+        
+        const catValue = Array.isArray(data.cat) ? data.cat[0] : data.cat;
+        card.querySelector('.spell-cat').value = catValue || "Feitiço";
+    }
+    
+    // Adiciona os eventos
+    card.querySelector('.delete-btn').addEventListener('click', () => { 
+        card.remove(); 
+        sortSpells(); 
+    });
+    card.querySelector('.spell-cat').addEventListener('change', sortSpells);
+    card.querySelector('.spell-lvl').addEventListener('change', sortSpells);
+    
+    // Joga o feitiço na tela
+    container.appendChild(card);
+    
+    // Só aciona a organização mágica se for uma inserção manual. 
+    // Em carregamentos em lote (Load), deixamos para organizar tudo de uma vez só no final.
+    if (!data) {
+        sortSpells();
+    }
 }
 
 export function sortSpells() {
@@ -187,16 +205,9 @@ export function sortSpells() {
 
         // Lógica de ativação da animação após o reposicionamento no DOM
         if (card.dataset.newlyCreated === 'true') {
-            // 1. Remove a marcação para não re-animar na próxima ordenação
             delete card.dataset.newlyCreated;
-
-            // 2. Força um reflow do navegador para aplicar a animação de deslize
             void card.offsetHeight;
-
-            // 3. Adiciona a classe que engatilha a animação CSS
             card.classList.add('spell-animate-entrance');
-
-            // 4. Clean Code: Remove a classe de animação e ouvinte após o término (0.5s)
             card.addEventListener('animationend', () => {
                 card.classList.remove('spell-animate-entrance');
             }, { once: true });
@@ -231,11 +242,9 @@ export function addInventoryContainer(name = "Novo Recipiente") {
     const id = Date.now() + Math.floor(Math.random() * 1000);
     const card = document.createElement('div');
     
-    // Adiciona a classe 'animate-entrance' para animar ao surgir
     card.className = 'bureaucracy-box inventory-container-card animate-entrance';
     card.dataset.id = id;
     
-    // HTML limpo, repassando o trabalho de layout para o CSS
     card.innerHTML = `
         <button class="delete-btn" title="Excluir Recipiente">X</button>
         <input type="text" class="ink-input container-name" style="font-size: 1.2em; font-weight: bold; width: calc(100% - 30px); margin-bottom: 15px;">
@@ -245,7 +254,6 @@ export function addInventoryContainer(name = "Novo Recipiente") {
     
     card.querySelector('.container-name').value = name;
     
-    // Lógica de exclusão com animação
     card.querySelector('.delete-btn').addEventListener('click', () => {
         card.classList.remove('animate-entrance'); 
         card.classList.add('animate-exit');        
@@ -262,8 +270,6 @@ export function addInventoryItem(containerId) {
     if (!container) return;
 
     const div = document.createElement('div');
-    
-    // Removemos os estilos inline 'style="display:flex..."' para usar as classes do CSS puro
     div.className = 'item-row animate-entrance';
     
     div.innerHTML = `
@@ -277,7 +283,6 @@ export function addInventoryItem(containerId) {
         if(this.value > 100) this.value = 100;
     });
     
-    // Lógica de exclusão com animação do item
     div.querySelector('.btn-danger').addEventListener('click', () => {
         div.classList.remove('animate-entrance');
         div.classList.add('animate-exit');

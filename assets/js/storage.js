@@ -4,7 +4,7 @@
  */
 
 import { updateSkillBonuses } from './sheet.js';
-import { sortSpells, addInventoryContainer, addInventoryItem } from './spells.js';
+import { sortSpells, addInventoryContainer, addInventoryItem, addSpellCard } from './spells.js';
 import { addPet } from './pets.js';
 
 export function setupPersistence() {
@@ -225,29 +225,16 @@ function importData(e) {
 
             document.getElementById('traits-text').value = data.magic.traits || "";
 
+            // --- MAGIA PURA AQUI ---
             document.getElementById('spells-list').innerHTML = '';
-            data.magic.spells.forEach(sp => {
-                document.getElementById('btn-add-spell').click();
-                const last = document.getElementById('spells-list').lastElementChild;
-                
-                const setVal = (selector, val) => {
-                    if (last.querySelector(selector)) last.querySelector(selector).value = val || "";
-                };
-
-                setVal('.spell-name', sp.name);
-                setVal('.spell-lvl', sp.lvl);
-                setVal('.spell-desc', sp.desc);
-
-                const catSelect = last.querySelector('.spell-cat');
-                if (catSelect) {
-                    if (Array.isArray(sp.cat)) {
-                        catSelect.value = sp.cat[0] || "Feitiço";
-                    } else {
-                        catSelect.value = sp.cat || "Feitiço";
-                    }
-                }
-            });
-            sortSpells();
+            if (data.magic.spells && Array.isArray(data.magic.spells)) {
+                data.magic.spells.forEach(sp => {
+                    // Preenchemos o feitiço direto com a nova função
+                    addSpellCard(sp); 
+                });
+                // Organiza todos eles na tela de uma só vez!
+                sortSpells(); 
+            }
 
             // 6. Inventory
             document.getElementById('coin-g').value = data.inventory.coins.g || 0;
