@@ -239,3 +239,44 @@
     min-width: 0; /* Remove a trava nativa de largura do navegador para inputs, permitindo que encolham */
     flex: 1 1 100%; /* Força o input a se expandir de forma fluida ou ocupar 100% da nova linha quando quebrado */
 }
+
+/* ==========================================================================
+   CORREÇÃO DE RESPONSIVIDADE - CABEÇALHO (MOBILE)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .ministry-header {
+        /* Remove o brasão lateral no mobile para evitar sobreposição ao texto */
+        background-image: none; 
+        /* Aumenta o espaçamento no topo para impedir que o botão de tema (lua) sobreponha os títulos */
+        padding: 70px 15px 25px; 
+    }
+
+    .header-titles h1 {
+        font-size: 1.6rem; /* Reduz o tamanho do título principal */
+        padding: 0 10px 10px;
+    }
+
+    .header-titles h2 {
+        font-size: 0.95rem; /* Reduz o subtítulo */
+    }
+
+    .header-titles p {
+        font-size: 0.8rem;
+    }
+
+    .sys-controls {
+        flex-direction: column; /* Empilha os botões verticalmente */
+        gap: 10px;
+        width: 100%;
+    }
+
+    /* Sobrescreve a largura fixa e força os botões a adaptarem-se ao ecrã */
+    .sys-controls #btn-export,
+    .sys-controls label[for="file-import"],
+    .sys-controls #btn-reset {
+        width: 100%; 
+        height: auto;
+        min-height: 45px; 
+        padding: 10px;
+    }
+}
