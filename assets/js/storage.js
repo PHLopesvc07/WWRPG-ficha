@@ -225,14 +225,12 @@ function importData(e) {
 
             document.getElementById('traits-text').value = data.magic.traits || "";
 
-            // --- MAGIA PURA AQUI ---
+            // --- MAGIA (FEITIÇOS) ---
             document.getElementById('spells-list').innerHTML = '';
             if (data.magic.spells && Array.isArray(data.magic.spells)) {
                 data.magic.spells.forEach(sp => {
-                    // Preenchemos o feitiço direto com a nova função
                     addSpellCard(sp); 
                 });
-                // Organiza todos eles na tela de uma só vez!
                 sortSpells(); 
             }
 
@@ -242,19 +240,25 @@ function importData(e) {
             document.getElementById('coin-k').value = data.inventory.coins.k || 0;
 
             document.getElementById('inventory-list').innerHTML = '';
-            data.inventory.containers.forEach(cont => {
-                addInventoryContainer(cont.name);
-                const lastCont = document.getElementById('inventory-list').lastElementChild;
-                const contId = lastCont.dataset.id;
-                
-                cont.items.forEach(item => {
-                    addInventoryItem(contId);
-                    const lastItem = lastCont.querySelector('.items-list').lastElementChild;
-                    lastItem.querySelector('.item-qtd').value = item.qtd;
-                    lastItem.querySelector('.item-name').value = item.name;
-                    lastItem.querySelector('.item-desc').value = item.desc;
+            if (data.inventory && data.inventory.containers) {
+                data.inventory.containers.forEach(cont => {
+                    addInventoryContainer(cont.name);
+                    const lastCont = document.getElementById('inventory-list').lastElementChild;
+                    const contId = lastCont.dataset.id;
+                    
+                    cont.items.forEach(item => {
+                        addInventoryItem(contId);
+                        const lastItem = lastCont.querySelector('.items-list').lastElementChild;
+                        lastItem.querySelector('.item-qtd').value = item.qtd;
+                        lastItem.querySelector('.item-name').value = item.name;
+                        
+                        const descArea = lastItem.querySelector('.item-desc');
+                        descArea.value = item.desc;
+                        // Dispara o evento de input para a caixa se expandir sozinha ao carregar o save
+                        descArea.dispatchEvent(new Event('input'));
+                    });
                 });
-            });
+            }
 
             // 6.5 Pets
             document.getElementById('pets-container').innerHTML = ''; 

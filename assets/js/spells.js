@@ -63,7 +63,7 @@ export function setupDynamicLists() {
     addInventoryContainer("Mochila Principal");
 }
 
-// NOVA FUNÇÃO: Cria e injeta um card de feitiço à prova de falhas
+// Cria e injeta um card de feitiço à prova de falhas
 export function addSpellCard(data = null) {
     const container = document.getElementById('spells-list');
     const id = Date.now() + Math.floor(Math.random() * 10000); // Garante um ID único
@@ -101,7 +101,7 @@ export function addSpellCard(data = null) {
         <textarea class="ink-textarea spell-desc" placeholder="Descrição do efeito..."></textarea>
     `;
 
-    // Se estivermos importando (Load), injeta as informações ANTES de ir para a tela
+    // Se estivermos a importar (Load), injeta as informações ANTES de ir para o ecrã
     if (data) {
         card.querySelector('.spell-name').value = data.name || "";
         card.querySelector('.spell-desc').value = data.desc || "";
@@ -119,7 +119,7 @@ export function addSpellCard(data = null) {
     card.querySelector('.spell-cat').addEventListener('change', sortSpells);
     card.querySelector('.spell-lvl').addEventListener('change', sortSpells);
     
-    // Joga o feitiço na tela
+    // Joga o feitiço no ecrã
     container.appendChild(card);
     
     // Só aciona a organização mágica se for uma inserção manual. 
@@ -272,15 +272,23 @@ export function addInventoryItem(containerId) {
     const div = document.createElement('div');
     div.className = 'item-row animate-entrance';
     
+    // Trocamos o input text por um textarea expansível
     div.innerHTML = `
         <input type="number" class="ink-input short-input item-qtd" placeholder="Qtd" value="1" min="1" max="100">
         <input type="text" class="ink-input item-name" placeholder="Nome">
-        <input type="text" class="ink-input item-desc" placeholder="Descrição rápida">
-        <button class="btn-danger" style="padding: 2px 8px;" title="Remover item">X</button>
+        <textarea class="ink-input item-desc" placeholder="Descrição rápida" rows="1" style="resize: none; overflow: hidden; min-height: 28px; line-height: 1.4; padding-top: 5px;"></textarea>
+        <button class="btn-danger" style="padding: 2px 8px; margin-top: 2px;" title="Remover item">X</button>
     `;
     
     div.querySelector('.item-qtd').addEventListener('change', function() {
         if(this.value > 100) this.value = 100;
+    });
+
+    // Magia para a descrição expandir as linhas automaticamente conforme o utilizador digita
+    const descArea = div.querySelector('.item-desc');
+    descArea.addEventListener('input', function() {
+        this.style.height = 'auto'; // Reseta a altura momentaneamente
+        this.style.height = this.scrollHeight + 'px'; // Ajusta ao tamanho real do conteúdo
     });
     
     div.querySelector('.btn-danger').addEventListener('click', () => {
