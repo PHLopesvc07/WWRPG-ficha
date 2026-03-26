@@ -111,11 +111,15 @@ export function addSpellCard(data = null) {
         card.querySelector('.spell-cat').value = catValue || "Feitiço";
     }
     
-    // Adiciona os eventos
+    // Adiciona os eventos (COM A NOVA ANIMAÇÃO DE SAÍDA)
     card.querySelector('.delete-btn').addEventListener('click', () => { 
-        card.remove(); 
-        sortSpells(); 
+        card.classList.add('spell-card-exit');
+        card.addEventListener('animationend', () => {
+            card.remove(); 
+            sortSpells(); 
+        }, { once: true });
     });
+    
     card.querySelector('.spell-cat').addEventListener('change', sortSpells);
     card.querySelector('.spell-lvl').addEventListener('change', sortSpells);
     
@@ -272,7 +276,6 @@ export function addInventoryItem(containerId) {
     const div = document.createElement('div');
     div.className = 'item-row animate-entrance';
     
-    // Trocamos o input text por um textarea expansível
     div.innerHTML = `
         <input type="number" class="ink-input short-input item-qtd" placeholder="Qtd" value="1" min="1" max="100">
         <input type="text" class="ink-input item-name" placeholder="Nome">
@@ -284,11 +287,11 @@ export function addInventoryItem(containerId) {
         if(this.value > 100) this.value = 100;
     });
 
-    // Magia para a descrição expandir as linhas automaticamente conforme o utilizador digita
+    // Magia para a descrição expandir as linhas automaticamente
     const descArea = div.querySelector('.item-desc');
     descArea.addEventListener('input', function() {
-        this.style.height = 'auto'; // Reseta a altura momentaneamente
-        this.style.height = this.scrollHeight + 'px'; // Ajusta ao tamanho real do conteúdo
+        this.style.height = 'auto'; 
+        this.style.height = this.scrollHeight + 'px'; 
     });
     
     div.querySelector('.btn-danger').addEventListener('click', () => {

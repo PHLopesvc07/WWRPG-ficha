@@ -249,3 +249,38 @@
     animation: slideDownFadeOut 0.3s ease-in forwards;
     pointer-events: none; /* Evita cliques enquanto desaparece */
 }
+
+/* ==========================================================================
+   ANIMAÇÕES DE SAÍDA (MINISTÉRIO DA MAGIA)
+   ========================================================================== */
+
+/* Animação de saída para feitiços: fade out e encolhimento rápido */
+@keyframes spellFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+        max-height: 500px; /* Valor alto o suficiente para cobrir o tamanho do card */
+        margin-bottom: 15px;
+        padding: 20px;
+        border-width: 2px;
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+        max-height: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-width: 0;
+        visibility: hidden;
+    }
+}
+
+/* Classe aplicada via JS para iniciar a animação */
+.spell-card-exit {
+    animation: spellFadeOut 0.3s ease-in forwards;
+    /* Impede cliques enquanto anima */
+    pointer-events: none; 
+    /* Garante que o elemento não cause scrollbar durante a animação */
+    overflow: hidden !important; 
+}
