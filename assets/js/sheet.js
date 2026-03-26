@@ -3,15 +3,19 @@
  * Lógica central da Ficha (Famílias, Perícias e Cálculos de Atributos)
  */
 
-// Precisamos importar o banco de dados estático que criamos antes
-import { db } from './data.js';
-
-export function populateFamilies() {
+/**
+ * Preenche a lista de linhagens familiares no select baseado na base de dados.
+ * (Cumpre o Princípio da Inversão de Dependência - recebe os dados por parâmetro)
+ * * @param {Object} database - O objeto que contém os dados estáticos do sistema (famílias, perícias, etc).
+ */
+export function populateFamilies(database) {
     const select = document.getElementById('family-select');
+    if (!select) return; // Prevenção de erros caso o elemento não exista no DOM
+
     select.innerHTML = '<option value="">Selecione uma Linhagem...</option>';
 
     // Varre o banco de dados e cria os grupos de nacionalidade
-    for (const [nationality, families] of Object.entries(db.families)) {
+    for (const [nationality, families] of Object.entries(database.families)) {
         const optgroup = document.createElement('optgroup');
         optgroup.label = nationality;
         
@@ -39,27 +43,34 @@ export function populateFamilies() {
     });
 }
 
-export function populateSkills() {
+/**
+ * Cria a grelha de perícias dinamicamente e inicializa os seus multiplicadores.
+ * * @param {Object} database - O objeto que contém os dados estáticos do sistema.
+ */
+export function populateSkills(database) {
     const container = document.getElementById('skills-container');
+    if (!container) return;
+
     container.innerHTML = ''; // Limpa antes de injetar
 
-    const profOptions = db.proficiencyLevels.map(p => 
+    // Prepara as opções de proficiência uma única vez para otimizar performance (Eficiência)
+    const profOptions = database.proficiencyLevels.map(p => 
         `<option value="${p.value}" ${p.default ? 'selected' : ''}>${p.label}</option>`
     ).join('');
 
-    for (const [stat, skills] of Object.entries(db.skills)) {
+    for (const [stat, skills] of Object.entries(database.skills)) {
         skills.forEach(skillName => {
             const div = document.createElement('div');
             div.className = 'skill-item';
             
-            // Correção Aplicada: O bônus (.skill-total) foi retirado de dentro do (.rollable)
-            // e colocado ao lado usando um container flexível.
+            // SRP: Estilos inline removidos e substituídos pelas classes .skill-label-group e .skill-total-val
+            // Acessibilidade: Adicionado aria-label dinâmico ao select
             div.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 6px;">
+                <div class="skill-label-group">
                     <span class="rollable skill-roll" data-stat="${stat}" data-skill="${skillName}">${skillName}</span> 
-                    <span class="skill-total" data-skill="${skillName}" style="color:var(--stamp-red); font-family:var(--font-typewriter); font-weight:bold; font-size:0.9em;">(+0)</span>
+                    <span class="skill-total skill-total-val" data-skill="${skillName}">(+0)</span>
                 </div>
-                <select class="ink-select short-input skill-prof" data-skill="${skillName}">
+                <select class="ink-select short-input skill-prof" data-skill="${skillName}" aria-label="Nível de Proficiência em ${skillName}">
                     ${profOptions}
                 </select>
             `;
@@ -71,10 +82,14 @@ export function populateSkills() {
         });
     }
 
-    // Calcula os bônus iniciais logo após criar a lista
+    // Calcula os bónus iniciais logo após criar a lista
     updateSkillBonuses();
 }
 
+/**
+ * Recalcula e atualiza na interface o valor total de todas as perícias 
+ * (Atributo Base + Nível de Proficiência).
+ */
 export function updateSkillBonuses() {
     const skillSelects = document.querySelectorAll('.skill-prof');
     
@@ -91,6 +106,8 @@ export function updateSkillBonuses() {
         const profValue = parseInt(select.value) || 0;
         
         const total = statValue + profValue;
+        
+        // Formatação visual para garantir o sinal de positivo (+) em números maiores ou iguais a zero
         const formattedTotal = total >= 0 ? `+${total}` : `${total}`;
         
         const displaySpan = document.querySelector(`.skill-total[data-skill="${skillName}"]`);

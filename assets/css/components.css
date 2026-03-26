@@ -1,10 +1,39 @@
 /* ==========================================================================
-   COMPONENTS.CSS - MINISTÉRIO DA MAGIA
-   Abas, Botões, Inputs e Caixas Burocráticas
+   COMPONENTS.CSS - MINISTÉRIO DA MAGIA (VERSÃO DEFINITIVA)
+   Consolidação: Abas, Botões, Inputs, Cards e Utilitários de JS (Pets, Dice, Spells)
    ========================================================================== */
 
 /* ==========================================================================
-   NAVEGAÇÃO (ABAS)
+   1. UTILITÁRIOS GERAIS E ANIMAÇÕES
+   ========================================================================== */
+.hidden {
+    display: none !important; 
+}
+
+.mt-15 { margin-top: 15px; }
+.flex-1 { flex: 1; }
+
+.animated-fade-in {
+    animation: fadeInForm 0.3s ease;
+}
+
+@keyframes fadeInForm {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animações de saída para elementos removidos (Spells, Inventário) */
+.animate-exit, .spell-card-exit {
+    animation: fadeOutForm 0.3s ease forwards;
+}
+
+@keyframes fadeOutForm {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.95); }
+}
+
+/* ==========================================================================
+   2. NAVEGAÇÃO (ABAS)
    ========================================================================== */
 .tabs-nav {
     display: flex;
@@ -30,10 +59,7 @@
     text-transform: uppercase;
 }
 
-.tab-btn:hover {
-    opacity: 1;
-    background-color: #9cd4c7; /* Teal mais claro */
-}
+.tab-btn:hover { opacity: 1; background-color: #9cd4c7; }
 
 .tab-btn.active {
     background-color: var(--parchment);
@@ -49,30 +75,17 @@
     animation: fadeInForm 0.5s ease;
 }
 
-.tab-panel.active {
-    display: block;
-}
-
-@keyframes fadeInForm {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+.tab-panel.active { display: block; }
 
 /* ==========================================================================
-   CAIXAS BUROCRÁTICAS E CARIMBO (WATERMARK)
+   3. CAIXAS BUROCRÁTICAS E CARIMBO (WATERMARK)
    ========================================================================== */
 .bureaucracy-box {
     border: 2px solid var(--ink);
     padding: 20px;
     margin-bottom: 25px;
     position: relative;
-    background-color: rgba(255, 255, 255, 0.3); /* Fundo leve para destacar do pergaminho principal */
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 .bureaucracy-box h3 {
@@ -81,346 +94,279 @@
     display: inline-block;
     padding: 0 10px;
     position: absolute;
-    top: -15px; /* Quebra a borda superior para parecer um título impresso */
+    top: -15px;
     left: 15px;
     border-left: 2px solid var(--ink);
     border-right: 2px solid var(--ink);
 }
 
-/* Classe utilitária para aplicar a marca d'água do carimbo */
 .bureaucracy-box.stamped::after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 80%;
-    height: 80%;
+    top: 50%; left: 50%; width: 80%; height: 80%;
     transform: translate(-50%, -50%);
     background-image: url('../img/CarimboMinisterio.png');
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-    opacity: 0.08; /* Muito sutil para não atrapalhar a leitura */
-    z-index: 0;
-    pointer-events: none; /* Deixa o clique passar direto para os inputs */
+    opacity: 0.08; z-index: 0; pointer-events: none;
 }
 
-/* Garante que o conteúdo fique acima do carimbo */
-.bureaucracy-box > * {
-    position: relative;
-    z-index: 1;
-}
+.bureaucracy-box > * { position: relative; z-index: 1; }
 
 /* ==========================================================================
-   FORMULÁRIOS E INPUTS (ESTILO TINTA)
+   4. FORMULÁRIOS E INPUTS (ESTILO TINTA)
    ========================================================================== */
 label {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    margin-bottom: 12px;
-    font-weight: bold;
-    font-size: 0.95rem;
+    display: flex; align-items: flex-end; gap: 10px;
+    margin-bottom: 12px; font-weight: bold; font-size: 0.95rem;
 }
 
-.ink-input,
-.ink-select,
-.ink-textarea {
-    background: transparent;
-    border: none;
+.ink-input, .ink-select, .ink-textarea {
+    background: transparent; border: none;
     border-bottom: 2px dotted var(--ink);
-    color: var(--ink);
-    font-family: var(--font-typewriter);
-    font-size: 1rem;
-    padding: 2px 5px;
-    flex: 1;
-    outline: none;
-    transition: border-color 0.3s;
+    color: var(--ink); font-family: var(--font-typewriter);
+    font-size: 1rem; padding: 2px 5px; flex: 1;
+    outline: none; transition: border-color 0.3s;
 }
 
-.ink-input:focus,
-.ink-select:focus,
-.ink-textarea:focus {
+.ink-input:focus, .ink-select:focus, .ink-textarea:focus {
     border-bottom: 2px solid var(--magic-gold);
     background-color: rgba(243, 181, 98, 0.1);
 }
 
-.short-input {
-    flex: none;
-    width: 65px;
-    text-align: center;
-}
+.short-input { flex: none; width: 65px; text-align: center; }
 
 .ink-textarea {
-    width: 100%;
-    min-height: 120px;
-    border: 1px solid var(--ink);
-    margin-top: 15px;
-    resize: vertical;
+    width: 100%; min-height: 120px; border: 1px solid var(--ink);
+    margin-top: 15px; resize: vertical;
     background-image: repeating-linear-gradient(transparent, transparent 30px, rgba(92, 75, 81, 0.2) 30px, rgba(92, 75, 81, 0.2) 31px);
-    line-height: 31px;
-    padding: 5px 10px;
+    line-height: 31px; padding: 5px 10px;
 }
 
-/* Esconde os inputs de arquivo originais feios, mantendo apenas os labels estilizados */
-input[type="file"] {
-    display: none;
-}
+input[type="file"] { display: none; }
 
-/* Efeito de Regra Quebrada/Riscada (Checkbox de Regras Pessoais) */
-.rule-checkbox {
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    accent-color: #8b0000; /* Vermelho sangue */
-}
+/* Efeito de Regra Quebrada/Riscada */
+.rule-checkbox { cursor: pointer; width: 16px; height: 16px; accent-color: #8b0000; }
+.rule-checkbox:checked + .ink-input { text-decoration: line-through; opacity: 0.6; transition: all 0.3s ease; }
 
-/* Aplica o risco no texto do input adjacente quando a caixa for marcada */
-.rule-checkbox:checked + .ink-input {
-    text-decoration: line-through;
-    opacity: 0.6;
-    transition: all 0.3s ease;
+/* Estados da Fotografia de Perfil e Pets */
+.photo-preview-active {
+    display: block !important;
+    max-width: 150px;
+    border: 2px solid var(--ink);
+    margin-bottom: 10px;
 }
 
 /* ==========================================================================
-   BOTÕES OFICIAIS
+   5. BOTÕES OFICIAIS
    ========================================================================== */
-button,
-.upload-label,
-label[for="file-import"] {
-    font-family: var(--font-typewriter);
-    font-weight: bold;
-    font-size: 0.9rem;
-    padding: 8px 16px;
-    cursor: pointer;
-    border: 2px solid var(--ink);
-    text-transform: uppercase;
-    transition: all 0.2s;
-    box-shadow: 2px 2px 0 var(--ink);
-    display: inline-block;
+button, .upload-label, label[for="file-import"] {
+    font-family: var(--font-typewriter); font-weight: bold; font-size: 0.9rem;
+    padding: 8px 16px; cursor: pointer; border: 2px solid var(--ink);
+    text-transform: uppercase; transition: all 0.2s;
+    box-shadow: 2px 2px 0 var(--ink); display: inline-block;
 }
 
-button:active,
-.upload-label:active,
-label[for="file-import"]:active {
-    transform: translate(2px, 2px);
-    box-shadow: 0 0 0 var(--ink);
+button:active, .upload-label:active, label[for="file-import"]:active {
+    transform: translate(2px, 2px); box-shadow: 0 0 0 var(--ink);
 }
 
-.btn-gold {
-    background-color: var(--magic-gold);
-    color: var(--ink);
+/* Comportamento de botões desativados via JS */
+button:disabled {
+    opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none;
 }
 
-.btn-gold:hover {
-    background-color: #f5c786;
-}
+.btn-gold { background-color: var(--magic-gold); color: var(--ink); }
+.btn-gold:hover:not(:disabled) { background-color: #f5c786; }
 
-.btn-teal {
-    background-color: var(--muted-teal);
-    color: var(--ink);
-}
+.btn-teal { background-color: var(--muted-teal); color: var(--ink); }
+.btn-teal:hover:not(:disabled) { background-color: #a3ccc2; }
 
-.btn-teal:hover {
-    background-color: #a3ccc2;
-}
+.btn-bronze { background-color: #c96e2e; color: #fff; }
+.btn-bronze:hover:not(:disabled) { background-color: #d87e3f; }
 
 .btn-danger {
-    background-color: transparent;
-    color: var(--stamp-red);
-    border: 3px solid var(--stamp-red);
-    font-family: var(--font-serif);
-    font-size: 1rem;
-    transform: rotate(-2deg);
-    box-shadow: none;
+    background-color: transparent; color: var(--stamp-red); border: 3px solid var(--stamp-red);
+    font-family: var(--font-serif); font-size: 1rem; transform: rotate(-2deg); box-shadow: none;
 }
-
-.btn-danger:hover {
-    background-color: rgba(240, 96, 96, 0.1);
-    transform: rotate(0deg);
-}
+.btn-danger:hover:not(:disabled) { background-color: rgba(240, 96, 96, 0.1); transform: rotate(0deg); }
 
 .btn-format {
-    background: transparent;
-    color: var(--ink);
-    border: 1px solid var(--ink);
-    padding: 4px 12px;
-    font-family: var(--font-serif);
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 2px 2px 0 var(--ink);
-    border-radius: 2px;
+    background: transparent; color: var(--ink); border: 1px solid var(--ink);
+    padding: 4px 12px; font-family: var(--font-serif); font-size: 1rem;
+    cursor: pointer; box-shadow: 2px 2px 0 var(--ink); border-radius: 2px;
 }
+.btn-format:hover:not(:disabled) { background-color: var(--muted-teal); color: var(--parchment); }
 
-.btn-format:hover {
-    background-color: var(--muted-teal);
-    color: var(--parchment);
+.btn-theme-toggle {
+    position: absolute; top: 20px; right: 20px; width: 45px; height: 45px;
+    padding: 0; font-size: 1.2rem; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
 }
 
 .delete-btn {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: var(--parchment);
-    border: 2px solid var(--stamp-red);
-    color: var(--stamp-red);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    box-shadow: none;
-    transform: none;
+    position: absolute; top: -10px; right: -10px;
+    background: var(--parchment); border: 2px solid var(--stamp-red);
+    color: var(--stamp-red); border-radius: 50%; width: 30px; height: 30px;
+    font-weight: bold; display: flex; align-items: center; justify-content: center;
+    padding: 0; box-shadow: none; transform: none;
 }
-
-.delete-btn:hover {
-    background: var(--stamp-red);
-    color: var(--parchment);
-}
+.delete-btn:hover { background: var(--stamp-red); color: var(--parchment); }
 
 /* ==========================================================================
-   CARDS DINÂMICOS (FEITIÇOS E INVENTÁRIO)
+   6. CARDS DINÂMICOS (FEITIÇOS E INVENTÁRIO)
    ========================================================================== */
-.spell-card,
-.inventory-container-card {
-    border: 2px solid var(--ink);
-    padding: 15px;
-    margin-top: 15px;
-    background-color: rgba(140, 190, 178, 0.15);
-    position: relative;
+.spell-card, .inventory-container-card {
+    border: 2px solid var(--ink); padding: 15px; margin-top: 15px;
+    background-color: rgba(140, 190, 178, 0.15); position: relative;
     box-shadow: 2px 2px 0 var(--ink);
 }
 
 /* Sistema de Arquivamento por Cores (Feitiços) */
-.spell-card {
-    border-left-width: 6px !important;
-    transition: all 0.3s ease;
+.spells-container .spell-card { border-left-width: 6px; transition: all 0.3s ease; }
+
+.spells-container .spell-card.cat-transfiguracao { border-left-color: #D9534F; background-color: rgba(217, 83, 79, 0.08); }
+.spells-container .spell-card.cat-feitico        { border-left-color: #F0AD4E; background-color: rgba(240, 173, 78, 0.08); }
+.spells-container .spell-card.cat-azaracao       { border-left-color: #EBD55B; background-color: rgba(235, 213, 91, 0.08); }
+.spells-container .spell-card.cat-maldicao-menor { border-left-color: #5CB85C; background-color: rgba(92, 184, 92, 0.08); }
+.spells-container .spell-card.cat-maldicao       { border-left-color: #5BC0DE; background-color: rgba(91, 192, 222, 0.08); }
+.spells-container .spell-card.cat-contra-feitico { border-left-color: #428BCA; background-color: rgba(66, 139, 202, 0.08); }
+.spells-container .spell-card.cat-cura           { border-left-color: #9E6EA1; background-color: rgba(158, 110, 161, 0.08); }
+
+/* Animação e Destaque de Feitiços via JS */
+.spell-highlight {
+    transition: transform 0.3s, box-shadow 0.3s !important;
+    transform: scale(1.02); box-shadow: 0 0 15px rgba(0,0,0,0.3) !important;
 }
 
-.cat-transfiguracao { border-left-color: #D9534F !important; background-color: rgba(217, 83, 79, 0.08) !important; }
-.cat-feitico        { border-left-color: #F0AD4E !important; background-color: rgba(240, 173, 78, 0.08) !important; }
-.cat-azaracao       { border-left-color: #EBD55B !important; background-color: rgba(235, 213, 91, 0.08) !important; }
-.cat-maldicao-menor { border-left-color: #5CB85C !important; background-color: rgba(92, 184, 92, 0.08) !important; }
-.cat-maldicao       { border-left-color: #5BC0DE !important; background-color: rgba(91, 192, 222, 0.08) !important; }
-.cat-contra-feitico { border-left-color: #428BCA !important; background-color: rgba(66, 139, 202, 0.08) !important; }
-.cat-cura           { border-left-color: #9E6EA1 !important; background-color: rgba(158, 110, 161, 0.08) !important; }
+/* Estilo Base dos Cabeçalhos Dinâmicos de Feitiços */
+.spell-category-header {
+    margin-top: 25px; margin-bottom: 10px; padding-bottom: 5px;
+    font-family: var(--font-serif); font-size: 1.2rem; font-weight: bold;
+    letter-spacing: 1px; text-transform: uppercase;
+}
+.header-transfiguracao { border-bottom: 2px solid #D9534F; color: #D9534F; }
+.header-feitico        { border-bottom: 2px solid #e69622; color: #e69622; }
+.header-azaracao       { border-bottom: 2px solid #d1b504; color: #d1b504; }
+.header-maldicao-menor { border-bottom: 2px solid #5CB85C; color: #5CB85C; }
+.header-maldicao       { border-bottom: 2px solid #279ebd; color: #279ebd; }
+.header-contra-feitico { border-bottom: 2px solid #428BCA; color: #428BCA; }
+.header-cura           { border-bottom: 2px solid #9E6EA1; color: #9E6EA1; }
 
 /* ==========================================================================
-   NAVEGAÇÃO DE FEITIÇOS (BADGES)
+   7. BADGES (NAVEGAÇÃO DE FEITIÇOS)
    ========================================================================== */
-.spell-nav-header {
-    margin-bottom: 20px;
-}
-
 .spell-nav-header h3 {
-    position: relative;
-    background: transparent;
-    border: none;
-    font-size: 1.6rem;
-    padding: 0;
-    top: 0;
-    left: 0;
-    margin-bottom: 5px;
-    display: flex;
-    align-items: baseline;
-    gap: 15px;
+    background: transparent; border: none; font-size: 1.6rem; padding: 0;
+    margin-bottom: 5px; display: flex; align-items: baseline; gap: 15px;
 }
 
-.total-spells-count {
-    font-family: var(--font-typewriter);
-    font-size: 0.9rem;
-    color: rgba(0,0,0,0.4);
-    font-weight: normal;
-}
+.total-spells-count { font-family: var(--font-typewriter); font-size: 0.9rem; color: rgba(0,0,0,0.4); font-weight: normal; }
 
 .spell-nav-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(0,0,0,0.1);
+    display: flex; flex-wrap: wrap; gap: 10px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.1);
 }
 
 .spell-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: 1px solid #ccc;
-    border-radius: 20px; /* Formato de pílula */
-    padding: 6px 14px;
-    font-family: var(--font-serif);
-    font-size: 0.75rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-transform: uppercase;
-    box-shadow: none;
-    transition: all 0.3s ease;
+    display: flex; align-items: center; gap: 6px; background: transparent;
+    border: 1px solid #ccc; border-radius: 20px; padding: 6px 14px;
+    font-family: var(--font-serif); font-size: 0.75rem; font-weight: bold;
+    cursor: pointer; text-transform: uppercase; box-shadow: none; transition: all 0.3s ease;
 }
 
-.spell-badge:hover {
-    transform: translateY(-2px);
-    background-color: rgba(255,255,255,0.5);
-}
+.spell-badge:hover { transform: translateY(-2px); background-color: rgba(255,255,255,0.5); }
+.spell-badge .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.spell-badge .count { font-family: var(--font-typewriter); opacity: 0.6; }
+.badge-inactive { opacity: 0.4; filter: grayscale(80%); }
 
-.spell-badge .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.spell-badge .count {
-    font-family: var(--font-typewriter);
-    opacity: 0.6;
-}
-
-/* Cores das Badges (Baseado no padrão de arquivamento) */
-.badge-transfiguracao { border-color: #D9534F; color: #D9534F; }
-.badge-transfiguracao .dot { background-color: #D9534F; }
-
-.badge-feitico { border-color: #e69622; color: #e69622; }
-.badge-feitico .dot { background-color: #e69622; }
-
-.badge-azaracao { border-color: #d1b504; color: #d1b504; }
-.badge-azaracao .dot { background-color: #d1b504; }
-
-.badge-maldicao-menor { border-color: #5CB85C; color: #5CB85C; }
-.badge-maldicao-menor .dot { background-color: #5CB85C; }
-
-.badge-maldicao { border-color: #279ebd; color: #279ebd; }
-.badge-maldicao .dot { background-color: #279ebd; }
-
-.badge-contra-feitico { border-color: #428BCA; color: #428BCA; }
-.badge-contra-feitico .dot { background-color: #428BCA; }
-
-.badge-cura { border-color: #9E6EA1; color: #9E6EA1; }
-.badge-cura .dot { background-color: #9E6EA1; }
+.badge-transfiguracao { border-color: #D9534F; color: #D9534F; } .badge-transfiguracao .dot { background-color: #D9534F; }
+.badge-feitico { border-color: #e69622; color: #e69622; } .badge-feitico .dot { background-color: #e69622; }
+.badge-azaracao { border-color: #d1b504; color: #d1b504; } .badge-azaracao .dot { background-color: #d1b504; }
+.badge-maldicao-menor { border-color: #5CB85C; color: #5CB85C; } .badge-maldicao-menor .dot { background-color: #5CB85C; }
+.badge-maldicao { border-color: #279ebd; color: #279ebd; } .badge-maldicao .dot { background-color: #279ebd; }
+.badge-contra-feitico { border-color: #428BCA; color: #428BCA; } .badge-contra-feitico .dot { background-color: #428BCA; }
+.badge-cura { border-color: #9E6EA1; color: #9E6EA1; } .badge-cura .dot { background-color: #9E6EA1; }
 
 /* ==========================================================================
-   ELEMENTOS INTERATIVOS (ROLAGENS)
+   8. UTILITÁRIOS DA MESA DE DADOS (DICE.JS) E SHEET.JS
    ========================================================================== */
 .rollable {
-    cursor: pointer;
-    color: var(--ink);
-    font-weight: bold;
-    text-decoration: underline dotted var(--ink);
-    transition: color 0.2s;
+    cursor: pointer; color: var(--ink); font-weight: bold;
+    text-decoration: underline dotted var(--ink); transition: color 0.2s;
+}
+.rollable:hover { color: var(--stamp-red); text-decoration: underline solid var(--stamp-red); }
+
+.roll-action-btn { width: 100%; font-size: 1.3rem; padding: 15px; margin-top: 15px; margin-bottom: 20px; font-family: var(--font-serif); }
+
+.dice-margin-bottom { margin-bottom: 10px; }
+.dice-group-flex { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.dice-text-center { width: 45px; text-align: center; }
+.dice-d-label { font-family: var(--font-serif); font-weight: bold; color: var(--ink); }
+.dice-spacer { width: 22px; }
+.dice-plus-sign { font-size: 1.2em; color: var(--ink); font-weight: bold; }
+
+.btn-dashed-full { width: 100%; font-size: 0.75rem; padding: 4px; border-style: dashed; }
+.btn-remove-dice { position: relative; top: 0; right: 0; margin: 0; width: 22px; height: 22px; font-size: 0.7rem; box-shadow: none; display: flex; align-items: center; justify-content: center; }
+
+/* Log de Rolagens Dinâmico */
+.text-teal { color: var(--muted-teal); }
+.text-red { color: var(--stamp-red); }
+.text-ink-bold { font-weight: bold; color: var(--ink); }
+.log-entry-details { font-size: 0.9em; opacity: 0.9; }
+.dice-grand-total { color: var(--stamp-red); font-size: 1.2em; margin-left: 5px; }
+
+/* Perícias (Sheet.js) */
+.skill-label-group { display: flex; align-items: center; gap: 6px; }
+.skill-total-val { color: var(--stamp-red); font-family: var(--font-typewriter); font-weight: bold; font-size: 0.9em; }
+
+/* ==========================================================================
+   9. INVENTÁRIO E FORMULÁRIOS PEQUENOS (SPELLS.JS)
+   ========================================================================== */
+.container-name-input { font-size: 1.2em; font-weight: bold; width: calc(100% - 30px); margin-bottom: 15px; }
+.items-list-flex { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
+.item-desc-textarea { resize: none; overflow: hidden; min-height: 28px; line-height: 1.4; padding-top: 5px; }
+.injury-name-input { width: 100px; }
+
+.btn-delete-small { position: relative; }
+.btn-add-item-small { align-self: flex-start; font-size: 0.8rem; padding: 6px 12px; }
+.btn-remove-item-small { padding: 2px 8px; margin-top: 2px; }
+
+/* ==========================================================================
+   10. CLASSES DOS ANIMAIS MÁGICOS (PETS.JS)
+   ========================================================================== */
+.pet-card {
+    background-color: rgba(243, 181, 98, 0.15); padding: 25px 20px 20px;
 }
 
-.rollable:hover {
-    color: var(--stamp-red);
-    text-decoration: underline solid var(--stamp-red);
+.pet-card-title {
+    margin-bottom: 20px; border-bottom: 1px dashed var(--ink);
+    font-family: var(--font-serif); letter-spacing: 2px;
 }
 
-.roll-action-btn {
-    width: 100%;
-    font-size: 1.3rem;
-    padding: 15px;
-    margin-top: 15px;
-    margin-bottom: 20px;
-    font-family: var(--font-serif);
+.pet-main-info-flex { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px; }
+
+.pet-photo-container {
+    flex: 0 0 120px; display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start;
 }
+
+.pet-photo-container .pet-photo-preview { width: 100%; object-fit: cover; background-color: var(--parchment); }
+.pet-upload-label { font-size: 0.7rem; padding: 4px 8px; text-align: center; margin: 0; width: 100%; }
+
+.pet-details-col { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 300px; }
+.pet-form-row { display: flex; flex-wrap: wrap; gap: 15px; }
+
+/* Distribuição flexível dos tamanhos das caixas do animal */
+.pet-label-name { flex: 3; min-width: 200px; }
+.pet-label-age { flex: 1; min-width: 100px; }
+.pet-label-size { flex: 2; min-width: 150px; }
+.pet-label-species { flex: 2; min-width: 180px; }
+.pet-label-origin { flex: 1; min-width: 160px; }
+.pet-label-sex { flex: 1; min-width: 140px; }
+.pet-label-class { flex: 1; min-width: 220px; }
+.pet-label-license { flex: 1; min-width: 220px; }
+
+.pet-stats-section { border-top: 1px dashed var(--ink); padding-top: 15px; margin-top: 5px; }
+.pet-stats-title { font-family: var(--font-serif); margin-bottom: 5px; font-size: 1rem; }
+.pet-stats-grid { margin-bottom: 15px; }

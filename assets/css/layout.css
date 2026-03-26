@@ -10,7 +10,6 @@
     text-align: center;
     margin-bottom: 30px;
     border: 6px double var(--ink);
-    /* Borda dupla imitando documentos antigos */
     padding: 30px 20px;
     position: relative;
     background-color: rgba(255, 255, 255, 0.15);
@@ -20,9 +19,7 @@
     background-image: url('../img/LogoMinisterio.png');
     background-repeat: no-repeat;
     background-position: calc(100% - 30px) center;
-    /* Alinhado à direita com margem */
     background-size: 120px;
-    /* Ajuste o tamanho do brasão aqui se necessário */
 }
 
 .header-titles h1 {
@@ -79,7 +76,6 @@
 
 .main-content {
     flex: 1;
-    /* Ocupa todo o espaço restante disponível */
     background-color: var(--parchment);
     border: 4px solid var(--ink);
     padding: 25px;
@@ -93,7 +89,6 @@
 .dice-widget {
     width: 320px;
     position: sticky;
-    /* Mantém a mesa de dados visível ao rolar a página */
     top: 20px;
     background-color: var(--parchment);
     border: 4px double var(--ink);
@@ -114,7 +109,7 @@
 }
 
 /* ==========================================================================
-   SISTEMAS DE GRID INTERNOS (COLUNAS)
+   SISTEMAS DE GRID INTERNOS (COLUNAS E ESTRUTURAS)
    ========================================================================== */
 .panel-grid {
     display: flex;
@@ -123,7 +118,6 @@
 }
 
 /* Grids que se adaptam automaticamente ao tamanho da tela (Responsividade) */
-.stats-grid,
 .wand-grid,
 .coins-grid {
     display: grid;
@@ -132,11 +126,9 @@
     margin-top: 15px;
 }
 
-/* Correção de Responsividade dos Atributos Base */
+/* Correção de Responsividade dos Atributos Base (Redundância removida) */
 .stats-grid {
     display: grid;
-    /* Reduz o tamanho mínimo para permitir que os 6 caibam em telas maiores, 
-       ou quebrem para a linha de baixo com elegância em telas menores */
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 15px;
     margin-top: 15px;
@@ -174,6 +166,23 @@
     margin-top: 10px;
 }
 
+/* Estrutura das Regras Pessoais (Extraída do HTML inline) */
+.rules-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.rule-label {
+    display: flex;
+    align-items: center;
+}
+
+.rule-input {
+    flex: 1;
+}
+
 /* ==========================================================================
    GRID DE INVENTÁRIO (COLUNAS) E ITENS
    ========================================================================== */
@@ -194,9 +203,9 @@
     }
 }
 
-/* Ajustes na mochila para funcionar bem no Grid */
-.inventory-container-card {
-    margin-top: 0 !important;
+/* Ajustes na mochila para funcionar bem no Grid (Especificidade aumentada para remover o !important) */
+#inventory-list .inventory-container-card {
+    margin-top: 0;
     display: flex;
     flex-direction: column;
 }
@@ -204,7 +213,7 @@
 /* Estrutura flexível para a linha de itens */
 .item-row {
     display: flex;
-    align-items: flex-start; /* Alinha tudo ao topo para acomodar as múltiplas linhas da descrição */
+    align-items: flex-start;
     gap: 8px;
     margin-bottom: 8px;
     flex-wrap: nowrap;

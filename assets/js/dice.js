@@ -3,6 +3,10 @@
  * Motor de Rolagem de Múltiplos Dados e Registro Oficial (Log)
  */
 
+/**
+ * Inicializa a mesa de rolagens, configurando os eventos para adição de dados,
+ * limpeza do histórico e rolagens rápidas (1-click) a partir da ficha.
+ */
 export function setupDiceRoller() {
     const rollBtn = document.getElementById('btn-roll');
     const clearLogBtn = document.getElementById('btn-clear-log');
@@ -10,7 +14,7 @@ export function setupDiceRoller() {
     const groupsContainer = document.getElementById('dice-groups-container');
 
     // Lógica para adicionar até 2 tipos de dados adicionais
-    if (addDiceBtn) {
+    if (addDiceBtn && groupsContainer) {
         addDiceBtn.addEventListener('click', () => {
             const currentGroups = groupsContainer.querySelectorAll('.dice-group').length;
             
@@ -21,14 +25,14 @@ export function setupDiceRoller() {
             }
             
             const newGroup = document.createElement('div');
-            newGroup.className = 'dice-group extra-dice';
-            newGroup.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-bottom: 8px; animation: fadeInForm 0.3s ease;';
+            // SRP: Estilos inline removidos. Utilização de classes CSS.
+            newGroup.className = 'dice-group extra-dice dice-group-flex animated-fade-in';
             
             newGroup.innerHTML = `
-                <span style="font-size: 1.2em; color: var(--ink); font-weight: bold;">+</span>
-                <input type="number" class="ink-input short-input dice-qty" value="1" min="1" max="20" style="width: 45px; text-align: center;">
-                <span style="font-family: var(--font-serif); font-weight: bold;">d</span>
-                <select class="ink-select dice-type" style="flex: 1;">
+                <span class="dice-plus-sign">+</span>
+                <input type="number" class="ink-input short-input dice-qty dice-text-center" value="1" min="1" max="20" aria-label="Quantidade de Dados Extras">
+                <span class="dice-d-label">d</span>
+                <select class="ink-select dice-type flex-1" aria-label="Tipo de Dado Extra">
                     <option value="2">2</option>
                     <option value="4">4</option>
                     <option value="6" selected>6</option>
@@ -41,22 +45,23 @@ export function setupDiceRoller() {
                     <option value="50">50</option>
                     <option value="100">100</option>
                 </select>
-                <button class="delete-btn remove-dice" style="position: relative; top: 0; right: 0; margin: 0; width: 22px; height: 22px; font-size: 0.7rem; box-shadow: none;" title="Remover Dado">X</button>
+                <button class="delete-btn btn-remove-dice" aria-label="Remover Dado Extra" title="Remover Dado">X</button>
             `;
             
             // Ouvinte para remover o dado extra
-            newGroup.querySelector('.remove-dice').addEventListener('click', () => {
-                newGroup.remove();
-                addDiceBtn.disabled = false;
-                addDiceBtn.style.opacity = '1';
-            });
+            const removeBtn = newGroup.querySelector('.remove-dice');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', () => {
+                    newGroup.remove();
+                    addDiceBtn.disabled = false;
+                });
+            }
             
             groupsContainer.appendChild(newGroup);
             
-            // Se atingiu o limite de 3 dados (1 principal + 2 extras), desabilita visualmente o botão
+            // Se atingiu o limite de 3 dados, desativa o botão (o visual é tratado pelo CSS :disabled)
             if (currentGroups + 1 >= 3) {
                 addDiceBtn.disabled = true;
-                addDiceBtn.style.opacity = '0.5';
             }
         });
     }
@@ -93,13 +98,11 @@ export function setupDiceRoller() {
                 modifier += profValue;
             }
 
-            // [SEGURANÇA BUROCRÁTICA] Limpa dados extras para evitar que um dado de dano antigo suje a rolagem de atributo.
+            // [SEGURANÇA BUROCRÁTICA] Limpa dados extras para evitar contaminação da rolagem
             document.querySelectorAll('.extra-dice').forEach(el => el.remove());
             if (addDiceBtn) {
                 addDiceBtn.disabled = false;
-                addDiceBtn.style.opacity = '1';
             }
-
 
             const diceMod = document.getElementById('dice-mod');
             if (diceMod) diceMod.value = modifier;
@@ -112,6 +115,11 @@ export function setupDiceRoller() {
     });
 }
 
+/**
+ * Executa o cálculo matemático, processa vantagens/desvantagens 
+ * e injeta o resultado formatado no Registo Oficial (Log).
+ * * @param {string|null} customTitle - Título opcional para a rolagem (ex: "Status: Corpo").
+ */
 function executeRoll(customTitle = null) {
     const groups = document.querySelectorAll('.dice-group');
     if (groups.length === 0) return;
@@ -134,12 +142,13 @@ function executeRoll(customTitle = null) {
         const qtyInput = group.querySelector('.dice-qty');
         const typeInput = group.querySelector('.dice-type');
         
-        const qty = Math.min(parseInt(qtyInput ? qtyInput.value : 1) || 1, 20); // Limite 20 dados por grupo para não travar o browser
+        // Limite 20 dados por grupo para não travar o browser (Eficiência de Desempenho)
+        const qty = Math.min(parseInt(qtyInput ? qtyInput.value : 1) || 1, 20); 
         const sides = parseInt(typeInput ? typeInput.value : 20) || 20;
         
         let groupResults = [];
         
-        for(let i=0; i < qty; i++) {
+        for(let i = 0; i < qty; i++) {
             let roll1 = Math.floor(Math.random() * sides) + 1;
             let finalRoll = roll1;
             let rollStr = `${roll1}`;
@@ -149,10 +158,10 @@ function executeRoll(customTitle = null) {
                 let roll2 = Math.floor(Math.random() * sides) + 1;
                 if (advState === 'adv') {
                     finalRoll = Math.max(roll1, roll2);
-                    rollStr = `<span style="color:var(--muted-teal)">[${roll1}, ${roll2}]</span> ➔ ${finalRoll}`;
+                    rollStr = `<span class="text-teal">[${roll1}, ${roll2}]</span> ➔ ${finalRoll}`;
                 } else {
                     finalRoll = Math.min(roll1, roll2);
-                    rollStr = `<span style="color:var(--stamp-red)">[${roll1}, ${roll2}]</span> ➔ ${finalRoll}`;
+                    rollStr = `<span class="text-red">[${roll1}, ${roll2}]</span> ➔ ${finalRoll}`;
                 }
             }
             
@@ -163,7 +172,7 @@ function executeRoll(customTitle = null) {
         grandTotal += groupTotal;
         
         const groupStr = groupResults.map(r => r.str).join(' + ');
-        // Encapsula em parênteses se rolou mais de um dado naquele grupo para organização visual no Log
+        // Encapsula em parênteses se rolou mais de um dado para organização visual
         allRollTexts.push(qty > 1 ? `(${groupStr})` : groupStr);
         rollExpressions.push(`${qty}d${sides}`);
     });
@@ -171,13 +180,13 @@ function executeRoll(customTitle = null) {
     // Aplica o modificador final ao Grande Total
     grandTotal += mod;
     
-    // Tratamento de formatação visual do Registo (Log)
+    // Tratamento de formatação visual do Registo (Log) usando classes CSS
     const modText = mod !== 0 ? (mod > 0 ? ` + ${mod}` : ` - ${Math.abs(mod)}`) : '';
     const title = customTitle || `${rollExpressions.join(' + ')}${modText !== '' ? ` (${modText})` : ''}`;
-    const resultText = allRollTexts.join(' <span style="font-weight:bold; color:var(--ink);">+</span> ');
+    const resultText = allRollTexts.join(' <span class="text-ink-bold">+</span> ');
 
     const li = document.createElement('li');
-    li.innerHTML = `<strong>${title}:</strong><br><span style="font-size:0.9em; opacity:0.9;">${resultText}${modText}</span> = <strong style="color:var(--stamp-red); font-size: 1.2em; margin-left:5px;">${grandTotal}</strong>`;
+    li.innerHTML = `<strong>${title}:</strong><br><span class="log-entry-details">${resultText}${modText}</span> = <strong class="dice-grand-total">${grandTotal}</strong>`;
     
     log.prepend(li);
 }

@@ -3,6 +3,9 @@
  * Gerenciamento de Animais de Estimação / Familiares
  */
 
+/**
+ * Inicializa o ouvinte de eventos para adicionar novos animais à ficha.
+ */
 export function setupPets() {
     const btnAddPet = document.getElementById('btn-add-pet');
     if (btnAddPet) {
@@ -10,8 +13,14 @@ export function setupPets() {
     }
 }
 
+/**
+ * Cria e injeta o cartão de registro de um novo animal mágico.
+ * @param {Object|null} data - Dados do animal para carregamento (Load do JSON). Se null, cria vazio.
+ */
 export function addPet(data = null) {
     const container = document.getElementById('pets-container');
+    if (!container) return; // Defensiva: Garante que o container existe
+
     const currentPets = container.querySelectorAll('.pet-card').length;
 
     // Regra de Negócio: Limite de 3 animais
@@ -22,51 +31,50 @@ export function addPet(data = null) {
 
     const petId = Date.now() + Math.floor(Math.random() * 1000);
     const card = document.createElement('div');
-    card.className = 'bureaucracy-box pet-card';
-    card.dataset.id = petId;
-    card.style.backgroundColor = 'rgba(243, 181, 98, 0.15)'; 
-    card.style.padding = '25px 20px 20px';
     
-    // Aplicando Flexbox por linhas para garantir responsividade perfeita sem sobreposição
+    // SRP Aplicado: O fundo amarelo claro e os paddings foram movidos para a classe CSS .pet-card
+    card.className = 'bureaucracy-box pet-card animated-fade-in';
+    card.dataset.id = petId;
+    
     card.innerHTML = `
-        <button class="delete-btn" title="Remover Registro">X</button>
-        <h4 style="margin-bottom: 20px; border-bottom: 1px dashed var(--ink); font-family: var(--font-serif); letter-spacing: 2px;">- REGISTRO DE ANIMAL -</h4>
+        <button class="delete-btn" aria-label="Remover Registro de Animal" title="Remover Registro">X</button>
+        <h4 class="pet-card-title">- REGISTRO DE ANIMAL -</h4>
         
-        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
+        <div class="pet-main-info-flex">
             
-            <div class="photo-upload" style="flex: 0 0 120px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
-                <img class="pet-photo-preview" src="${data?.photo || ''}" style="${data?.photo ? 'display:block;' : 'display:none;'} width: 100%; object-fit: cover; border: 2px solid var(--ink); margin-bottom: 10px; background-color: var(--parchment);">
-                <label for="pet-photo-${petId}" class="upload-label" style="font-size: 0.7rem; padding: 4px 8px; text-align: center; margin: 0; width: 100%;">Anexar Foto</label>
-                <input type="file" id="pet-photo-${petId}" class="pet-photo-input" accept="image/*" style="display: none;">
+            <div class="pet-photo-container">
+                <img class="pet-photo-preview ${data?.photo ? 'photo-preview-active' : 'hidden'}" src="${data?.photo || ''}" alt="Foto do Animal">
+                <label for="pet-photo-${petId}" class="upload-label pet-upload-label" tabindex="0">Anexar Foto</label>
+                <input type="file" id="pet-photo-${petId}" class="pet-photo-input hidden" accept="image/*" tabindex="-1">
             </div>
             
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 300px;">
+            <div class="pet-details-col">
                 
-                <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                    <label style="flex: 3; min-width: 200px;">Nome: 
-                        <input type="text" class="ink-input pet-name" value="${data?.name || ''}">
+                <div class="pet-form-row">
+                    <label class="pet-label-name">Nome: 
+                        <input type="text" class="ink-input pet-name" value="${data?.name || ''}" aria-label="Nome do Animal">
                     </label>
-                    <label style="flex: 1; min-width: 100px;">Idade: 
-                        <input type="number" class="ink-input short-input pet-age" value="${data?.age || ''}">
+                    <label class="pet-label-age">Idade: 
+                        <input type="number" class="ink-input short-input pet-age" value="${data?.age || ''}" aria-label="Idade do Animal">
                     </label>
-                    <label style="flex: 2; min-width: 150px;">Tamanho/Peso: 
-                        <input type="text" class="ink-input pet-size" value="${data?.size || ''}">
+                    <label class="pet-label-size">Tamanho/Peso: 
+                        <input type="text" class="ink-input pet-size" value="${data?.size || ''}" aria-label="Tamanho ou Peso do Animal">
                     </label>
                 </div>
                 
-                <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                    <label style="flex: 2; min-width: 180px;">Espécie: 
-                        <input type="text" class="ink-input pet-species" value="${data?.species || ''}">
+                <div class="pet-form-row">
+                    <label class="pet-label-species">Espécie: 
+                        <input type="text" class="ink-input pet-species" value="${data?.species || ''}" aria-label="Espécie do Animal">
                     </label>
-                    <label style="flex: 1; min-width: 160px;">Origem:
-                        <select class="ink-select pet-origin">
+                    <label class="pet-label-origin">Origem:
+                        <select class="ink-select pet-origin" aria-label="Origem do Animal">
                             <option value="Mágica" ${data?.origin === 'Mágica' ? 'selected' : ''}>Mágica</option>
                             <option value="Não Mágica" ${data?.origin === 'Não Mágica' ? 'selected' : ''}>Não Mágica</option>
                             <option value="Desconhecida" ${data?.origin === 'Desconhecida' ? 'selected' : ''}>Desconhecida</option>
                         </select>
                     </label>
-                    <label style="flex: 1; min-width: 140px;">Sexo:
-                        <select class="ink-select pet-sex">
+                    <label class="pet-label-sex">Sexo:
+                        <select class="ink-select pet-sex" aria-label="Sexo do Animal">
                             <option value="Não aplicável" ${data?.sex === 'Não aplicável' ? 'selected' : ''}>Não aplic.</option>
                             <option value="Fêmea" ${data?.sex === 'Fêmea' ? 'selected' : ''}>Fêmea</option>
                             <option value="Macho" ${data?.sex === 'Macho' ? 'selected' : ''}>Macho</option>
@@ -74,9 +82,9 @@ export function addPet(data = null) {
                     </label>
                 </div>
                 
-                <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                    <label style="flex: 1; min-width: 220px;">Classif. Ministerial:
-                        <select class="ink-select pet-class">
+                <div class="pet-form-row">
+                    <label class="pet-label-class">Classif. Ministerial:
+                        <select class="ink-select pet-class" aria-label="Classificação Ministerial do Animal">
                             <option value="X" ${data?.classification === 'X' ? 'selected' : ''}>X (Tedioso)</option>
                             <option value="XX" ${data?.classification === 'XX' ? 'selected' : ''}>XX (Inofensivo)</option>
                             <option value="XXX" ${data?.classification === 'XXX' ? 'selected' : ''}>XXX (Bruxo competente)</option>
@@ -84,8 +92,8 @@ export function addPet(data = null) {
                             <option value="XXXXX" ${data?.classification === 'XXXXX' ? 'selected' : ''}>XXXXX (Mata bruxos)</option>
                         </select>
                     </label>
-                    <label style="flex: 1; min-width: 220px;">Licença Ministerial:
-                        <select class="ink-select pet-license">
+                    <label class="pet-label-license">Licença Ministerial:
+                        <select class="ink-select pet-license" aria-label="Licença Ministerial do Animal">
                             <option value="Inválida" ${data?.license === 'Inválida' ? 'selected' : ''}>Inválida</option>
                             <option value="Em falta" ${data?.license === 'Em falta' ? 'selected' : ''}>Em falta</option>
                             <option value="Vigente" ${data?.license === 'Vigente' ? 'selected' : ''}>Vigente</option>
@@ -96,38 +104,53 @@ export function addPet(data = null) {
             </div>
         </div>
 
-        <div style="border-top: 1px dashed var(--ink); padding-top: 15px; margin-top: 5px;">
-            <h5 style="font-family: var(--font-serif); margin-bottom: 5px; font-size: 1rem;">Atributos Base</h5>
+        <div class="pet-stats-section">
+            <h5 class="pet-stats-title">Atributos Base</h5>
             
-            <div class="stats-grid" style="margin-bottom: 15px;">
-                <label>Corpo: <input type="number" class="ink-input pet-corpo" value="${data?.stats?.corpo || 0}"></label>
-                <label>Destreza: <input type="number" class="ink-input pet-destreza" value="${data?.stats?.destreza || 0}"></label>
-                <label>Vitalidade: <input type="number" class="ink-input pet-vitalidade" value="${data?.stats?.vitalidade || 0}"></label>
-                <label>Instinto: <input type="number" class="ink-input pet-instinto" value="${data?.stats?.instinto || 0}"></label>
+            <div class="stats-grid pet-stats-grid">
+                <label>Corpo: <input type="number" class="ink-input pet-corpo" value="${data?.stats?.corpo || 0}" aria-label="Atributo Corpo do Animal"></label>
+                <label>Destreza: <input type="number" class="ink-input pet-destreza" value="${data?.stats?.destreza || 0}" aria-label="Atributo Destreza do Animal"></label>
+                <label>Vitalidade: <input type="number" class="ink-input pet-vitalidade" value="${data?.stats?.vitalidade || 0}" aria-label="Atributo Vitalidade do Animal"></label>
+                <label>Instinto: <input type="number" class="ink-input pet-instinto" value="${data?.stats?.instinto || 0}" aria-label="Atributo Instinto do Animal"></label>
             </div>
         </div>
 
-        <textarea class="ink-textarea pet-desc" placeholder="Descrição, comportamento, alimentação e peculiaridades...">${data?.description || ''}</textarea>
+        <textarea class="ink-textarea pet-desc" placeholder="Descrição, comportamento, alimentação e peculiaridades..." aria-label="Descrição e peculiaridades do Animal">${data?.description || ''}</textarea>
     `;
 
     // Lógica para Remover Animal
-    card.querySelector('.delete-btn').addEventListener('click', () => card.remove());
+    const deleteBtn = card.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            // Em vez de remover de imediato, criamos uma pequena animação de fade-out
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.95)';
+            card.style.transition = 'all 0.3s ease';
+            setTimeout(() => card.remove(), 300);
+        });
+    }
 
-    // Lógica para Upload da Foto Isolada do Pet
+    // Lógica para Upload da Foto Isolada do Pet (SRP aplicado ao usar a classe photo-preview-active)
     const fileInput = card.querySelector('.pet-photo-input');
     const imgPreview = card.querySelector('.pet-photo-preview');
     
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                imgPreview.src = event.target.result;
-                imgPreview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+    if (fileInput && imgPreview) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imgPreview.src = event.target.result;
+                    imgPreview.classList.remove('hidden');
+                    imgPreview.classList.add('photo-preview-active');
+                };
+                reader.onerror = function() {
+                    console.error('Erro ao ler a foto do animal.');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 
     container.appendChild(card);
 }

@@ -1,10 +1,10 @@
 /* ==========================================================================
    MODULES.CSS - MINISTÉRIO DA MAGIA
-   Widgets e Componentes Específicos Isolados
+   Widgets e Componentes Específicos Isolados e Animações Complexas
    ========================================================================== */
 
 /* ==========================================================================
-   MESA LATERAL: HISTÓRICO DE ROLAGENS (LOG)
+   1. MESA LATERAL: HISTÓRICO DE ROLAGENS (LOG)
    ========================================================================== */
 .dice-log-container {
     height: 280px;
@@ -60,7 +60,7 @@
 }
 
 /* ==========================================================================
-   ECONOMIA: BALCÃO DE CÂMBIO DE GRINGOTES
+   2. ECONOMIA: BALCÃO DE CÂMBIO DE GRINGOTES
    ========================================================================== */
 .gringotts-exchange h3 {
     border-bottom: 1px solid var(--ink);
@@ -150,7 +150,7 @@
 }
 
 /* ==========================================================================
-   DIÁRIO DE CAMPO (EDITOR DE TEXTO RICO)
+   3. DIÁRIO DE CAMPO (EDITOR DE TEXTO RICO)
    ========================================================================== */
 .editor-toolbar {
     display: flex;
@@ -183,90 +183,65 @@
 }
 
 /* ==========================================================================
-   WWRRPG - ANIMAÇÕES DE MAGIA
+   4. SISTEMA DE ANIMAÇÕES DE ALTA PERFORMANCE (GPU ACCELERATED)
    ========================================================================== */
 
-/* Definição da Animação de Entrada do Feitiço */
+/* Entrada de Feitiços */
 @keyframes spellSlideEntrance {
     0% {
         opacity: 0;
-        /* Começa 50px acima da sua posição final */
-        transform: translateY(-50px) scale(0.95); 
+        transform: translateY(-50px) scale(0.95) translateZ(0); 
     }
     100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0) scale(1) translateZ(0);
     }
 }
 
-/* Classe que aplica a animação */
 .spell-animate-entrance {
-    /* ease-out para uma desaceleração suave ao chegar na posição final */
     animation: spellSlideEntrance 0.5s ease-out forwards;
-    
-    /* Garante que o card fique acima dos separadores durante o deslize */
     z-index: 1; 
     position: relative;
-    
-    /* Evita cliques acidentais enquanto anima */
     pointer-events: none; 
+    will-change: transform, opacity; /* Aviso prévio ao navegador para usar GPU */
 }
 
-/* ==========================================================================
-   ANIMAÇÕES DE INVENTÁRIO (ENTRADA E SAÍDA)
-   ========================================================================== */
-
-/* Animação de surgir de baixo */
+/* Entrada de Itens do Inventário */
 @keyframes slideUpFadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(20px) translateZ(0); }
+    100% { opacity: 1; transform: translateY(0) translateZ(0); }
 }
 
-/* Animação de cair e desaparecer (para exclusão) */
-@keyframes slideDownFadeOut {
-    0% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-}
-
-/* Classes utilitárias que o JS vai injetar */
 .animate-entrance {
     animation: slideUpFadeIn 0.3s ease-out forwards;
+    will-change: transform, opacity;
+}
+
+/* Saída de Itens do Inventário */
+@keyframes slideDownFadeOut {
+    0% { opacity: 1; transform: translateY(0) translateZ(0); }
+    100% { opacity: 0; transform: translateY(20px) translateZ(0); }
 }
 
 .animate-exit {
     animation: slideDownFadeOut 0.3s ease-in forwards;
-    pointer-events: none; /* Evita cliques enquanto desaparece */
+    pointer-events: none; 
+    will-change: transform, opacity;
 }
 
-/* ==========================================================================
-   ANIMAÇÕES DE SAÍDA (MINISTÉRIO DA MAGIA)
-   ========================================================================== */
-
-/* Animação de saída para feitiços: fade out e encolhimento rápido */
+/* Saída de Feitiços (Exclusão com encolhimento de espaço) */
 @keyframes spellFadeOut {
     from {
         opacity: 1;
-        transform: scale(1);
-        max-height: 500px; /* Valor alto o suficiente para cobrir o tamanho do card */
+        transform: scale(1) translateZ(0);
+        max-height: 500px; 
         margin-bottom: 15px;
         padding: 20px;
         border-width: 2px;
     }
     to {
         opacity: 0;
-        transform: scale(0.9);
+        transform: scale(0.9) translateZ(0);
         max-height: 0;
         margin-bottom: 0;
         padding-top: 0;
@@ -276,11 +251,10 @@
     }
 }
 
-/* Classe aplicada via JS para iniciar a animação */
-.spell-card-exit {
+/* SRP/Manutenibilidade: Aumentada a especificidade em vez de usar !important */
+.spell-card.spell-card-exit {
     animation: spellFadeOut 0.3s ease-in forwards;
-    /* Impede cliques enquanto anima */
     pointer-events: none; 
-    /* Garante que o elemento não cause scrollbar durante a animação */
-    overflow: hidden !important; 
+    overflow: hidden; 
+    will-change: transform, opacity, max-height;
 }

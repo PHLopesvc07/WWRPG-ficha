@@ -7,112 +7,130 @@ import { updateSkillBonuses } from './sheet.js';
 import { sortSpells, addInventoryContainer, addInventoryItem, addSpellCard } from './spells.js';
 import { addPet } from './pets.js';
 
+/**
+ * ============================================================================
+ * HELPER FUNCTIONS (Funções Utilitárias para Robustez e Código Limpo - DRY)
+ * ============================================================================
+ */
+const getVal = (id) => document.getElementById(id)?.value || '';
+const getCheck = (id) => document.getElementById(id)?.checked || false;
+const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+const setCheck = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val; };
+
+/**
+ * Inicializa os ouvintes de eventos para importação, exportação e reset da ficha.
+ */
 export function setupPersistence() {
-    document.getElementById('btn-export').addEventListener('click', exportData);
-    document.getElementById('file-import').addEventListener('change', importData);
-    document.getElementById('btn-reset').addEventListener('click', () => {
-        if(confirm("Tem certeza que deseja apagar todo o registro? Esta ação é irreversível.")) {
-            location.reload();
-        }
-    });
+    const btnExport = document.getElementById('btn-export');
+    const fileImport = document.getElementById('file-import');
+    const btnReset = document.getElementById('btn-reset');
+
+    if (btnExport) btnExport.addEventListener('click', exportData);
+    if (fileImport) fileImport.addEventListener('change', importData);
+    
+    if (btnReset) {
+        btnReset.addEventListener('click', () => {
+            if(confirm("Tem certeza que deseja apagar todo o registro? Esta ação é irreversível.")) {
+                location.reload();
+            }
+        });
+    }
 }
 
+/**
+ * Coleta todos os dados do DOM, empacota num objeto JSON estruturado 
+ * e aciona o download (ou a API File System Access) para o utilizador.
+ */
 async function exportData() {
-    // 1. Coleta todos os dados da ficha
+    // 1. Coleta todos os dados da ficha de forma segura
     const data = {
         profile: {
-            photo: document.getElementById('char-photo-preview').src,
-            name: document.getElementById('char-name').value,
-            blood: document.getElementById('blood-status').value,
-            school: document.getElementById('school').value,
-            age: document.getElementById('age').value,
-            hw: document.getElementById('height-weight').value,
-            languages: document.getElementById('languages').value,
-            profession: document.getElementById('profession').value,
-            family: document.getElementById('family-select').value
+            photo: document.getElementById('char-photo-preview')?.src || '',
+            name: getVal('char-name'),
+            blood: getVal('blood-status'),
+            school: getVal('school'),
+            age: getVal('age'),
+            hw: getVal('height-weight'),
+            languages: getVal('languages'),
+            profession: getVal('profession'),
+            family: getVal('family-select')
         },
         stats: {
-            corpo: document.getElementById('stat-corpo').value,
-            destreza: document.getElementById('stat-destreza').value,
-            inteligencia: document.getElementById('stat-inteligencia').value,
-            sabedoria: document.getElementById('stat-sabedoria').value,
-            vitalidade: document.getElementById('stat-vitalidade').value,
-            carisma: document.getElementById('stat-carisma').value
+            corpo: getVal('stat-corpo'),
+            destreza: getVal('stat-destreza'),
+            inteligencia: getVal('stat-inteligencia'),
+            sabedoria: getVal('stat-sabedoria'),
+            vitalidade: getVal('stat-vitalidade'),
+            carisma: getVal('stat-carisma')
         },
         skills: Array.from(document.querySelectorAll('.skill-prof')).map(s => ({
             name: s.dataset.skill,
             value: s.value
         })),
         injuries: {
-            leve: { c: document.getElementById('inj-leve-curr').value, m: document.getElementById('inj-leve-max').value },
-            media: { c: document.getElementById('inj-media-curr').value, m: document.getElementById('inj-media-max').value },
-            pesada: { c: document.getElementById('inj-pesada-curr').value, m: document.getElementById('inj-pesada-max').value },
+            leve: { c: getVal('inj-leve-curr'), m: getVal('inj-leve-max') },
+            media: { c: getVal('inj-media-curr'), m: getVal('inj-media-max') },
+            pesada: { c: getVal('inj-pesada-curr'), m: getVal('inj-pesada-max') },
             custom: Array.from(document.querySelectorAll('.custom-injury')).map(row => ({
-                name: row.querySelector('input[type="text"]').value,
-                c: row.querySelector('.curr').value,
-                m: row.querySelector('.max').value
+                name: row.querySelector('.injury-name-input')?.value || '',
+                c: row.querySelector('.curr')?.value || '',
+                m: row.querySelector('.max')?.value || ''
             }))
         },
         magic: {
-            wand: { l: document.getElementById('wand-length').value, w: document.getElementById('wand-wood').value, c: document.getElementById('wand-core').value },
+            wand: { l: getVal('wand-length'), w: getVal('wand-wood'), c: getVal('wand-core') },
             rules: [
-                document.getElementById('rule-1').value,
-                document.getElementById('rule-2').value,
-                document.getElementById('rule-3').value,
-                document.getElementById('rule-4').value,
-                document.getElementById('rule-5').value
+                getVal('rule-1'), getVal('rule-2'), getVal('rule-3'), getVal('rule-4'), getVal('rule-5')
             ],
             rulesState: [
-                document.getElementById('rule-check-1').checked,
-                document.getElementById('rule-check-2').checked,
-                document.getElementById('rule-check-3').checked,
-                document.getElementById('rule-check-4').checked,
-                document.getElementById('rule-check-5').checked
+                getCheck('rule-check-1'), getCheck('rule-check-2'), getCheck('rule-check-3'), 
+                getCheck('rule-check-4'), getCheck('rule-check-5')
             ],
-            traits: document.getElementById('traits-text').value,
+            traits: getVal('traits-text'),
             spells: Array.from(document.querySelectorAll('.spell-card')).map(card => ({
-                name: card.querySelector('.spell-name').value,
-                cat: card.querySelector('.spell-cat').value,
-                lvl: card.querySelector('.spell-lvl').value,
-                desc: card.querySelector('.spell-desc').value
+                name: card.querySelector('.spell-name')?.value || '',
+                cat: card.querySelector('.spell-cat')?.value || '',
+                lvl: card.querySelector('.spell-lvl')?.value || '',
+                desc: card.querySelector('.spell-desc')?.value || ''
             }))
         },
         inventory: {
-            coins: { g: document.getElementById('coin-g').value, s: document.getElementById('coin-s').value, k: document.getElementById('coin-k').value },
+            coins: { g: getVal('coin-g'), s: getVal('coin-s'), k: getVal('coin-k') },
             containers: Array.from(document.querySelectorAll('.inventory-container-card')).map(cont => ({
-                name: cont.querySelector('.container-name').value,
+                name: cont.querySelector('.container-name')?.value || '',
                 items: Array.from(cont.querySelectorAll('.item-row')).map(item => ({
-                    qtd: item.querySelector('.item-qtd').value,
-                    name: item.querySelector('.item-name').value,
-                    desc: item.querySelector('.item-desc').value
+                    qtd: item.querySelector('.item-qtd')?.value || '',
+                    name: item.querySelector('.item-name')?.value || '',
+                    desc: item.querySelector('.item-desc')?.value || ''
                 }))
             }))
         },
         pets: Array.from(document.querySelectorAll('.pet-card')).map(card => ({
-            photo: card.querySelector('.pet-photo-preview').src,
-            name: card.querySelector('.pet-name').value,
-            age: card.querySelector('.pet-age').value,
-            size: card.querySelector('.pet-size').value,
-            species: card.querySelector('.pet-species').value,
-            origin: card.querySelector('.pet-origin').value,
-            sex: card.querySelector('.pet-sex').value,
-            classification: card.querySelector('.pet-class').value,
-            license: card.querySelector('.pet-license').value,
+            photo: card.querySelector('.pet-photo-preview')?.src || '',
+            name: card.querySelector('.pet-name')?.value || '',
+            age: card.querySelector('.pet-age')?.value || '',
+            size: card.querySelector('.pet-size')?.value || '',
+            species: card.querySelector('.pet-species')?.value || '',
+            origin: card.querySelector('.pet-origin')?.value || '',
+            sex: card.querySelector('.pet-sex')?.value || '',
+            classification: card.querySelector('.pet-class')?.value || '',
+            license: card.querySelector('.pet-license')?.value || '',
             stats: {
-                corpo: card.querySelector('.pet-corpo').value,
-                destreza: card.querySelector('.pet-destreza').value,
-                vitalidade: card.querySelector('.pet-vitalidade').value,
-                instinto: card.querySelector('.pet-instinto').value
+                corpo: card.querySelector('.pet-corpo')?.value || 0,
+                destreza: card.querySelector('.pet-destreza')?.value || 0,
+                vitalidade: card.querySelector('.pet-vitalidade')?.value || 0,
+                instinto: card.querySelector('.pet-instinto')?.value || 0
             },
-            description: card.querySelector('.pet-desc').value
+            description: card.querySelector('.pet-desc')?.value || ''
         })),
-        notes: document.getElementById('notes-editor').innerHTML
+        notes: document.getElementById('notes-editor')?.innerHTML || ''
     };
 
     const jsonString = JSON.stringify(data, null, 2);
     const suggestedFileName = `${data.profile.name || 'Bruxo'}_Ficha.json`;
 
     try {
+        // Tenta usar a File System Access API (Mais moderno e limpo)
         if ('showSaveFilePicker' in window) {
             const handle = await window.showSaveFilePicker({
                 suggestedName: suggestedFileName,
@@ -126,6 +144,7 @@ async function exportData() {
             await writable.close();
             alert('Ficha carimbada e atualizada com sucesso!');
         } else {
+            // Fallback para navegadores mais antigos
             const blob = new Blob([jsonString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -142,6 +161,11 @@ async function exportData() {
     }
 }
 
+/**
+ * Lê o ficheiro JSON selecionado pelo utilizador, faz o parse (análise)
+ * e injeta os dados de volta nos elementos visuais e lógicos do DOM.
+ * @param {Event} e - Evento de alteração do input file.
+ */
 function importData(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -154,123 +178,154 @@ function importData(e) {
             // 1. Profile
             if(data.profile.photo && !data.profile.photo.includes(window.location.host)) {
                 const img = document.getElementById('char-photo-preview');
-                img.src = data.profile.photo;
-                img.style.display = 'block';
-                img.style.maxWidth = '150px';
-                img.style.border = '2px solid var(--ink)';
+                if (img) {
+                    img.src = data.profile.photo;
+                    // SRP: Estilos inline removidos, utilizando as classes CSS
+                    img.classList.remove('hidden');
+                    img.classList.add('photo-preview-active');
+                }
             }
-            document.getElementById('char-name').value = data.profile.name || "";
-            document.getElementById('blood-status').value = data.profile.blood || "puro";
-            document.getElementById('school').value = data.profile.school || "";
-            document.getElementById('age').value = data.profile.age || "";
-            document.getElementById('height-weight').value = data.profile.hw || "";
-            document.getElementById('languages').value = data.profile.languages || "";
-            document.getElementById('profession').value = data.profile.profession || "";
+            
+            setVal('char-name', data.profile.name || "");
+            setVal('blood-status', data.profile.blood || "puro");
+            setVal('school', data.profile.school || "");
+            setVal('age', data.profile.age || "");
+            setVal('height-weight', data.profile.hw || "");
+            setVal('languages', data.profile.languages || "");
+            setVal('profession', data.profile.profession || "");
             
             const famSelect = document.getElementById('family-select');
-            famSelect.value = data.profile.family || "";
-            famSelect.dispatchEvent(new Event('change'));
+            if (famSelect) {
+                famSelect.value = data.profile.family || "";
+                famSelect.dispatchEvent(new Event('change'));
+            }
 
             // 2. Stats
-            document.getElementById('stat-corpo').value = data.stats.corpo || 0;
-            document.getElementById('stat-destreza').value = data.stats.destreza || 0;
-            document.getElementById('stat-inteligencia').value = data.stats.inteligencia || 0;
-            document.getElementById('stat-sabedoria').value = data.stats.sabedoria || 0;
-            document.getElementById('stat-vitalidade').value = data.stats.vitalidade || 0;
-            document.getElementById('stat-carisma').value = data.stats.carisma || 0;
+            setVal('stat-corpo', data.stats.corpo || 0);
+            setVal('stat-destreza', data.stats.destreza || 0);
+            setVal('stat-inteligencia', data.stats.inteligencia || 0);
+            setVal('stat-sabedoria', data.stats.sabedoria || 0);
+            setVal('stat-vitalidade', data.stats.vitalidade || 0);
+            setVal('stat-carisma', data.stats.carisma || 0);
 
             // 3. Skills
-            data.skills.forEach(sk => {
-                const select = document.querySelector(`.skill-prof[data-skill="${sk.name}"]`);
-                if(select) select.value = sk.value;
-            });
+            if (data.skills && Array.isArray(data.skills)) {
+                data.skills.forEach(sk => {
+                    const select = document.querySelector(`.skill-prof[data-skill="${sk.name}"]`);
+                    if(select) select.value = sk.value;
+                });
+            }
 
             // 4. Injuries
-            document.getElementById('inj-leve-curr').value = data.injuries.leve.c || "";
-            document.getElementById('inj-leve-max').value = data.injuries.leve.m || "";
-            document.getElementById('inj-media-curr').value = data.injuries.media.c || "";
-            document.getElementById('inj-media-max').value = data.injuries.media.m || "";
-            document.getElementById('inj-pesada-curr').value = data.injuries.pesada.c || "";
-            document.getElementById('inj-pesada-max').value = data.injuries.pesada.m || "";
+            setVal('inj-leve-curr', data.injuries?.leve?.c || "");
+            setVal('inj-leve-max', data.injuries?.leve?.m || "");
+            setVal('inj-media-curr', data.injuries?.media?.c || "");
+            setVal('inj-media-max', data.injuries?.media?.m || "");
+            setVal('inj-pesada-curr', data.injuries?.pesada?.c || "");
+            setVal('inj-pesada-max', data.injuries?.pesada?.m || "");
             
-            document.getElementById('custom-injuries-container').innerHTML = '';
-            data.injuries.custom.forEach(inj => {
-                document.getElementById('btn-add-injury').click();
-                const last = document.getElementById('custom-injuries-container').lastElementChild;
-                last.querySelector('input[type="text"]').value = inj.name;
-                last.querySelector('.curr').value = inj.c;
-                last.querySelector('.max').value = inj.m;
-            });
+            const customInjuriesContainer = document.getElementById('custom-injuries-container');
+            const btnAddInjury = document.getElementById('btn-add-injury');
+            if (customInjuriesContainer && btnAddInjury && data.injuries?.custom) {
+                customInjuriesContainer.innerHTML = '';
+                data.injuries.custom.forEach(inj => {
+                    btnAddInjury.click();
+                    const last = customInjuriesContainer.lastElementChild;
+                    if (last) {
+                        const nameInput = last.querySelector('.injury-name-input');
+                        const currInput = last.querySelector('.curr');
+                        const maxInput = last.querySelector('.max');
+                        
+                        if (nameInput) nameInput.value = inj.name;
+                        if (currInput) currInput.value = inj.c;
+                        if (maxInput) maxInput.value = inj.m;
+                    }
+                });
+            }
 
             // 5. Magic
-            document.getElementById('wand-length').value = data.magic.wand.l || "";
-            document.getElementById('wand-wood').value = data.magic.wand.w || "";
-            document.getElementById('wand-core').value = data.magic.wand.c || "";
+            setVal('wand-length', data.magic?.wand?.l || "");
+            setVal('wand-wood', data.magic?.wand?.w || "");
+            setVal('wand-core', data.magic?.wand?.c || "");
             
-            if (data.magic.rules) {
-                document.getElementById('rule-1').value = data.magic.rules[0] || "";
-                document.getElementById('rule-2').value = data.magic.rules[1] || "";
-                document.getElementById('rule-3').value = data.magic.rules[2] || "";
-                document.getElementById('rule-4').value = data.magic.rules[3] || "";
-                document.getElementById('rule-5').value = data.magic.rules[4] || "";
+            if (data.magic?.rules) {
+                setVal('rule-1', data.magic.rules[0] || "");
+                setVal('rule-2', data.magic.rules[1] || "");
+                setVal('rule-3', data.magic.rules[2] || "");
+                setVal('rule-4', data.magic.rules[3] || "");
+                setVal('rule-5', data.magic.rules[4] || "");
             }
 
-            if (data.magic.rulesState) {
-                document.getElementById('rule-check-1').checked = data.magic.rulesState[0] || false;
-                document.getElementById('rule-check-2').checked = data.magic.rulesState[1] || false;
-                document.getElementById('rule-check-3').checked = data.magic.rulesState[2] || false;
-                document.getElementById('rule-check-4').checked = data.magic.rulesState[3] || false;
-                document.getElementById('rule-check-5').checked = data.magic.rulesState[4] || false;
+            if (data.magic?.rulesState) {
+                setCheck('rule-check-1', data.magic.rulesState[0] || false);
+                setCheck('rule-check-2', data.magic.rulesState[1] || false);
+                setCheck('rule-check-3', data.magic.rulesState[2] || false);
+                setCheck('rule-check-4', data.magic.rulesState[3] || false);
+                setCheck('rule-check-5', data.magic.rulesState[4] || false);
             }
 
-            document.getElementById('traits-text').value = data.magic.traits || "";
+            setVal('traits-text', data.magic?.traits || "");
 
             // --- MAGIA (FEITIÇOS) ---
-            document.getElementById('spells-list').innerHTML = '';
-            if (data.magic.spells && Array.isArray(data.magic.spells)) {
-                data.magic.spells.forEach(sp => {
-                    addSpellCard(sp); 
-                });
-                sortSpells(); 
+            const spellsList = document.getElementById('spells-list');
+            if (spellsList) {
+                spellsList.innerHTML = '';
+                if (data.magic?.spells && Array.isArray(data.magic.spells)) {
+                    data.magic.spells.forEach(sp => addSpellCard(sp));
+                    sortSpells(); 
+                }
             }
 
             // 6. Inventory
-            document.getElementById('coin-g').value = data.inventory.coins.g || 0;
-            document.getElementById('coin-s').value = data.inventory.coins.s || 0;
-            document.getElementById('coin-k').value = data.inventory.coins.k || 0;
+            setVal('coin-g', data.inventory?.coins?.g || 0);
+            setVal('coin-s', data.inventory?.coins?.s || 0);
+            setVal('coin-k', data.inventory?.coins?.k || 0);
 
-            document.getElementById('inventory-list').innerHTML = '';
-            if (data.inventory && data.inventory.containers) {
+            const inventoryList = document.getElementById('inventory-list');
+            if (inventoryList && data.inventory?.containers) {
+                inventoryList.innerHTML = '';
                 data.inventory.containers.forEach(cont => {
                     addInventoryContainer(cont.name);
-                    const lastCont = document.getElementById('inventory-list').lastElementChild;
+                    const lastCont = inventoryList.lastElementChild;
+                    if (!lastCont) return;
+                    
                     const contId = lastCont.dataset.id;
+                    const itemsList = lastCont.querySelector('.items-list');
                     
                     cont.items.forEach(item => {
                         addInventoryItem(contId);
-                        const lastItem = lastCont.querySelector('.items-list').lastElementChild;
-                        lastItem.querySelector('.item-qtd').value = item.qtd;
-                        lastItem.querySelector('.item-name').value = item.name;
+                        if (!itemsList) return;
                         
+                        const lastItem = itemsList.lastElementChild;
+                        if (!lastItem) return;
+                        
+                        const qtdInput = lastItem.querySelector('.item-qtd');
+                        const nameInput = lastItem.querySelector('.item-name');
                         const descArea = lastItem.querySelector('.item-desc');
-                        descArea.value = item.desc;
-                        // Dispara o evento de input para a caixa se expandir sozinha ao carregar o save
-                        descArea.dispatchEvent(new Event('input'));
+                        
+                        if (qtdInput) qtdInput.value = item.qtd;
+                        if (nameInput) nameInput.value = item.name;
+                        if (descArea) {
+                            descArea.value = item.desc;
+                            descArea.dispatchEvent(new Event('input')); // Força o auto-resize
+                        }
                     });
                 });
             }
 
             // 6.5 Pets
-            document.getElementById('pets-container').innerHTML = ''; 
-            if (data.pets && Array.isArray(data.pets)) {
-                data.pets.forEach(petData => {
-                    addPet(petData);
-                });
+            const petsContainer = document.getElementById('pets-container');
+            if (petsContainer) {
+                petsContainer.innerHTML = ''; 
+                if (data.pets && Array.isArray(data.pets)) {
+                    data.pets.forEach(petData => addPet(petData));
+                }
             }
 
             // 7. Notes
-            if (data.notes !== undefined) {
-                document.getElementById('notes-editor').innerHTML = data.notes;
+            const notesEditor = document.getElementById('notes-editor');
+            if (notesEditor && data.notes !== undefined) {
+                notesEditor.innerHTML = data.notes;
             }
 
             updateSkillBonuses();
@@ -282,5 +337,5 @@ function importData(e) {
         }
     };
     reader.readAsText(file);
-    e.target.value = ''; 
+    e.target.value = ''; // Limpa o input para permitir carregar o mesmo ficheiro em seguida, se desejado
 }

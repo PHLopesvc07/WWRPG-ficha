@@ -7,12 +7,12 @@
     <title>Registro de Pessoas Mágicas - Ministério da Magia</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="assets/css/main.css">
 </head>
 
 <body>
     <script>
+        // Lógica de tema baseada na preferência do sistema/utilizador
         const storedTheme = localStorage.getItem('wwrpg-theme');
         if (storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.body.classList.add('dark-mode');
@@ -20,7 +20,7 @@
     </script>
 
     <header class="ministry-header">
-        <button id="btn-theme-toggle" class="btn-gold" style="position: absolute; top: 20px; right: 20px; width: 45px; height: 45px; padding: 0; font-size: 1.2rem; border-radius: 5px; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0 var(--ink);" title="Alternar Modo de Leitura">
+        <button id="btn-theme-toggle" class="btn-gold btn-theme-toggle" aria-label="Alternar Modo de Leitura" title="Alternar Modo de Leitura">
             🌙
         </button>
 
@@ -29,20 +29,21 @@
             <h2>Departamento de Execução das Leis da Magia</h2>
             <p>Formulário Padrão de Identificação Mágica</p>
         </div>
-        <div class="sys-controls">
-            <button id="btn-export" class="btn-gold">Carimbar & Exportar (.json)</button>
-            <label for="file-import" class="btn-gold">Anexar Arquivo (.json)</label>
-            <input type="file" id="file-import" accept=".json" style="display: none;">
-            <button id="btn-reset" class="btn-danger">Incendiar Registro (Limpar)</button>
+        
+        <div class="sys-controls" role="group" aria-label="Controlos do Sistema">
+            <button id="btn-export" class="btn-gold" aria-label="Carimbar e Exportar Ficha em JSON">Carimbar & Exportar (.json)</button>
+            <label for="file-import" class="btn-gold" aria-label="Anexar ficheiro JSON" tabindex="0">Anexar Arquivo (.json)</label>
+            <input type="file" id="file-import" accept=".json" class="hidden" tabindex="-1">
+            <button id="btn-reset" class="btn-danger" aria-label="Apagar todos os dados do registo">Incendiar Registro (Limpar)</button>
         </div>
     </header>
 
-    <nav class="tabs-nav">
-        <button class="tab-btn active" data-target="tab-status">I. Registro Pessoal</button>
-        <button class="tab-btn" data-target="tab-magic">II. Feitiços & Encantamentos</button>
-        <button class="tab-btn" data-target="tab-inventory">III. Inventário & Economia</button>
-        <button class="tab-btn" data-target="tab-notes">IV. Diário de Campo</button>
-        <button class="tab-btn" data-target="tab-pets">V. Animais Mágicos</button>
+    <nav class="tabs-nav" aria-label="Navegação das secções da ficha">
+        <button class="tab-btn active" data-target="tab-status" aria-pressed="true">I. Registro Pessoal</button>
+        <button class="tab-btn" data-target="tab-magic" aria-pressed="false">II. Feitiços & Encantamentos</button>
+        <button class="tab-btn" data-target="tab-inventory" aria-pressed="false">III. Inventário & Economia</button>
+        <button class="tab-btn" data-target="tab-notes" aria-pressed="false">IV. Diário de Campo</button>
+        <button class="tab-btn" data-target="tab-pets" aria-pressed="false">V. Animais Mágicos</button>
     </nav>
 
     <div class="layout-wrapper">
@@ -50,135 +51,130 @@
 
             <section id="tab-status" class="tab-panel active">
                 <div class="panel-grid">
-
                     <div class="bureaucracy-box profile-section">
                         <div class="photo-upload">
-                            <img id="char-photo-preview" src="" alt="Retrato Mágico" style="display:none;">
-                            <label for="char-photo" class="upload-label">Anexar Retrato</label>
-                            <input type="file" id="char-photo" accept="image/*" style="display: none;">
+                            <img id="char-photo-preview" src="" alt="Retrato Mágico" class="hidden photo-preview">
+                            <label for="char-photo" class="upload-label" tabindex="0">Anexar Retrato</label>
+                            <input type="file" id="char-photo" accept="image/*" class="hidden" tabindex="-1">
                         </div>
                         <div class="basic-info">
-                            <label>Nome Completo: <input type="text" id="char-name" class="ink-input"></label>
+                            <label>Nome Completo: <input type="text" id="char-name" class="ink-input" aria-label="Nome Completo"></label>
                             <label>Status de Sangue:
-                                <select id="blood-status" class="ink-select">
+                                <select id="blood-status" class="ink-select" aria-label="Status de Sangue">
                                     <option value="puro">Puro-Sangue</option>
                                     <option value="mestico">Mestiço</option>
                                     <option value="nascido-trouxa">Nascido-Trouxa</option>
                                     <option value="meio-humano">Aborto</option>
                                 </select>
                             </label>
-                            <label>Escola de Origem: <input type="text" id="school" class="ink-input"></label>
-                            <label>Idade: <input type="number" id="age" class="ink-input short-input"></label>
-                            <label>Altura / Peso: <input type="text" id="height-weight" class="ink-input"></label>
-                            <label>Idiomas: <input type="text" id="languages" class="ink-input"></label>
-                            <label>Profissão: <input type="text" id="profession" class="ink-input"></label>
+                            <label>Escola de Origem: <input type="text" id="school" class="ink-input" aria-label="Escola de Origem"></label>
+                            <label>Idade: <input type="number" id="age" class="ink-input short-input" aria-label="Idade do personagem"></label>
+                            <label>Altura / Peso: <input type="text" id="height-weight" class="ink-input" aria-label="Altura e Peso"></label>
+                            <label>Idiomas: <input type="text" id="languages" class="ink-input" aria-label="Idiomas falados"></label>
+                            <label>Profissão: <input type="text" id="profession" class="ink-input" aria-label="Profissão"></label>
                         </div>
                     </div>
 
                     <div class="bureaucracy-box family-section">
                         <h3>Linhagem Familiar</h3>
                         <label>Família:
-                            <select id="family-select" class="ink-select">
+                            <select id="family-select" class="ink-select" aria-label="Seleção da Família">
                                 <option value="">Aguardando Registros...</option>
                             </select>
                         </label>
                         <div class="status-row">
-                            <label>Preconceito: <input type="number" id="prejudice" class="ink-input short-input"
-                                    readonly></label>
-                            <label>Influência: <input type="number" id="influence" class="ink-input short-input"
-                                    readonly></label>
+                            <label>Preconceito: <input type="number" id="prejudice" class="ink-input short-input" readonly aria-label="Nível de Preconceito da Família"></label>
+                            <label>Influência: <input type="number" id="influence" class="ink-input short-input" readonly aria-label="Nível de Influência da Família"></label>
                         </div>
                     </div>
 
                     <div class="bureaucracy-box stats-section">
                         <h3>Atributos Base</h3>
-                        <div class="stats-grid">
-                            <label><span class="rollable stat-roll" data-stat="corpo">Corpo</span> <input type="number"
-                                    id="stat-corpo" class="ink-input" value="0"></label>
-                            <label><span class="rollable stat-roll" data-stat="destreza">Destreza</span> <input
-                                    type="number" id="stat-destreza" class="ink-input" value="0"></label>
-                            <label><span class="rollable stat-roll" data-stat="inteligencia">Inteligência</span> <input
-                                    type="number" id="stat-inteligencia" class="ink-input" value="0"></label>
-                            <label><span class="rollable stat-roll" data-stat="sabedoria">Sabedoria</span> <input
-                                    type="number" id="stat-sabedoria" class="ink-input" value="0"></label>
-                            <label><span class="rollable stat-roll" data-stat="vitalidade">Vitalidade</span> <input
-                                    type="number" id="stat-vitalidade" class="ink-input" value="0"></label>
-                            <label><span class="rollable stat-roll" data-stat="carisma">Carisma</span> <input
-                                    type="number" id="stat-carisma" class="ink-input" value="0"></label>
+                        <div class="stats-grid" aria-label="Atributos Base">
+                            <label><span class="rollable stat-roll" data-stat="corpo">Corpo</span> <input type="number" id="stat-corpo" class="ink-input" value="0" aria-label="Atributo Corpo"></label>
+                            <label><span class="rollable stat-roll" data-stat="destreza">Destreza</span> <input type="number" id="stat-destreza" class="ink-input" value="0" aria-label="Atributo Destreza"></label>
+                            <label><span class="rollable stat-roll" data-stat="inteligencia">Inteligência</span> <input type="number" id="stat-inteligencia" class="ink-input" value="0" aria-label="Atributo Inteligência"></label>
+                            <label><span class="rollable stat-roll" data-stat="sabedoria">Sabedoria</span> <input type="number" id="stat-sabedoria" class="ink-input" value="0" aria-label="Atributo Sabedoria"></label>
+                            <label><span class="rollable stat-roll" data-stat="vitalidade">Vitalidade</span> <input type="number" id="stat-vitalidade" class="ink-input" value="0" aria-label="Atributo Vitalidade"></label>
+                            <label><span class="rollable stat-roll" data-stat="carisma">Carisma</span> <input type="number" id="stat-carisma" class="ink-input" value="0" aria-label="Atributo Carisma"></label>
                         </div>
                     </div>
 
                     <div class="bureaucracy-box skills-section">
                         <h3>Perícias Registradas</h3>
-                        <div id="skills-container" class="skills-grid">
-                        </div>
+                        <div id="skills-container" class="skills-grid" aria-label="Lista de Perícias">
+                            </div>
                     </div>
 
                     <div class="bureaucracy-box injuries-section">
                         <h3>Prontuário Médico (Injúrias)</h3>
-                        <div class="injury-row"><label>Leve (Atual/Máx):</label> <input type="number" id="inj-leve-curr"
-                                class="ink-input short-input"> / <input type="number" id="inj-leve-max"
-                                class="ink-input short-input"></div>
-                        <div class="injury-row"><label>Média (Atual/Máx):</label> <input type="number"
-                                id="inj-media-curr" class="ink-input short-input"> / <input type="number"
-                                id="inj-media-max" class="ink-input short-input"></div>
-                        <div class="injury-row"><label>Pesada (Atual/Máx):</label> <input type="number"
-                                id="inj-pesada-curr" class="ink-input short-input"> / <input type="number"
-                                id="inj-pesada-max" class="ink-input short-input"></div>
+                        <div class="injury-row">
+                            <label>Leve (Atual/Máx):</label> 
+                            <input type="number" id="inj-leve-curr" class="ink-input short-input" aria-label="Injúrias Leves Atuais"> / 
+                            <input type="number" id="inj-leve-max" class="ink-input short-input" aria-label="Injúrias Leves Máximas">
+                        </div>
+                        <div class="injury-row">
+                            <label>Média (Atual/Máx):</label> 
+                            <input type="number" id="inj-media-curr" class="ink-input short-input" aria-label="Injúrias Médias Atuais"> / 
+                            <input type="number" id="inj-media-max" class="ink-input short-input" aria-label="Injúrias Médias Máximas">
+                        </div>
+                        <div class="injury-row">
+                            <label>Pesada (Atual/Máx):</label> 
+                            <input type="number" id="inj-pesada-curr" class="ink-input short-input" aria-label="Injúrias Pesadas Atuais"> / 
+                            <input type="number" id="inj-pesada-max" class="ink-input short-input" aria-label="Injúrias Pesadas Máximas">
+                        </div>
                         <div id="custom-injuries-container"></div>
-                        <button id="btn-add-injury" class="btn-teal">+ Adicionar Condição Médica</button>
+                        <button id="btn-add-injury" class="btn-teal mt-15">+ Adicionar Condição Médica</button>
                     </div>
                 </div>
             </section>
 
             <section id="tab-magic" class="tab-panel">
-
                 <div class="bureaucracy-box wand-section">
                     <h3>Registro da Varinha</h3>
                     <div class="wand-grid">
-                        <label>Comprimento: <input type="text" id="wand-length" class="ink-input"></label>
-                        <label>Madeira: <input type="text" id="wand-wood" class="ink-input"></label>
-                        <label>Núcleo: <input type="text" id="wand-core" class="ink-input"></label>
+                        <label>Comprimento: <input type="text" id="wand-length" class="ink-input" aria-label="Comprimento da Varinha"></label>
+                        <label>Madeira: <input type="text" id="wand-wood" class="ink-input" aria-label="Madeira da Varinha"></label>
+                        <label>Núcleo: <input type="text" id="wand-core" class="ink-input" aria-label="Núcleo da Varinha"></label>
                     </div>
                 </div>
 
                 <div class="bureaucracy-box rules-section">
                     <h3>Regras Pessoais</h3>
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
-                        <label style="display: flex; align-items: center;">
-                            1. <input type="checkbox" id="rule-check-1" class="rule-checkbox" style="margin: 0 8px;" title="Marcar como quebrada/superada"> 
-                            <input type="text" id="rule-1" class="ink-input" placeholder="Primeira regra de conduta..." style="flex: 1;">
+                    <div class="rules-container">
+                        <label class="rule-label">
+                            1. <input type="checkbox" id="rule-check-1" class="rule-checkbox" title="Marcar como quebrada/superada" aria-label="Marcar regra 1 como quebrada"> 
+                            <input type="text" id="rule-1" class="ink-input rule-input" placeholder="Primeira regra de conduta..." aria-label="Texto da Regra 1">
                         </label>
-                        <label style="display: flex; align-items: center;">
-                            2. <input type="checkbox" id="rule-check-2" class="rule-checkbox" style="margin: 0 8px;"> 
-                            <input type="text" id="rule-2" class="ink-input" placeholder="" style="flex: 1;">
+                        <label class="rule-label">
+                            2. <input type="checkbox" id="rule-check-2" class="rule-checkbox" aria-label="Marcar regra 2 como quebrada"> 
+                            <input type="text" id="rule-2" class="ink-input rule-input" aria-label="Texto da Regra 2">
                         </label>
-                        <label style="display: flex; align-items: center;">
-                            3. <input type="checkbox" id="rule-check-3" class="rule-checkbox" style="margin: 0 8px;"> 
-                            <input type="text" id="rule-3" class="ink-input" placeholder="" style="flex: 1;">
+                        <label class="rule-label">
+                            3. <input type="checkbox" id="rule-check-3" class="rule-checkbox" aria-label="Marcar regra 3 como quebrada"> 
+                            <input type="text" id="rule-3" class="ink-input rule-input" aria-label="Texto da Regra 3">
                         </label>
-                        <label style="display: flex; align-items: center;">
-                            4. <input type="checkbox" id="rule-check-4" class="rule-checkbox" style="margin: 0 8px;"> 
-                            <input type="text" id="rule-4" class="ink-input" placeholder="" style="flex: 1;">
+                        <label class="rule-label">
+                            4. <input type="checkbox" id="rule-check-4" class="rule-checkbox" aria-label="Marcar regra 4 como quebrada"> 
+                            <input type="text" id="rule-4" class="ink-input rule-input" aria-label="Texto da Regra 4">
                         </label>
-                        <label style="display: flex; align-items: center;">
-                            5. <input type="checkbox" id="rule-check-5" class="rule-checkbox" style="margin: 0 8px;"> 
-                            <input type="text" id="rule-5" class="ink-input" placeholder="" style="flex: 1;">
+                        <label class="rule-label">
+                            5. <input type="checkbox" id="rule-check-5" class="rule-checkbox" aria-label="Marcar regra 5 como quebrada"> 
+                            <input type="text" id="rule-5" class="ink-input rule-input" aria-label="Texto da Regra 5">
                         </label>
                     </div>
                 </div>
 
                 <div class="bureaucracy-box traits-section">
                     <h3>Dons e Maldições</h3>
-                    <textarea id="traits-text" class="ink-textarea"
-                        placeholder="Descreva anomalias mágicas, bênçãos ou maldições..."></textarea>
+                    <textarea id="traits-text" class="ink-textarea" placeholder="Descreva anomalias mágicas, bênçãos ou maldições..." aria-label="Descrição de Dons e Maldições"></textarea>
                 </div>
 
                 <div class="bureaucracy-box spells-section">
                     <div class="spell-nav-header">
                         <h3>Feitiços & Encantamentos <span class="total-spells-count" id="total-spells-count">0 registrados</span></h3>
                         
-                        <div class="spell-nav-badges">
+                        <div class="spell-nav-badges" role="group" aria-label="Filtros de Feitiços">
                             <button class="spell-badge badge-transfiguracao" data-filter="Transfiguração"><span class="dot"></span>Transfiguração <span class="count">(0)</span></button>
                             <button class="spell-badge badge-feitico" data-filter="Feitiço"><span class="dot"></span>Charme <span class="count">(0)</span></button>
                             <button class="spell-badge badge-azaracao" data-filter="Azaração"><span class="dot"></span>Azaração <span class="count">(0)</span></button>
@@ -189,33 +185,31 @@
                         </div>
                     </div>
 
-                    <button id="btn-add-spell" class="btn-teal" style="margin-top: 15px;">+ Registrar Novo Feitiço</button>
-                    <div id="spells-list" class="spells-container">
-                    </div>
+                    <button id="btn-add-spell" class="btn-teal mt-15">+ Registrar Novo Feitiço</button>
+                    <div id="spells-list" class="spells-container"></div>
                 </div>
             </section>
 
             <section id="tab-inventory" class="tab-panel">
-
                 <div class="bureaucracy-box economy-section">
                     <h3>Cofre de Gringotes (Economia)</h3>
                     <div class="coins-grid">
                         <div class="coin-group">
                             <label>Galeões</label>
-                            <input type="number" id="coin-g" class="ink-input" value="0">
+                            <input type="number" id="coin-g" class="ink-input" value="0" aria-label="Quantidade de Galeões">
                         </div>
                         <div class="coin-group">
                             <label>Sicles</label>
-                            <input type="number" id="coin-s" class="ink-input" value="0">
+                            <input type="number" id="coin-s" class="ink-input" value="0" aria-label="Quantidade de Sicles">
                         </div>
                         <div class="coin-group">
                             <label>Nuques</label>
-                            <input type="number" id="coin-k" class="ink-input" value="0">
+                            <input type="number" id="coin-k" class="ink-input" value="0" aria-label="Quantidade de Nuques">
                         </div>
                     </div>
-                    <div class="economy-controls">
-                        <input type="number" id="calc-amount" class="ink-input short-input" placeholder="Qtd">
-                        <select id="calc-type" class="ink-select">
+                    <div class="economy-controls mt-15">
+                        <input type="number" id="calc-amount" class="ink-input short-input" placeholder="Qtd" aria-label="Quantidade a calcular">
+                        <select id="calc-type" class="ink-select" aria-label="Tipo de Moeda">
                             <option value="g">Galeões</option>
                             <option value="s">Sicles</option>
                             <option value="k">Nuques</option>
@@ -233,13 +227,12 @@
                             <div class="exchange-inputs">
                                 <div class="input-col">
                                     <label>Galeões</label>
-                                    <input type="number" id="exc-g-val" class="ink-input short-input" value="1" min="1">
+                                    <input type="number" id="exc-g-val" class="ink-input short-input" value="1" min="1" aria-label="Galeões a converter">
                                 </div>
-                                <span class="exchange-arrow">→</span>
+                                <span class="exchange-arrow" aria-hidden="true">→</span>
                                 <div class="input-col">
                                     <label>Sicles</label>
-                                    <input type="number" id="exc-s-res" class="ink-input short-input" value="17"
-                                        readonly tabindex="-1">
+                                    <input type="number" id="exc-s-res" class="ink-input short-input" value="17" readonly tabindex="-1" aria-label="Resultado em Sicles">
                                 </div>
                             </div>
                             <button id="btn-exc-gs" class="btn-gold btn-exchange">Trocar</button>
@@ -249,17 +242,15 @@
                             <div class="exchange-inputs">
                                 <div class="input-col">
                                     <label>Sicles</label>
-                                    <input type="number" id="exc-s-val" class="ink-input short-input" value="1" min="1">
+                                    <input type="number" id="exc-s-val" class="ink-input short-input" value="1" min="1" aria-label="Sicles a converter">
                                 </div>
-                                <span class="exchange-arrow">→</span>
+                                <span class="exchange-arrow" aria-hidden="true">→</span>
                                 <div class="input-col">
                                     <label>Nuques</label>
-                                    <input type="number" id="exc-k-res" class="ink-input short-input" value="29"
-                                        readonly tabindex="-1">
+                                    <input type="number" id="exc-k-res" class="ink-input short-input" value="29" readonly tabindex="-1" aria-label="Resultado em Nuques">
                                 </div>
                             </div>
-                            <button id="btn-exc-sk" class="btn-gold btn-exchange"
-                                style="background-color: #c96e2e; color: #fff;">Trocar</button>
+                            <button id="btn-exc-sk" class="btn-bronze btn-exchange">Trocar</button>
                         </div>
                     </div>
                 </div>
@@ -267,8 +258,7 @@
                 <div class="bureaucracy-box inventory-section">
                     <h3>Registro de Bens Materiais</h3>
                     <button id="btn-add-container" class="btn-teal">+ Adicionar Recipiente/Bolso</button>
-                    <div id="inventory-list">
-                    </div>
+                    <div id="inventory-list"></div>
                 </div>
             </section>
 
@@ -276,32 +266,27 @@
                 <div class="bureaucracy-box notes-section">
                     <h3>Registros Oficiais e Relatórios Livres</h3>
 
-                    <div class="editor-toolbar">
-                        <button type="button" class="btn-format" data-cmd="bold" title="Negrito"><b>B</b></button>
-                        <button type="button" class="btn-format" data-cmd="italic" title="Itálico"><i>I</i></button>
-                        <button type="button" class="btn-format" data-cmd="underline"
-                            title="Sublinhado"><u>U</u></button>
-                        <button type="button" class="btn-format" data-cmd="insertUnorderedList"
-                            title="Lista de Tópicos">• Lista</button>
-                        <button type="button" class="btn-format" data-cmd="removeFormat"
-                            title="Remover Formatação">Limpar</button>
+                    <div class="editor-toolbar" role="toolbar" aria-label="Formatação de Texto">
+                        <button type="button" class="btn-format" data-cmd="bold" title="Negrito" aria-label="Negrito"><b>B</b></button>
+                        <button type="button" class="btn-format" data-cmd="italic" title="Itálico" aria-label="Itálico"><i>I</i></button>
+                        <button type="button" class="btn-format" data-cmd="underline" title="Sublinhado" aria-label="Sublinhado"><u>U</u></button>
+                        <button type="button" class="btn-format" data-cmd="insertUnorderedList" title="Lista de Tópicos" aria-label="Lista de Tópicos">• Lista</button>
+                        <button type="button" class="btn-format" data-cmd="removeFormat" title="Remover Formatação" aria-label="Remover Formatação">Limpar</button>
                     </div>
 
-                    <div id="notes-editor" class="ink-textarea rich-editor" contenteditable="true" spellcheck="false"
-                        placeholder="Comece a redigir seu relatório aqui..."></div>
+                    <div id="notes-editor" class="ink-textarea rich-editor" contenteditable="true" spellcheck="false" placeholder="Comece a redigir seu relatório aqui..." aria-label="Área de edição de relatório livre"></div>
                 </div>
             </section>
 
             <section id="tab-pets" class="tab-panel">
                 <div class="bureaucracy-box">
                     <h3>Registro de Criaturas e Familiares</h3>
-                    <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px;">
+                    <p class="pets-disclaimer">
                         De acordo com o Artigo 73 do Estatuto de Sigilo em Magia, bruxos têm permissão para portar até 3 criaturas devidamente registradas.
                     </p>
                     <button id="btn-add-pet" class="btn-teal">+ Adicionar Animal de Estimação</button>
                     
-                    <div id="pets-container" style="margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
-                    </div>
+                    <div id="pets-container" class="pets-grid"></div>
                 </div>
             </section>
 
@@ -310,12 +295,12 @@
         <aside class="dice-widget bureaucracy-box">
             <h3 class="stamp-title">Mesa de Rolagem</h3>
 
-            <div class="dice-controls" style="margin-bottom: 10px;">
+            <div class="dice-controls dice-margin-bottom">
                 <div id="dice-groups-container">
-                    <div class="dice-group primary-dice" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <input type="number" class="ink-input short-input dice-qty" value="1" min="1" max="20" style="width: 45px; text-align: center;">
-                        <span style="font-family: var(--font-serif); font-weight: bold; color: var(--ink);">d</span>
-                        <select class="ink-select dice-type" style="flex: 1;">
+                    <div class="dice-group primary-dice dice-group-flex">
+                        <input type="number" class="ink-input short-input dice-qty dice-text-center" value="1" min="1" max="20" aria-label="Quantidade de Dados">
+                        <span class="dice-d-label">d</span>
+                        <select class="ink-select dice-type flex-1" aria-label="Tipo de Dado">
                             <option value="2">2</option>
                             <option value="4">4</option>
                             <option value="6">6</option>
@@ -328,29 +313,31 @@
                             <option value="50">50</option>
                             <option value="100">100</option>
                         </select>
-                        <div style="width: 22px;"></div> </div>
+                        <div class="dice-spacer"></div> 
+                    </div>
                 </div>
-                <button id="btn-add-dice" class="btn-format" style="width: 100%; font-size: 0.75rem; padding: 4px; border-style: dashed; margin-top: 5px;">
+                <button id="btn-add-dice" class="btn-format btn-dashed-full mt-15">
                     + Adicionar Dado Combinado (Máx 2)
                 </button>
             </div>
+            
             <div class="dice-modifiers">
-                <label>Modificador: <input type="number" id="dice-mod" class="ink-input short-input" value="0"></label>
-                <div class="adv-disadv-toggles">
+                <label>Modificador: <input type="number" id="dice-mod" class="ink-input short-input" value="0" aria-label="Modificador da rolagem"></label>
+                <div class="adv-disadv-toggles" role="radiogroup" aria-label="Vantagem ou Desvantagem">
                     <label><input type="radio" name="adv-disadv" value="normal" checked> Normal</label>
                     <label><input type="radio" name="adv-disadv" value="adv"> Vantagem</label>
                     <label><input type="radio" name="adv-disadv" value="disadv"> Desvantagem</label>
                 </div>
             </div>
 
-            <button id="btn-roll" class="btn-gold roll-action-btn">Lançar Dados</button>
+            <button id="btn-roll" class="btn-gold roll-action-btn" aria-label="Lançar Dados">Lançar Dados</button>
 
             <div class="dice-log-container">
                 <div class="log-header">
                     <h4>Registro Oficial</h4>
-                    <button id="btn-clear-log" class="btn-clear-log" title="Apagar histórico">Limpar</button>
+                    <button id="btn-clear-log" class="btn-clear-log" title="Apagar histórico" aria-label="Limpar histórico de rolagem">Limpar</button>
                 </div>
-                <ul id="dice-log"></ul>
+                <ul id="dice-log" aria-live="polite"></ul>
             </div>
         </aside>
     </div>
