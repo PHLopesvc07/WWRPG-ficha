@@ -1,56 +1,66 @@
-# WWRPG-ficha
-O Registro de Pessoas Mágicas é uma ficha digital para meu RPG de mesa baseado em Harry Potter! Ele roda no navegador e faz o trabalho chato: calcula bônus, rola dados virtuais e converte moedas em Gringotes. Dispensando papel.
+# 🧙‍♂️ Registro de Pessoas Mágicas - Ministério da Magia (WWRPG)
 
-# 🧙‍♂️ Registro de Pessoas Mágicas - Ministério da Magia
+Uma aplicação web estática, responsiva e de alta performance desenhada para servir como a **Ficha de Personagem Oficial** para jogadores de RPG de mesa baseados no universo bruxo.
 
-Um sistema web completo, interativo e imersivo para gerenciamento de fichas de personagens para campanhas de RPG de mesa no universo de Harry Potter. 
+Este projeto foi construído puramente com **Vanilla HTML5, CSS3 e JavaScript (ES6 Modules)**. Não requer a instalação de servidores locais, bases de dados ou bibliotecas externas (como React ou Bootstrap), garantindo leveza absoluta e execução imediata em qualquer navegador moderno.
 
-Desenvolvido com foco na experiência do usuário, o sistema elimina o uso de papel, automatiza cálculos de perícias, rolagens de dados e gerencia o inventário mágico — tudo diretamente pelo navegador.
+---
 
-## ✨ Funcionalidades Principais
+## 🌟 Principais Funcionalidades
 
-* **Ficha Dinâmica:** Cálculo automático de perícias baseado na linhagem familiar e atributos (Corpo, Destreza, Inteligência, Sabedoria, Vitalidade e Carisma).
-* **Registro de Animais e Familiares (NOVO):** Aba dedicada para portar até 3 criaturas mágicas. Inclui upload de fotos individuais, atributos próprios, licenças e classificação de perigo do Ministério.
-* **Motor de Probabilidades Avançado (Dados):** Rolador de dados embutido (d2 a d100) com suporte a modificadores, Vantagem e Desvantagem, além de um histórico de rolagem oficial. Agora permite **rolagens combinadas** (ex: 1d20 + 2d6) na mesma ação.
-* **Economia (Balcão de Gringotes):** Sistema de conversão automática e gestão interativa de moedas bruxas (Galeões, Sicles e Nuques) com regras de "empréstimo em cascata".
-* **Catálogo de Feitiços:** Adição dinâmica de feitiços com animações de interface e sistema de arquivamento por cores (Transfiguração, Azaração, Maldição, Cura, etc).
-* **Diário de Campo:** Editor de texto rico (Rich Text) para anotações de campanha, relatórios e evolução do personagem, com formatação que respeita as linhas do pergaminho.
-* **Modo de Leitura Noturna (NOVO):** Alternância instantânea para o "Modo Escuro" (Dark Mode), que troca o pergaminho claro por um fundo negro com tinta verde-menta e laranja-mágico, ideal para sessões noturnas. Salva automaticamente a sua preferência.
-* **Persistência de Dados:** Salve e carregue sua ficha (incluindo imagens e pets) a qualquer momento utilizando o sistema de "Carimbar & Exportar" arquivos `.json`.
+* **Sistema Burocrático Completo:** Gestão de status de sangue, linhagens familiares (com cálculo automático de preconceito e influência), histórico médico e regras pessoais.
+* **Cálculo Automático de Atributos:** As perícias somam automaticamente o nível de proficiência com o atributo base correspondente.
+* **Mesa de Rolagem Integrada (Dice Roller):** Motor de dados complexo que suporta combinações (ex: 1d20 + 2d6), rolagem com Vantagem/Desvantagem e "1-Click Roll" direto da ficha de perícias, tudo registado num Log Oficial.
+* **Balcão de Câmbio de Gringotes:** Gestão económica inteligente com "Empréstimo em Cascata" (o sistema quebra automaticamente Galeões em Sicles e Sicles em Nuques nas compras) e conversão entre moedas.
+* **Gestão Dinâmica de Magia e Inventário:** Criação de feitiços com categorização por cores, filtros de pesquisa e adição de mochilas/bolsos infinitos.
+* **Registro de Criaturas (Pets):** Sistema para gerir até 3 animais mágicos com fotos individuais e os seus próprios atributos.
+* **Modo Escuro (Dark Mode):** Alternância instantânea de tema (Pergaminho Claro vs. Fundo Escuro), sincronizado com as preferências do Sistema Operativo.
+* **Persistência de Dados (Save/Load):** Como não utiliza base de dados em nuvem, o sistema exporta e importa toda a ficha (incluindo imagens convertidas em Base64) através de um ficheiro `.json` seguro, utilizando a *File System Access API*.
 
-## 🛠️ Tecnologias Utilizadas
+---
 
-Este projeto foi construído utilizando **Vanilla Web Technologies** (sem frameworks pesados), priorizando performance e uma arquitetura modular moderna:
+## 🏛️ Arquitetura e Engenharia de Software
 
-* **HTML5:** Semântico e acessível, dividido por painéis.
-* **CSS3:** Arquitetura 7-1 (simplificada) com variáveis globais, flexbox/grid e transições suaves.
-* **JavaScript (ES6+):** Sistema arquitetado em Módulos (`import`/`export`) separando claramente os dados (Model), a interface (UI) e a lógica de negócios (Controllers).
+O código fonte foi rigorosamente refatorado para cumprir elevados padrões da indústria de desenvolvimento:
 
-## 📁 Estrutura do Projeto
+### 1. Princípios SOLID Aplicados
+* **SRP (Single Responsibility Principle):** Estrita separação de conceitos. O HTML trata apenas da semântica, o CSS da apresentação visual e as animações, e o JavaScript foca-se puramente na lógica de negócio e manipulação do DOM (sem injeção de estilos em linha).
+* **DIP (Dependency Inversion Principle):** O orquestrador central (`main.js`) importa a base de dados estática e **injeta as dependências** nos módulos secundários, garantindo um baixo acoplamento.
 
-O código é escalável e segmentado. A estrutura de pastas segue o seguinte padrão:
+### 2. Normas de Qualidade de Produto (ABNT ISO/IEC 25010)
+* **Confiabilidade:** Programação defensiva avançada. Todos os seletores do DOM possuem checagem prévia (*null-checks*) e eventos sensíveis são protegidos por blocos `try...catch`, impedindo que a aplicação quebre.
+* **Usabilidade e Acessibilidade:** Implementação de atributos de acessibilidade (como `aria-labels` e `aria-pressed`) em elementos gerados dinamicamente para suporte a leitores de ecrã, e navegação visível por teclado (`:focus-visible`).
+* **Eficiência de Desempenho:** * Estruturas CSS unificadas para evitar código duplicado e tempo de leitura desnecessário pelo navegador.
+  * Animações pesadas (como o surgir/desaparecer de feitiços e itens) são delegadas ao processamento da placa gráfica (GPU Accelerated) utilizando `will-change` e transformações 3D (`translateZ(0)`), garantindo 60fps constantes.
+* **Manutenibilidade:** O projeto adota variáveis CSS globais para uma fácil gestão de temas, módulos isolados (ES6) e documentação extensiva utilizando padrões **JSDoc**.
+
+---
+
+## 📁 Estrutura de Diretórios
+
+A modularidade foi o pilar da construção deste sistema:
 
 ```text
-/
-├── index.html                # Ponto de entrada da aplicação
-├── README.md                 # Documentação do projeto
-└── /assets
-    ├── /img                  # Recursos visuais (Fundos de pergaminho claro/escuro, logos, carimbos)
-    ├── /css
-    │   ├── main.css          # Arquivo agregador de estilos
-    │   ├── base.css          # Variáveis globais, tipografia e reset
-    │   ├── layout.css        # Estrutura de grid e posicionamento
-    │   ├── components.css    # Botões, inputs e formulários burocráticos
-    │   ├── modules.css       # Widgets isolados (Gringotes, Dados, Editor, Animações)
-    │   └── theme.css         # Lógica visual e paleta de cores do Modo Escuro
-    └── /js
-        ├── main.js           # Orquestrador (Entry Point do JS)
-        ├── data.js           # Banco de dados estático (Famílias, Perícias)
-        ├── ui.js             # Lógica de interface (Abas, Upload de Fotos do Personagem)
-        ├── sheet.js          # Cálculos de ficha e atributos
-        ├── dice.js           # Motor de rolagem de dados simples e combinados
-        ├── economy.js        # Lógica de moedas e câmbio de Gringotes
-        ├── spells.js         # Manipulação do DOM para listas dinâmicas e inventário
-        ├── pets.js           # Módulo exclusivo para gestão de animais de estimação
-        ├── theme.js          # Controlador do Modo Escuro e salvamento de preferências
-        └── storage.js        # Sistema de Exportar/Importar a ficha completa em JSON
+WWRPG-ficha/
+├── index.html               # Estrutura semântica principal e templates
+├── README.md                # Documentação do projeto
+├── fichasTesteExemplo/      # Modelos de fichas (.json) para testes rápidos
+└── assets/
+    ├── img/                 # Ativos visuais (Carimbos, Texturas, Logos)
+    ├── css/
+    │   ├── base.css         # Variáveis, Fontes, Reset e Acessibilidade Global
+    │   ├── layout.css       # Estruturas de Grid, Flexbox e Responsividade
+    │   ├── components.css   # Estilos base de Botões, Inputs, Abas e Cards
+    │   ├── modules.css      # Animações Complexas e Widgets Isolados (Mesa de Dados, etc.)
+    │   └── theme.css        # Sobrescrita de paleta de cores para o Modo Escuro
+    └── js/
+        ├── main.js          # Orquestrador (Ponto de entrada)
+        ├── data.js          # Simulador de Base de Dados Estática (Famílias, Perícias)
+        ├── sheet.js         # Lógica da Ficha e Cálculos de Atributos
+        ├── ui.js            # Interações Básicas de Interface (Abas, Upload de Foto)
+        ├── dice.js          # Motor Matemático de Rolagem de Dados e Log
+        ├── economy.js       # Sistema de Câmbio Monetário (Gringotes)
+        ├── spells.js        # Gestão e Ordenação do Inventário e Magias
+        ├── pets.js          # Gestão dos Animais Mágicos
+        ├── theme.js         # Alternador de Modo Escuro/Claro (Salvo no LocalStorage)
+        └── storage.js       # Sistema de I/O de ficheiros JSON (Save/Load)
