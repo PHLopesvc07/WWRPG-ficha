@@ -3,9 +3,6 @@
  * Gerenciamento de Animais de Estimação e Integração com Magizoologista
  */
 
-/**
- * Inicializa o ouvinte de eventos para o botão principal de adicionar animais.
- */
 export function setupPets() {
     const btnAddPet = document.getElementById('btn-add-pet');
     if (btnAddPet) {
@@ -13,17 +10,12 @@ export function setupPets() {
     }
 }
 
-/**
- * Cria um novo card de animal. 
- * @param {Object|null} data - Dados vindos do Magizoologista ou nulo para novo registo.
- */
 export function addPet(data = null) {
     const container = document.getElementById('pets-container');
     if (!container) return;
 
     const currentPets = container.querySelectorAll('.pet-card').length;
 
-    // Regra: Limite de 3 animais (Artigo 73 do Estatuto de Sigilo)
     if (currentPets >= 3 && !data) {
         alert("Aviso do Departamento para Regulamentação de Criaturas: Limite máximo atingido.");
         return;
@@ -35,7 +27,6 @@ export function addPet(data = null) {
     card.className = 'bureaucracy-box pet-card animated-fade-in';
     card.dataset.id = petId;
     
-    // Template com mapeamento de campos do Magizoologista
     card.innerHTML = `
         <button class="delete-btn" aria-label="Remover Registro" title="Remover Registro">X</button>
         
@@ -73,11 +64,12 @@ export function addPet(data = null) {
                     <label class="pet-label-species">Espécie: 
                         <input type="text" class="ink-input pet-species" value="${data?.species || data?.nome || ''}">
                     </label>
-                    <label class="pet-label-origin">Origem:
-                        <select class="ink-select pet-origin">
-                            <option value="Mágica" ${data?.origin === 'Mágica' || data?.origem === 'Mágica' ? 'selected' : ''}>Mágica</option>
-                            <option value="Não Mágica" ${data?.origin === 'Não Mágica' || data?.origem === 'Não Mágica' ? 'selected' : ''}>Não Mágica</option>
-                            <option value="Desconhecida" ${data?.origin === 'Desconhecida' ? 'selected' : ''}>Desconhecida</option>
+                    <label class="pet-label-type">Tipo:
+                        <select class="ink-select pet-type">
+                            <option value="Comum" ${data?.tipo === 'Comum' ? 'selected' : ''}>Comum</option>
+                            <option value="Bestial" ${data?.tipo === 'Bestial' ? 'selected' : ''}>Bestial</option>
+                            <option value="Neutro" ${data?.tipo === 'Neutro' ? 'selected' : ''}>Neutro</option>
+                            <option value="Consciente" ${data?.tipo === 'Consciente' ? 'selected' : ''}>Consciente</option>
                         </select>
                     </label>
                     <label class="pet-label-sex">Sexo:
@@ -113,15 +105,42 @@ export function addPet(data = null) {
         <div class="pet-stats-section">
             <h5 class="pet-stats-title">Atributos Base</h5>
             <div class="stats-grid pet-stats-grid">
-                <label>Corpo: <input type="number" class="ink-input pet-corpo" value="${data?.stats?.corpo || data?.atributos?.corpo || 0}"></label>
-                <label>Destreza: <input type="number" class="ink-input pet-destreza" value="${data?.stats?.destreza || data?.atributos?.destreza || 0}"></label>
-                <label>Vitalidade: <input type="number" class="ink-input pet-vitalidade" value="${data?.stats?.vitalidade || data?.atributos?.vitalidade || 0}"></label>
-                <label>Instinto: <input type="number" class="ink-input pet-instinto" value="${data?.stats?.instinto || data?.atributos?.instinto || 0}"></label>
+                <label class="attr-field">Corpo: <input type="number" class="ink-input pet-corpo" value="${data?.stats?.corpo || data?.atributos?.corpo || 0}"></label>
+                <label class="attr-field">Destreza: <input type="number" class="ink-input pet-destreza" value="${data?.stats?.destreza || data?.atributos?.destreza || 0}"></label>
+                <label class="attr-field">Vitalidade: <input type="number" class="ink-input pet-vitalidade" value="${data?.stats?.vitalidade || data?.atributos?.vitalidade || 0}"></label>
+                
+                <label class="attr-field dynamic-attr" data-types="Bestial,Neutro,Consciente">Instinto: <input type="number" class="ink-input pet-instinto" value="${data?.stats?.instinto || data?.atributos?.instinto || 0}"></label>
+                <label class="attr-field dynamic-attr" data-types="Neutro,Consciente">Carisma: <input type="number" class="ink-input pet-carisma" value="${data?.stats?.carisma || data?.atributos?.carisma || 0}"></label>
+                <label class="attr-field dynamic-attr" data-types="Consciente">Inteligência: <input type="number" class="ink-input pet-inteligencia" value="${data?.stats?.inteligencia || data?.atributos?.inteligencia || 0}"></label>
+                <label class="attr-field dynamic-attr" data-types="Consciente">Sabedoria: <input type="number" class="ink-input pet-sabedoria" value="${data?.stats?.sabedoria || data?.atributos?.sabedoria || 0}"></label>
             </div>
         </div>
 
         <textarea class="ink-textarea pet-desc" placeholder="Descrição, comportamento e notas...">${data?.description || data?.descricao || ''}</textarea>
     `;
+
+    // Lógica de Visibilidade Dinâmica de Atributos
+    const typeSelect = card.querySelector('.pet-type');
+    const dynamicAttrs = card.querySelectorAll('.dynamic-attr');
+
+    const updateAttributeVisibility = () => {
+        const selectedType = typeSelect.value;
+        
+        dynamicAttrs.forEach(attr => {
+            const allowedTypes = attr.dataset.types.split(',');
+            const input = attr.querySelector('input');
+            
+            if (allowedTypes.includes(selectedType)) {
+                attr.classList.remove('hidden');
+            } else {
+                attr.classList.add('hidden');
+                input.value = 0; // Zera o valor se for ocultado
+            }
+        });
+    };
+
+    typeSelect.addEventListener('change', updateAttributeVisibility);
+    updateAttributeVisibility(); // Executa ao criar para carregar estado inicial (vazio ou importado)
 
     // Lógica de Importação via Ficheiro JSON
     const importInput = card.querySelector(`#import-magi-${petId}`);
@@ -134,8 +153,8 @@ export function addPet(data = null) {
             reader.onload = function(event) {
                 try {
                     const magiData = JSON.parse(event.target.result);
-                    card.remove(); // Remove o card atual (vazio)
-                    addPet(magiData); // Reconstrói com os dados importados
+                    card.remove();
+                    addPet(magiData); 
                 } catch (err) {
                     alert("Erro ao ler o ficheiro ministerial. Certifique-se que é um JSON válido.");
                 }
@@ -162,7 +181,7 @@ export function addPet(data = null) {
         });
     }
 
-    // Botão de Remoção (Com animação)
+    // Botão de Remoção
     card.querySelector('.delete-btn').addEventListener('click', () => {
         card.style.opacity = '0';
         card.style.transform = 'scale(0.95)';

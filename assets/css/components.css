@@ -404,3 +404,17 @@ button:disabled {
     transform: translate(1px, 1px);
     box-shadow: none !important;
 }
+.hidden {
+    display: none !important;
+}
+
+.pet-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.attr-extra {
+    transition: all 0.3s ease;
+}
