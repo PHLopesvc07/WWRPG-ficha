@@ -403,3 +403,45 @@ button:disabled {
     background: var(--magic-gold);
     color: #000;
 }
+/* --- Ajuste para Integração Magizoologista --- */
+
+.pet-card {
+    position: relative !important; /* Essencial para o botão de importação se fixar no topo */
+    padding-top: 35px !important;  /* Abre espaço para o botão não cobrir o título */
+}
+
+.pet-import-zone {
+    position: absolute;
+    top: 10px;
+    right: 45px; /* Fica exatamente à esquerda do botão de fechar (X) */
+    z-index: 20;
+}
+
+/* Estilização do Botão de Importação */
+.pet-import-zone .btn-teal {
+    display: inline-block;
+    font-family: 'Special Elite', cursive; /* Mantém a estética de máquina de escrever */
+    font-size: 10px;
+    padding: 3px 8px;
+    background-color: #008080; /* Cor Teal padrão do sistema */
+    color: white;
+    border: 1px solid var(--magic-gold);
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    transition: transform 0.1s active;
+}
+
+.pet-import-zone .btn-teal:hover {
+    background-color: var(--magic-gold);
+    color: black;
+}
+
+.pet-import-zone .btn-teal:active {
+    transform: translateY(1px);
+}
+
+/* Garante que o input de arquivo real fique invisível */
+.magi-import-input {
+    display: none !important;
+}
