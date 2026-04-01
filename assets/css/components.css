@@ -370,3 +370,36 @@ button:disabled {
 .pet-stats-section { border-top: 1px dashed var(--ink); padding-top: 15px; margin-top: 5px; }
 .pet-stats-title { font-family: var(--font-serif); margin-bottom: 5px; font-size: 1rem; }
 .pet-stats-grid { margin-bottom: 15px; }
+
+/* Estilização da Zona de Importação de Criaturas */
+.pet-import-zone {
+    position: absolute;
+    top: 10px;
+    right: 45px; /* Posicionado à esquerda do botão de fechar (X) */
+    z-index: 10;
+}
+
+.pet-card {
+    position: relative; /* Garante que o posicionamento absoluto do botão funcione */
+    padding-top: 25px;  /* Espaço extra para não sobrepor o título */
+}
+
+.magi-import-input {
+    display: none; /* Esconde o input de ficheiro original */
+}
+
+/* Ajuste no botão de importação para manter a estética do Ministério */
+.pet-import-zone .btn-teal {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border: 1px solid var(--magic-gold);
+    background: rgba(0, 128, 128, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pet-import-zone .btn-teal:hover {
+    background: var(--magic-gold);
+    color: #000;
+}
