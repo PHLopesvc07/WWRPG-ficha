@@ -3,6 +3,9 @@
  * Gerenciamento de Animais de Estimação e Integração com Magizoologista
  */
 
+/**
+ * Inicializa o ouvinte de eventos para o botão principal de adicionar animais.
+ */
 export function setupPets() {
     const btnAddPet = document.getElementById('btn-add-pet');
     if (btnAddPet) {
@@ -10,13 +13,18 @@ export function setupPets() {
     }
 }
 
+/**
+ * Cria um novo card de animal. 
+ * @param {Object|null} data - Dados vindos do Magizoologista ou nulo para novo registo.
+ */
 export function addPet(data = null) {
     const container = document.getElementById('pets-container');
     if (!container) return;
 
     const currentPets = container.querySelectorAll('.pet-card').length;
 
-    if (currentPets >= 3) {
+    // Regra: Limite de 3 animais (Artigo 73 do Estatuto de Sigilo)
+    if (currentPets >= 3 && !data) {
         alert("Aviso do Departamento para Regulamentação de Criaturas: Limite máximo atingido.");
         return;
     }
@@ -27,14 +35,15 @@ export function addPet(data = null) {
     card.className = 'bureaucracy-box pet-card animated-fade-in';
     card.dataset.id = petId;
     
-    // Adicionado o input de arquivo e o botão de importação no layout
+    // Template com mapeamento de campos do Magizoologista
     card.innerHTML = `
         <button class="delete-btn" aria-label="Remover Registro" title="Remover Registro">X</button>
+        
         <div class="pet-import-zone">
-             <label for="import-magi-${petId}" class="btn-teal" style="font-size: 0.7rem; padding: 5px 10px; cursor: pointer;">
+             <label for="import-magi-${petId}" class="btn-import-magi" title="Importar arquivo .json do Magizoologista">
                 📥 Importar do Magizoologista
              </label>
-             <input type="file" id="import-magi-${petId}" class="hidden magi-import-input" accept=".json">
+             <input type="file" id="import-magi-${petId}" class="magi-import-input" accept=".json" style="display:none;">
         </div>
 
         <h4 class="pet-card-title">- REGISTRO DE ANIMAL -</h4>
@@ -55,7 +64,7 @@ export function addPet(data = null) {
                     <label class="pet-label-age">Idade: 
                         <input type="number" class="ink-input short-input pet-age" value="${data?.age || ''}">
                     </label>
-                    <label class="pet-label-size">Tamanho/Peso: 
+                    <label class="pet-label-size">Tam/Peso: 
                         <input type="text" class="ink-input pet-size" value="${data?.size || (data?.tamanho ? data.tamanho + ' / ' + data.peso : '') || ''}">
                     </label>
                 </div>
@@ -111,40 +120,40 @@ export function addPet(data = null) {
             </div>
         </div>
 
-        <textarea class="ink-textarea pet-desc" placeholder="Descrição e peculiaridades...">${data?.description || data?.descricao || ''}</textarea>
+        <textarea class="ink-textarea pet-desc" placeholder="Descrição, comportamento e notas...">${data?.description || data?.descricao || ''}</textarea>
     `;
 
-    // Lógica de Importação JSON (Magizoologista)
-    const importInput = card.querySelector('.magi-import-input');
-    importInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+    // Lógica de Importação via Ficheiro JSON
+    const importInput = card.querySelector(`#import-magi-${petId}`);
+    if (importInput) {
+        importInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            try {
-                const magiData = JSON.parse(event.target.result);
-                // Remove o card vazio atual e cria um novo com os dados
-                card.remove();
-                addPet(magiData);
-            } catch (err) {
-                alert("Erro ao ler o arquivo ministerial. Certifique-se que é um JSON válido.");
-            }
-        };
-        reader.readAsText(file);
-    });
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const magiData = JSON.parse(event.target.result);
+                    card.remove(); // Remove o card atual (vazio)
+                    addPet(magiData); // Reconstrói com os dados importados
+                } catch (err) {
+                    alert("Erro ao ler o ficheiro ministerial. Certifique-se que é um JSON válido.");
+                }
+            };
+            reader.readAsText(file);
+        });
+    }
 
-    // Lógica para Upload da Foto (Manual)
-    const fileInput = card.querySelector('.pet-photo-input');
+    // Lógica para Upload Manual da Foto do Pet
+    const photoInput = card.querySelector(`#pet-photo-${petId}`);
     const imgPreview = card.querySelector('.pet-photo-preview');
-    
-    if (fileInput && imgPreview) {
-        fileInput.addEventListener('change', function(e) {
+    if (photoInput && imgPreview) {
+        photoInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = (event) => {
-                    imgPreview.src = event.target.result;
+                reader.onload = (ev) => {
+                    imgPreview.src = ev.target.result;
                     imgPreview.classList.remove('hidden');
                     imgPreview.classList.add('photo-preview-active');
                 };
@@ -153,9 +162,10 @@ export function addPet(data = null) {
         });
     }
 
-    // Botão Deletar
+    // Botão de Remoção (Com animação)
     card.querySelector('.delete-btn').addEventListener('click', () => {
         card.style.opacity = '0';
+        card.style.transform = 'scale(0.95)';
         setTimeout(() => card.remove(), 300);
     });
 

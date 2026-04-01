@@ -371,77 +371,36 @@ button:disabled {
 .pet-stats-title { font-family: var(--font-serif); margin-bottom: 5px; font-size: 1rem; }
 .pet-stats-grid { margin-bottom: 15px; }
 
-/* Estilização da Zona de Importação de Criaturas */
-.pet-import-zone {
-    position: absolute;
-    top: 10px;
-    right: 45px; /* Posicionado à esquerda do botão de fechar (X) */
-    z-index: 10;
-}
-
+/* --- INTEGRAÇÃO MAGIZOOLOGISTA --- */
 .pet-card {
-    position: relative; /* Garante que o posicionamento absoluto do botão funcione */
-    padding-top: 25px;  /* Espaço extra para não sobrepor o título */
-}
-
-.magi-import-input {
-    display: none; /* Esconde o input de ficheiro original */
-}
-
-/* Ajuste no botão de importação para manter a estética do Ministério */
-.pet-import-zone .btn-teal {
-    font-family: 'Special Elite', cursive;
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    border: 1px solid var(--magic-gold);
-    background: rgba(0, 128, 128, 0.2);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.pet-import-zone .btn-teal:hover {
-    background: var(--magic-gold);
-    color: #000;
-}
-/* --- Ajuste para Integração Magizoologista --- */
-
-.pet-card {
-    position: relative !important; /* Essencial para o botão de importação se fixar no topo */
-    padding-top: 35px !important;  /* Abre espaço para o botão não cobrir o título */
+    position: relative !important;
+    padding-top: 40px !important; /* Espaço para o botão no topo */
 }
 
 .pet-import-zone {
     position: absolute;
     top: 10px;
-    right: 45px; /* Fica exatamente à esquerda do botão de fechar (X) */
-    z-index: 20;
+    right: 45px; /* Lado esquerdo do botão X */
+    z-index: 100;
 }
 
-/* Estilização do Botão de Importação */
-.pet-import-zone .btn-teal {
-    display: inline-block;
-    font-family: 'Special Elite', cursive; /* Mantém a estética de máquina de escrever */
-    font-size: 10px;
-    padding: 3px 8px;
-    background-color: #008080; /* Cor Teal padrão do sistema */
-    color: white;
-    border: 1px solid var(--magic-gold);
-    border-radius: 3px;
+.btn-import-magi {
+    background-color: var(--muted-teal) !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--ink) !important;
+    font-size: 10px !important;
+    padding: 4px 8px !important;
     cursor: pointer;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-    transition: transform 0.1s active;
+    box-shadow: 2px 2px 0 var(--ink) !important;
+    font-family: var(--font-typewriter) !important;
+    display: block;
 }
 
-.pet-import-zone .btn-teal:hover {
-    background-color: var(--magic-gold);
-    color: black;
+.btn-import-magi:hover {
+    background-color: var(--magic-gold) !important;
 }
 
-.pet-import-zone .btn-teal:active {
-    transform: translateY(1px);
-}
-
-/* Garante que o input de arquivo real fique invisível */
-.magi-import-input {
-    display: none !important;
+.btn-import-magi:active {
+    transform: translate(1px, 1px);
+    box-shadow: none !important;
 }
