@@ -117,6 +117,28 @@ export function addPet(data = null) {
         </div>
 
         <textarea class="ink-textarea pet-desc" placeholder="Descrição, comportamento e notas...">${data?.description || data?.descricao || ''}</textarea>
+        
+        <div class="bureaucracy-box injuries-section mt-15" style="padding: 15px; margin-top: 15px;">
+            <h5 class="pet-stats-title" style="margin-top: 0;">Prontuário Médico (Injúrias)</h5>
+            <div class="injury-row">
+                <label>Leve (Atual/Máx):</label> 
+                <input type="number" class="ink-input short-input pet-inj-leve-curr" value="${data?.injLeveCurr || 0}"> / 
+                <input type="number" class="ink-input short-input pet-inj-leve-max" value="${data?.injLeveMax || 0}">
+            </div>
+            <div class="injury-row mt-10">
+                <label>Média (Atual/Máx):</label> 
+                <input type="number" class="ink-input short-input pet-inj-media-curr" value="${data?.injMediaCurr || 0}"> / 
+                <input type="number" class="ink-input short-input pet-inj-media-max" value="${data?.injMediaMax || 0}">
+            </div>
+            <div class="injury-row mt-10">
+                <label>Pesada (Atual/Máx):</label> 
+                <input type="number" class="ink-input short-input pet-inj-pesada-curr" value="${data?.injPesadaCurr || 0}"> / 
+                <input type="number" class="ink-input short-input pet-inj-pesada-max" value="${data?.injPesadaMax || 0}">
+            </div>
+            
+            <div class="custom-pet-injuries-container mt-10"></div>
+            <button type="button" class="btn-teal btn-add-pet-injury mt-10" style="font-size: 0.8rem; padding: 5px 10px;">+ Adicionar Condição Médica</button>
+        </div>
     `;
 
     // Lógica de Visibilidade Dinâmica de Atributos
@@ -141,6 +163,19 @@ export function addPet(data = null) {
 
     typeSelect.addEventListener('change', updateAttributeVisibility);
     updateAttributeVisibility(); // Executa ao criar para carregar estado inicial (vazio ou importado)
+
+    // --- LÓGICA DE INJÚRIAS PERSONALIZADAS ---
+    const injuriesContainer = card.querySelector('.custom-pet-injuries-container');
+    const btnAddInjury = card.querySelector('.btn-add-pet-injury');
+
+    btnAddInjury.addEventListener('click', () => {
+        addCustomPetInjuryRow(injuriesContainer);
+    });
+
+    // Se houver dados de ferimentos customizados carregados do JSON
+    if (data?.customInjuries && Array.isArray(data.customInjuries)) {
+        data.customInjuries.forEach(inj => addCustomPetInjuryRow(injuriesContainer, inj));
+    }
 
     // Lógica de Importação via Ficheiro JSON
     const importInput = card.querySelector(`#import-magi-${petId}`);
@@ -189,4 +224,21 @@ export function addPet(data = null) {
     });
 
     container.appendChild(card);
+}
+
+/**
+ * Função utilitária para criar a linha do ferimento customizado
+ */
+function addCustomPetInjuryRow(container, data = null) {
+    const div = document.createElement('div');
+    div.className = 'injury-row custom-injury animated-fade-in mt-10';
+    div.innerHTML = `
+        <input type="text" class="ink-input short-input injury-name-input" placeholder="Condição Médica" aria-label="Nome do Ferimento" value="${data?.name || ''}">
+        <input type="number" class="ink-input short-input curr" aria-label="Gravidade Atual" value="${data?.curr || 0}"> / 
+        <input type="number" class="ink-input short-input max" aria-label="Gravidade Máxima" value="${data?.max || 0}">
+        <button class="delete-btn btn-delete-small" aria-label="Excluir Ferimento" title="Excluir" style="position: static; padding: 2px 6px;">X</button>
+    `;
+
+    div.querySelector('.delete-btn').addEventListener('click', () => div.remove());
+    container.appendChild(div);
 }
