@@ -11,6 +11,7 @@ export function setupDynamicLists() {
     const btnAddSpell = document.getElementById('btn-add-spell');
     const btnAddInjury = document.getElementById('btn-add-injury');
     const btnAddContainer = document.getElementById('btn-add-container');
+    const spellImportInput = document.getElementById('spell-import');
 
     // 1. Adicionar Feitiço Manualmente
     if (btnAddSpell) {
@@ -79,6 +80,43 @@ export function setupDynamicLists() {
     if (btnAddContainer) {
         btnAddContainer.addEventListener('click', () => {
             addInventoryContainer("Novo Recipiente");
+        });
+    }
+
+    // 4. Importar Feitiços (Individual ou Lista)
+    if (spellImportInput) {
+        spellImportInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+
+                    // Verifica se é uma lista (array) ou um feitiço individual (object)
+                    if (Array.isArray(data)) {
+                        data.forEach(spell => {
+                            addSpellCard(spell);
+                        });
+                        alert(`${data.length} feitiços importados com sucesso!`);
+                    } else if (typeof data === 'object' && data !== null) {
+                        addSpellCard(data);
+                        alert(`Feitiço "${data.name || 'desconhecido'}" importado!`);
+                    }
+
+                    // Organiza a lista após a importação
+                    sortSpells();
+                    
+                    // Limpa o input para permitir importar o mesmo arquivo novamente se necessário
+                    spellImportInput.value = '';
+
+                } catch (err) {
+                    console.error("Erro ao importar feitiço:", err);
+                    alert("Erro no arquivo: Certifique-se de que é um JSON válido do Ministério.");
+                }
+            };
+            reader.readAsText(file);
         });
     }
 
