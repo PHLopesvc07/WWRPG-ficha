@@ -105,6 +105,7 @@ async function exportData() {
                 }))
             }))
         },
+        // --- ATUALIZAÇÃO AQUI: Salvando os dados completos do Pet, incluindo Injúrias ---
         pets: Array.from(document.querySelectorAll('.pet-card')).map(card => ({
             photo: card.querySelector('.pet-photo-preview')?.src || '',
             name: card.querySelector('.pet-name')?.value || '',
@@ -115,13 +116,29 @@ async function exportData() {
             sex: card.querySelector('.pet-sex')?.value || '',
             classification: card.querySelector('.pet-class')?.value || '',
             license: card.querySelector('.pet-license')?.value || '',
+            tipo: card.querySelector('.pet-type')?.value || '', // Salvando o tipo dinâmico
             stats: {
                 corpo: card.querySelector('.pet-corpo')?.value || 0,
                 destreza: card.querySelector('.pet-destreza')?.value || 0,
                 vitalidade: card.querySelector('.pet-vitalidade')?.value || 0,
-                instinto: card.querySelector('.pet-instinto')?.value || 0
+                instinto: card.querySelector('.pet-instinto')?.value || 0,
+                carisma: card.querySelector('.pet-carisma')?.value || 0,
+                inteligencia: card.querySelector('.pet-inteligencia')?.value || 0,
+                sabedoria: card.querySelector('.pet-sabedoria')?.value || 0
             },
-            description: card.querySelector('.pet-desc')?.value || ''
+            description: card.querySelector('.pet-desc')?.value || '',
+            // Novos campos: Prontuário Médico do Pet
+            injLeveCurr: card.querySelector('.pet-inj-leve-curr')?.value || 0,
+            injLeveMax: card.querySelector('.pet-inj-leve-max')?.value || 0,
+            injMediaCurr: card.querySelector('.pet-inj-media-curr')?.value || 0,
+            injMediaMax: card.querySelector('.pet-inj-media-max')?.value || 0,
+            injPesadaCurr: card.querySelector('.pet-inj-pesada-curr')?.value || 0,
+            injPesadaMax: card.querySelector('.pet-inj-pesada-max')?.value || 0,
+            customInjuries: Array.from(card.querySelectorAll('.custom-pet-injuries-container .custom-injury')).map(row => ({
+                name: row.querySelector('.injury-name-input')?.value || '',
+                curr: row.querySelector('.curr')?.value || 0,
+                max: row.querySelector('.max')?.value || 0
+            }))
         })),
         notes: document.getElementById('notes-editor')?.innerHTML || ''
     };
@@ -216,7 +233,7 @@ function importData(e) {
                 });
             }
 
-            // 4. Injuries
+            // 4. Injuries (Personagem)
             setVal('inj-leve-curr', data.injuries?.leve?.c || "");
             setVal('inj-leve-max', data.injuries?.leve?.m || "");
             setVal('inj-media-curr', data.injuries?.media?.c || "");
@@ -313,12 +330,15 @@ function importData(e) {
                 });
             }
 
-            // 6.5 Pets
+            // 6.5 Pets (Agora importa com todos os atributos e injúrias)
             const petsContainer = document.getElementById('pets-container');
             if (petsContainer) {
                 petsContainer.innerHTML = ''; 
                 if (data.pets && Array.isArray(data.pets)) {
-                    data.pets.forEach(petData => addPet(petData));
+                    data.pets.forEach(petData => {
+                        // A função addPet (no pets.js) já está preparada para ler as injúrias
+                        addPet(petData); 
+                    });
                 }
             }
 
