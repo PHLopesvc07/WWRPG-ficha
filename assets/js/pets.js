@@ -26,6 +26,14 @@ export function addPet(data = null) {
     
     card.className = 'bureaucracy-box pet-card animated-fade-in';
     card.dataset.id = petId;
+
+    // LÓGICA DE COMPATIBILIDADE: Lê tanto do Magizoologista (injuries.leve.curr) quanto da Ficha (injLeveCurr)
+    const leveC = data?.injLeveCurr ?? data?.injuries?.leve?.curr ?? 0;
+    const leveM = data?.injLeveMax ?? data?.injuries?.leve?.max ?? 0;
+    const mediaC = data?.injMediaCurr ?? data?.injuries?.media?.curr ?? 0;
+    const mediaM = data?.injMediaMax ?? data?.injuries?.media?.max ?? 0;
+    const pesadaC = data?.injPesadaCurr ?? data?.injuries?.pesada?.curr ?? 0;
+    const pesadaM = data?.injPesadaMax ?? data?.injuries?.pesada?.max ?? 0;
     
     card.innerHTML = `
         <button class="delete-btn" aria-label="Remover Registro" title="Remover Registro">X</button>
@@ -122,18 +130,18 @@ export function addPet(data = null) {
             <h5 class="pet-stats-title" style="margin-top: 0;">Prontuário Médico (Injúrias)</h5>
             <div class="injury-row">
                 <label>Leve (Atual/Máx):</label> 
-                <input type="number" class="ink-input short-input pet-inj-leve-curr" value="${data?.injLeveCurr || 0}"> / 
-                <input type="number" class="ink-input short-input pet-inj-leve-max" value="${data?.injLeveMax || 0}">
+                <input type="number" class="ink-input short-input pet-inj-leve-curr" value="${leveC}"> / 
+                <input type="number" class="ink-input short-input pet-inj-leve-max" value="${leveM}">
             </div>
             <div class="injury-row mt-10">
                 <label>Média (Atual/Máx):</label> 
-                <input type="number" class="ink-input short-input pet-inj-media-curr" value="${data?.injMediaCurr || 0}"> / 
-                <input type="number" class="ink-input short-input pet-inj-media-max" value="${data?.injMediaMax || 0}">
+                <input type="number" class="ink-input short-input pet-inj-media-curr" value="${mediaC}"> / 
+                <input type="number" class="ink-input short-input pet-inj-media-max" value="${mediaM}">
             </div>
             <div class="injury-row mt-10">
                 <label>Pesada (Atual/Máx):</label> 
-                <input type="number" class="ink-input short-input pet-inj-pesada-curr" value="${data?.injPesadaCurr || 0}"> / 
-                <input type="number" class="ink-input short-input pet-inj-pesada-max" value="${data?.injPesadaMax || 0}">
+                <input type="number" class="ink-input short-input pet-inj-pesada-curr" value="${pesadaC}"> / 
+                <input type="number" class="ink-input short-input pet-inj-pesada-max" value="${pesadaM}">
             </div>
             
             <div class="custom-pet-injuries-container mt-10"></div>
@@ -172,9 +180,10 @@ export function addPet(data = null) {
         addCustomPetInjuryRow(injuriesContainer);
     });
 
-    // Se houver dados de ferimentos customizados carregados do JSON
-    if (data?.customInjuries && Array.isArray(data.customInjuries)) {
-        data.customInjuries.forEach(inj => addCustomPetInjuryRow(injuriesContainer, inj));
+    // Compatibilidade: Lê do formato da Ficha ou do formato do Magizoologista
+    const customInjs = data?.customInjuries || data?.injuries?.custom;
+    if (customInjs && Array.isArray(customInjs)) {
+        customInjs.forEach(inj => addCustomPetInjuryRow(injuriesContainer, inj));
     }
 
     // Lógica de Importação via Ficheiro JSON
@@ -234,8 +243,8 @@ function addCustomPetInjuryRow(container, data = null) {
     div.className = 'injury-row custom-injury animated-fade-in mt-10';
     div.innerHTML = `
         <input type="text" class="ink-input short-input injury-name-input" placeholder="Condição Médica" aria-label="Nome do Ferimento" value="${data?.name || ''}">
-        <input type="number" class="ink-input short-input curr" aria-label="Gravidade Atual" value="${data?.curr || 0}"> / 
-        <input type="number" class="ink-input short-input max" aria-label="Gravidade Máxima" value="${data?.max || 0}">
+        <input type="number" class="ink-input short-input curr" aria-label="Gravidade Atual" value="${data?.curr || data?.c || 0}"> / 
+        <input type="number" class="ink-input short-input max" aria-label="Gravidade Máxima" value="${data?.max || data?.m || 0}">
         <button class="delete-btn btn-delete-small" aria-label="Excluir Ferimento" title="Excluir" style="position: static; padding: 2px 6px;">X</button>
     `;
 
