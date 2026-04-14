@@ -53,6 +53,7 @@ async function exportData() {
             hw: getVal('height-weight'),
             languages: getVal('languages'),
             profession: getVal('profession'),
+            past: getVal('past'),
             family: getVal('family-select')
         },
         stats: {
@@ -210,6 +211,7 @@ function importData(e) {
             setVal('height-weight', data.profile.hw || "");
             setVal('languages', data.profile.languages || "");
             setVal('profession', data.profile.profession || "");
+            setVal('past', data.profile.past || "");
             
             const famSelect = document.getElementById('family-select');
             if (famSelect) {
