@@ -378,7 +378,7 @@ button:disabled {
     background-color: rgba(217, 83, 79, 0.08);
 }
 
-.spells-container .spell-card.cat-feitico {
+.spells-container .spell-card.cat-charme {
     border-left-color: #F0AD4E;
     background-color: rgba(240, 173, 78, 0.08);
 }
@@ -432,7 +432,7 @@ button:disabled {
     color: #D9534F;
 }
 
-.header-feitico {
+.header-charme {
     border-bottom: 2px solid #e69622;
     color: #e69622;
 }
@@ -539,12 +539,12 @@ button:disabled {
     background-color: #D9534F;
 }
 
-.badge-feitico {
+.badge-charme {
     border-color: #e69622;
     color: #e69622;
 }
 
-.badge-feitico .dot {
+.badge-charme .dot {
     background-color: #e69622;
 }
 

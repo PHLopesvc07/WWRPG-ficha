@@ -8,7 +8,7 @@
 
 const CONJ_ATTR = {
     'Transfiguração': 'Transfiguração (Carisma)',
-    'Feitiço':        'Prática (Sabedoria)',
+    'Charme':        'Prática (Sabedoria)',
     'Azaração':       'DCAT (Sabedoria)',
     'Maldição Menor': 'DCAT (Sabedoria)',
     'Maldição':       'DCAT (Sabedoria)',
@@ -93,7 +93,7 @@ export function setupDynamicLists() {
             const cards = Array.from(container.querySelectorAll('.spell-card'));
             const targetSpell = cards.find(card => {
                 const select = card.querySelector('.spell-cat');
-                return (select ? select.value : 'Feitiço') === targetCat;
+                return (select ? select.value : 'Charme') === targetCat;
             });
 
             if (targetSpell) {
@@ -178,7 +178,7 @@ export function addSpellCard(data = null) {
             <input type="text" class="ink-input spell-name" placeholder="Nome do Feitiço" aria-label="Nome do Feitiço">
             <select class="ink-select spell-cat" aria-label="Categoria do Feitiço">
                 <option value="Transfiguração">Transfiguração</option>
-                <option value="Feitiço" selected>Charme</option>
+                <option value="Charme" selected>Charme</option>
                 <option value="Azaração">Azaração</option>
                 <option value="Maldição Menor">Maldição Menor</option>
                 <option value="Maldição">Maldição</option>
@@ -214,7 +214,7 @@ export function addSpellCard(data = null) {
         card.querySelector('.spell-lvl').value  = data.lvl  || '1';
         card.querySelector('.spell-tipo').value = data.tipo || '';
         const catValue = Array.isArray(data.cat) ? data.cat[0] : data.cat;
-        card.querySelector('.spell-cat').value  = catValue || 'Feitiço';
+        card.querySelector('.spell-cat').value  = catValue || 'Charme';
     }
 
     // Painel de combate
@@ -260,7 +260,7 @@ export function sortSpells() {
 
     const catConfig = {
         'Transfiguração': { order:1, class:'cat-transfiguracao', headerClass:'header-transfiguracao', label:'Transfiguração' },
-        'Feitiço':        { order:2, class:'cat-feitico',        headerClass:'header-feitico',        label:'Charme'         },
+        'Charme':        { order:2, class:'cat-charme',        headerClass:'header-charme',        label:'Charme'         },
         'Azaração':       { order:3, class:'cat-azaracao',       headerClass:'header-azaracao',       label:'Azaração'       },
         'Maldição Menor': { order:4, class:'cat-maldicao-menor', headerClass:'header-maldicao-menor', label:'Maldição Menor' },
         'Maldição':       { order:5, class:'cat-maldicao',       headerClass:'header-maldicao',       label:'Maldição'       },
@@ -269,8 +269,8 @@ export function sortSpells() {
     };
 
     cards.sort((a, b) => {
-        const catA = a.querySelector('.spell-cat').value || 'Feitiço';
-        const catB = b.querySelector('.spell-cat').value || 'Feitiço';
+        const catA = a.querySelector('.spell-cat').value || 'Charme';
+        const catB = b.querySelector('.spell-cat').value || 'Charme';
         const oA   = catConfig[catA]?.order ?? 99;
         const oB   = catConfig[catB]?.order ?? 99;
         if (oA !== oB) return oA - oB;
@@ -281,7 +281,7 @@ export function sortSpells() {
     let currentCategory = null;
 
     cards.forEach(card => {
-        const cat = card.querySelector('.spell-cat').value || 'Feitiço';
+        const cat = card.querySelector('.spell-cat').value || 'Charme';
         Object.values(catConfig).forEach(c => card.classList.remove(c.class));
         if (catConfig[cat]) card.classList.add(catConfig[cat].class);
         if (counts[cat] !== undefined) counts[cat]++;
