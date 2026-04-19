@@ -1077,23 +1077,23 @@ button:disabled {
 .s-disaster {
     background: rgba(139, 0, 0, 0.12);
     border-color: #8B0000;
-    color: #8B0000;
+    color: #ffffff;
 }
 
 .s-fail {
-    background: rgba(92, 75, 81, 0.08);
+    background: rgba(92, 75, 81, 0.781);
     border-color: #aaa;
-    color: #888;
+    color: #ffffff;
 }
 
 .s-hit {
-    background: rgba(66, 139, 202, 0.12);
+    background: rgba(66, 139, 202, 0.822);
     border-color: #428BCA;
-    color: #428BCA;
+    color: #ffffff;
 }
 
 .s-crit {
-    background: rgba(243, 181, 98, 0.2);
+    background: rgba(243, 180, 98, 0.87);
     border-color: var(--magic-gold);
-    color: var(--magic-gold);
+    color: #ffffff;
 }
