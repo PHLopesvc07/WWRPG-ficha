@@ -1075,7 +1075,7 @@ button:disabled {
 }
 
 .s-disaster {
-    background: rgba(139, 0, 0, 0.12);
+    background: rgba(139, 0, 0, 0.877);
     border-color: #8B0000;
     color: #ffffff;
 }
