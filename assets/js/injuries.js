@@ -1,3 +1,4 @@
+
 /**
  * INJURIES.JS - MINISTÉRIO DA MAGIA
  * Barras Visuais de Injúrias e Painel de Penalidades Automáticas
@@ -9,9 +10,6 @@ const ROWS = [
     { curr: 'inj-pesada-curr', max: 'inj-pesada-max',  bar: 'bar-pesada', type: 'pesada' },
 ];
 
-/**
- * Inicializa as barras de HP e o painel de penalidades para a ficha do personagem.
- */
 export function setupInjuryBars() {
     ROWS.forEach(({ curr, max, bar, type }) => {
         const currEl = document.getElementById(curr);
@@ -31,7 +29,7 @@ export function setupInjuryBars() {
 function updateBar(currEl, maxEl, barEl, type) {
     const curr = Math.max(0, parseInt(currEl.value) || 0);
     const max  = Math.max(0, parseInt(maxEl.value)  || 0);
-    const pct  = max > 0 ? Math.min((curr / max) * 100, 110) : 0; // 110% → morte
+    const pct  = max > 0 ? (curr / max) * 100 : 0;
 
     const fill  = barEl.querySelector('.inj-fill');
     const label = barEl.querySelector('.inj-bar-label');
@@ -40,12 +38,11 @@ function updateBar(currEl, maxEl, barEl, type) {
     fill.style.width = Math.min(pct, 100) + '%';
     label.textContent = max > 0 ? `${curr} / ${max}` : '—';
 
-    // Cor dinâmica baseada no preenchimento
     fill.className = 'inj-fill';
-    if (pct >= 100) fill.classList.add('inj-fill--full');
+    if (pct >= 100)     fill.classList.add('inj-fill--full');
     else if (pct >= 66) fill.classList.add('inj-fill--high');
     else if (pct >= 33) fill.classList.add('inj-fill--mid');
-    else               fill.classList.add('inj-fill--low');
+    else                fill.classList.add('inj-fill--low');
 }
 
 function updatePenalties() {
@@ -57,7 +54,6 @@ function updatePenalties() {
 
     const warnings = [];
 
-    // Regras do sistema (Guia Básico)
     if (mediaM > 0 && mediaC >= mediaM)
         warnings.push({ icon: '⚠', text: '-2 em todos os testes', cls: 'pen--warn' });
 
@@ -67,7 +63,13 @@ function updatePenalties() {
     if (pesadaM > 0 && pesadaC >= pesadaM)
         warnings.push({ icon: '☠', text: '1 ação por turno · sem reações', cls: 'pen--crit' });
 
-    if (leveM > 0 && leveC > leveM)
+    // Morte: todas as categorias cheias E qualquer uma transbordando
+    const todasCheias  = (leveM > 0 && leveC >= leveM)
+                      && (mediaM > 0 && mediaC >= mediaM)
+                      && (pesadaM > 0 && pesadaC >= pesadaM);
+    const algumTransb  = leveC > leveM || mediaC > mediaM || pesadaC > pesadaM;
+
+    if (todasCheias && algumTransb)
         warnings.push({ icon: '💀', text: 'MORTE', cls: 'pen--death' });
 
     const panel = document.getElementById('injury-penalties');
