@@ -68,9 +68,9 @@ function renderCombatPanel(panel, cat, lvlStr, tipoVal) {
 
     panel.innerHTML = `
         <div class="spell-combat-badges">
-            <span class="spell-combat-badge">🎲 ${ld.dice}</span>
-            <span class="spell-combat-badge">⚡ ${ld.actions}</span>
-            <span class="spell-combat-badge">✨ ${attr}</span>
+            <span class="spell-combat-badge">⚅ ${ld.dice}</span>
+            <span class="spell-combat-badge">ϟ ${ld.actions}</span>
+            <span class="spell-combat-badge">★ ${attr}</span>
         </div>
         <div class="spell-dice-grid">
             <div class="spell-dice-box s-disaster">☠ Desastre<br><strong>${ld.ranges.disaster}</strong></div>
