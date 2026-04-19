@@ -3,6 +3,8 @@
  * Gerenciamento de Animais de Estimação e Integração com Magizoologista
  */
 
+import { setupPetInjuryBars } from './injuries.js';
+
 export function setupPets() {
     const btnAddPet = document.getElementById('btn-add-pet');
     if (btnAddPet) {
@@ -126,27 +128,48 @@ export function addPet(data = null) {
 
         <textarea class="ink-textarea pet-desc" placeholder="Descrição, comportamento e notas...">${data?.description || data?.descricao || ''}</textarea>
         
-        <div class="bureaucracy-box injuries-section mt-15" style="padding: 15px; margin-top: 15px;">
-            <h5 class="pet-stats-title" style="margin-top: 0;">Prontuário Médico (Injúrias)</h5>
-            <div class="injury-row">
-                <label>Leve (Atual/Máx):</label> 
-                <input type="number" class="ink-input short-input pet-inj-leve-curr" value="${leveC}"> / 
-                <input type="number" class="ink-input short-input pet-inj-leve-max" value="${leveM}">
-            </div>
-            <div class="injury-row mt-10">
-                <label>Média (Atual/Máx):</label> 
-                <input type="number" class="ink-input short-input pet-inj-media-curr" value="${mediaC}"> / 
-                <input type="number" class="ink-input short-input pet-inj-media-max" value="${mediaM}">
-            </div>
-            <div class="injury-row mt-10">
-                <label>Pesada (Atual/Máx):</label> 
-                <input type="number" class="ink-input short-input pet-inj-pesada-curr" value="${pesadaC}"> / 
-                <input type="number" class="ink-input short-input pet-inj-pesada-max" value="${pesadaM}">
-            </div>
-            
-            <div class="custom-pet-injuries-container mt-10"></div>
-            <button type="button" class="btn-teal btn-add-pet-injury mt-10" style="font-size: 0.8rem; padding: 5px 10px;">+ Adicionar Condição Médica</button>
-        </div>
+  <div class="bureaucracy-box injuries-section mt-15" style="padding: 15px; margin-top: 15px;">
+    <h5 class="pet-stats-title" style="margin-top: 0;">Prontuário Médico (Injúrias)</h5>
+
+    <div class="injury-row">
+        <label>Leve (Atual/Máx):</label>
+        <input type="number" class="ink-input short-input pet-inj-leve-curr" value="${leveC}"> /
+        <input type="number" class="ink-input short-input pet-inj-leve-max"  value="${leveM}">
+    </div>
+    <div class="inj-bar-wrap bar-pet-leve">
+        <span class="inj-bar-type">Leve</span>
+        <div class="inj-track"><div class="inj-fill inj-fill--low"></div></div>
+        <span class="inj-bar-label">—</span>
+    </div>
+
+    <div class="injury-row mt-10">
+        <label>Média (Atual/Máx):</label>
+        <input type="number" class="ink-input short-input pet-inj-media-curr" value="${mediaC}"> /
+        <input type="number" class="ink-input short-input pet-inj-media-max"  value="${mediaM}">
+    </div>
+    <div class="inj-bar-wrap bar-pet-media">
+        <span class="inj-bar-type">Média</span>
+        <div class="inj-track"><div class="inj-fill inj-fill--low"></div></div>
+        <span class="inj-bar-label">—</span>
+    </div>
+
+    <div class="injury-row mt-10">
+        <label>Pesada (Atual/Máx):</label>
+        <input type="number" class="ink-input short-input pet-inj-pesada-curr" value="${pesadaC}"> /
+        <input type="number" class="ink-input short-input pet-inj-pesada-max"  value="${pesadaM}">
+    </div>
+    <div class="inj-bar-wrap bar-pet-pesada">
+        <span class="inj-bar-type">Pesada</span>
+        <div class="inj-track"><div class="inj-fill inj-fill--low"></div></div>
+        <span class="inj-bar-label">—</span>
+    </div>
+
+    <div class="pet-injury-penalties injury-penalties" style="display:none;"></div>
+
+    <div class="custom-pet-injuries-container mt-10"></div>
+    <button type="button" class="btn-teal btn-add-pet-injury mt-10"
+            style="font-size: 0.8rem; padding: 5px 10px;">+ Adicionar Condição Médica</button>
+</div>
     `;
 
     // Lógica de Visibilidade Dinâmica de Atributos
@@ -232,6 +255,7 @@ export function addPet(data = null) {
         setTimeout(() => card.remove(), 300);
     });
 
+    setupPetInjuryBars(card);
     container.appendChild(card);
 }
 

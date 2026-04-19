@@ -24,7 +24,60 @@ export function setupInjuryBars() {
     });
 }
 
-// ─── Lógica interna ────────────────────────────────────────────────────────
+// ─── Barras para Pets (escopo por card) ───────────────────────────────────
+
+export function setupPetInjuryBars(card) {
+    const rows = [
+        { curr: '.pet-inj-leve-curr',   max: '.pet-inj-leve-max',   bar: '.bar-pet-leve'   },
+        { curr: '.pet-inj-media-curr',  max: '.pet-inj-media-max',  bar: '.bar-pet-media'  },
+        { curr: '.pet-inj-pesada-curr', max: '.pet-inj-pesada-max', bar: '.bar-pet-pesada' },
+    ];
+
+    rows.forEach(({ curr, max, bar }) => {
+        const currEl = card.querySelector(curr);
+        const maxEl  = card.querySelector(max);
+        const barEl  = card.querySelector(bar);
+        if (!currEl || !maxEl || !barEl) return;
+
+        const update = () => { updateBar(currEl, maxEl, barEl); updatePetPenalties(card); };
+        currEl.addEventListener('input', update);
+        maxEl.addEventListener('input',  update);
+        update();
+    });
+}
+
+function updatePetPenalties(card) {
+    const get = (sel) => Math.max(0, parseInt(card.querySelector(sel)?.value) || 0);
+
+    const leveC   = get('.pet-inj-leve-curr'),   leveM   = get('.pet-inj-leve-max');
+    const mediaC  = get('.pet-inj-media-curr'),  mediaM  = get('.pet-inj-media-max');
+    const pesadaC = get('.pet-inj-pesada-curr'), pesadaM = get('.pet-inj-pesada-max');
+
+    const warnings = [];
+
+    if (mediaM > 0 && mediaC >= mediaM)
+        warnings.push({ icon: '⚠', text: '-2 em todos os testes', cls: 'pen--warn' });
+    if (pesadaM > 0 && pesadaC > pesadaM / 2)
+        warnings.push({ icon: '⚠', text: '-1 ação por rodada', cls: 'pen--warn' });
+    if (pesadaM > 0 && pesadaC >= pesadaM)
+        warnings.push({ icon: '☠', text: '1 ação · sem reações', cls: 'pen--crit' });
+
+    const todasCheias = (leveM > 0 && leveC >= leveM)
+                     && (mediaM > 0 && mediaC >= mediaM)
+                     && (pesadaM > 0 && pesadaC >= pesadaM);
+    const algumTransb = leveC > leveM || mediaC > mediaM || pesadaC > pesadaM;
+
+    if (todasCheias && algumTransb)
+        warnings.push({ icon: '💀', text: 'MORTE', cls: 'pen--death' });
+
+    const panel = card.querySelector('.pet-injury-penalties');
+    if (!panel) return;
+
+    panel.style.display  = warnings.length ? 'flex' : 'none';
+    panel.innerHTML      = warnings.length
+        ? warnings.map(w => `<span class="penalty-tag ${w.cls}">${w.icon} ${w.text}</span>`).join('')
+        : '';
+}
 
 function updateBar(currEl, maxEl, barEl, type) {
     const curr = Math.max(0, parseInt(currEl.value) || 0);
