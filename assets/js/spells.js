@@ -295,57 +295,6 @@ export function sortSpells() {
             badge.classList.remove('badge-inactive');
         }
     });
-
-    function setupSpellFilter() {
-    const searchInput = document.getElementById('spell-search');
-    const lvlFilter   = document.getElementById('spell-filter-lvl');
-    const clearBtn    = document.getElementById('btn-clear-spell-filter');
-
-    if (searchInput) searchInput.addEventListener('input',  filterSpells);
-    if (lvlFilter)   lvlFilter.addEventListener('change',  filterSpells);
-    if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
-            if (searchInput) searchInput.value = '';
-            if (lvlFilter)   lvlFilter.value   = '';
-            filterSpells();
-        });
-    }
-}
-
-function filterSpells() {
-    const search = (document.getElementById('spell-search')?.value || '').toLowerCase().trim();
-    const lvl    =  document.getElementById('spell-filter-lvl')?.value || '';
-
-    const container = document.getElementById('spells-list');
-    if (!container) return;
-
-    // Mostra/esconde cada card
-    container.querySelectorAll('.spell-card').forEach(card => {
-        const name = (card.querySelector('.spell-name')?.value || '').toLowerCase();
-        const desc = (card.querySelector('.spell-desc')?.value || '').toLowerCase();
-        const cardLvl = card.querySelector('.spell-lvl')?.value || '';
-
-        const matchSearch = !search || name.includes(search) || desc.includes(search);
-        const matchLvl    = !lvl    || cardLvl === lvl;
-
-        card.style.display = (matchSearch && matchLvl) ? '' : 'none';
-    });
-
-    // Esconde headers cujos cards estejam todos ocultos
-    container.querySelectorAll('.spell-category-header').forEach(header => {
-        let next = header.nextElementSibling;
-        let hasVisible = false;
-        while (next && !next.classList.contains('spell-category-header')) {
-            if (next.classList.contains('spell-card') && next.style.display !== 'none') {
-                hasVisible = true;
-                break;
-            }
-            next = next.nextElementSibling;
-        }
-        header.style.display = hasVisible ? '' : 'none';
-    });
-}
-
 }
 
 /**

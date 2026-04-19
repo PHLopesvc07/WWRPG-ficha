@@ -418,15 +418,3 @@ button:disabled {
 .attr-extra {
     transition: all 0.3s ease;
 }
-
-/* Barra de Busca de Feitiços */
-.spell-search-bar {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: 10px 0;
-    border-bottom: 1px dashed rgba(92, 75, 81, 0.4);
-    margin-bottom: 10px;
-}
-.spell-filter-select { flex: none; width: 140px; }
