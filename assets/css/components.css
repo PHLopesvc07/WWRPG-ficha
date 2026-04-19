@@ -1026,3 +1026,74 @@ button:disabled {
         opacity: 0.6;
     }
 }
+
+/* ── Painel de Dados de Combate (Feitiços na Ficha) ─────────────────── */
+.btn-combat-toggle {
+    font-size: 0.78rem;
+    padding: 4px 12px;
+    margin-top: 10px;
+    box-shadow: none;
+}
+
+.spell-combat-panel {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid rgba(92, 75, 81, 0.25);
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 2px;
+}
+
+.spell-combat-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.spell-combat-badge {
+    font-size: 0.78rem;
+    padding: 2px 8px;
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.spell-dice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.spell-dice-box {
+    padding: 6px 8px;
+    border-radius: 2px;
+    text-align: center;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    border: 1px solid;
+}
+
+.s-disaster {
+    background: rgba(139, 0, 0, 0.12);
+    border-color: #8B0000;
+    color: #8B0000;
+}
+
+.s-fail {
+    background: rgba(92, 75, 81, 0.08);
+    border-color: #aaa;
+    color: #888;
+}
+
+.s-hit {
+    background: rgba(66, 139, 202, 0.12);
+    border-color: #428BCA;
+    color: #428BCA;
+}
+
+.s-crit {
+    background: rgba(243, 181, 98, 0.2);
+    border-color: var(--magic-gold);
+    color: var(--magic-gold);
+}

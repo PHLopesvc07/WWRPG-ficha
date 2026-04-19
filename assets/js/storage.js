@@ -92,6 +92,7 @@ async function exportData() {
                 name: card.querySelector('.spell-name')?.value || '',
                 cat: card.querySelector('.spell-cat')?.value || '',
                 lvl: card.querySelector('.spell-lvl')?.value || '',
+                tipo: card.querySelector('.spell-tipo')?.value || '',
                 desc: card.querySelector('.spell-desc')?.value || ''
             }))
         },

@@ -256,8 +256,6 @@ export function addSpellCard(data = null) {
     <div class="spell-combat-panel" style="display:none;"></div>
 `;
 
-// ─── Ainda dentro de addSpellCard(), após o innerHTML, adicione: ──────────
-
 const catSel   = card.querySelector('.spell-cat');
 const lvlSel   = card.querySelector('.spell-lvl');
 const tipoSel  = card.querySelector('.spell-tipo');
@@ -284,8 +282,10 @@ tipoSel.addEventListener('change', () => { if (panel.style.display !== 'none') u
         card.querySelector('.spell-desc').value = data.desc || "";
         card.querySelector('.spell-lvl').value = data.lvl || "1";
         
+        
         const catValue = Array.isArray(data.cat) ? data.cat[0] : data.cat;
         card.querySelector('.spell-cat').value = catValue || "Feitiço";
+        card.querySelector('.spell-tipo').value = data.tipo || '';
     }
     
     // Animação de Saída
