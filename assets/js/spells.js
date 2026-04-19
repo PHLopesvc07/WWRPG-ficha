@@ -13,6 +13,84 @@ export function setupDynamicLists() {
     const btnAddContainer = document.getElementById('btn-add-container');
     const spellImportInput = document.getElementById('spell-import');
 
+
+const CONJ_ATTR = {
+    'Transfiguração': 'Transfiguração (Carisma)',
+    'Feitiço':        'Prática (Sabedoria)',
+    'Azaração':       'DCAT (Sabedoria)',
+    'Maldição Menor': 'DCAT (Sabedoria)',
+    'Maldição':       'DCAT (Sabedoria)',
+    'Contra-feitiço': 'Prática (Sabedoria)',
+    'Cura':           'Cura (Carisma)',
+};
+
+const LEVEL_DATA = {
+    1: { dice:'d20', actions:'2 ações',             ranges:{disaster:'1',    fail:'2–5',   hit:'6–15',  crit:'16–20'}, fx:{dmg:{hit:'1L / 1C',         crit:'2L / 1C'},          def:{hit:'Bloqueia 1L / 0C',      crit:'Bloqueia 2L / 1C'},        cure:{hit:'1L',  crit:'2L'}}},
+    2: { dice:'d20', actions:'2 ações',             ranges:{disaster:'1',    fail:'2–5',   hit:'6–15',  crit:'16–20'}, fx:{dmg:{hit:'1L / 1C',         crit:'2L / 1C'},          def:{hit:'Bloqueia 1L / 0C',      crit:'Bloqueia 2L / 1C'},        cure:{hit:'1L',  crit:'2L'}}},
+    3: { dice:'d30', actions:'3 ações',             ranges:{disaster:'1–5',  fail:'6–10',  hit:'11–25', crit:'26–30'}, fx:{dmg:{hit:'2L, 1M / 1C',     crit:'3L, 2M / 1C'},      def:{hit:'Bloqueia 2L, 1M / 1C',  crit:'Bloqueia 3L, 2M / 1C'},    cure:{hit:'3L',  crit:'6L'}}},
+    4: { dice:'d30', actions:'3 ações',             ranges:{disaster:'1–5',  fail:'6–10',  hit:'11–25', crit:'26–30'}, fx:{dmg:{hit:'2L, 1M / 1C',     crit:'3L, 2M / 1C'},      def:{hit:'Bloqueia 2L, 1M / 1C',  crit:'Bloqueia 3L, 2M / 1C'},    cure:{hit:'3L',  crit:'6L'}}},
+    5: { dice:'d40', actions:'4 ações',             ranges:{disaster:'1–10', fail:'11–20', hit:'21–35', crit:'36–40'}, fx:{dmg:{hit:'3L, 2M, 1P / 1C', crit:'4L, 3M, 2P / 2C'}, def:{hit:'Bloq. 3L, 2M, 1P / 1C', crit:'Bloq. 4L, 3M, 2P / 2C'},  cure:{hit:'9L',  crit:'12L'}}},
+    6: { dice:'d40', actions:'Todas (5)',            ranges:{disaster:'1–10', fail:'11–20', hit:'21–35', crit:'36–40'}, fx:{dmg:{hit:'4L, 3M, 2P / 2C', crit:'5L, 4M, 3P / 3C'}, def:{hit:'Bloq. 4L, 4M, 2P / 2C', crit:'Bloq. 5L, 5M, 3P / 3C'},  cure:{hit:'15L', crit:'18L'}}},
+    7: { dice:'d50', actions:'Rodada de prep.',      ranges:{disaster:'1–20', fail:'21–35', hit:'36–45', crit:'46–50'}, fx:{dmg:{hit:'4L, 3M, 3P / 2C', crit:'Morte Inst. / 5L,5M,5P / 3C'}, def:{hit:'Bloq. 2L,2M,2P / 2C', crit:'Absoluta / 5L,5M,5P / 3C'}, cure:{hit:'24L', crit:'27L — Completa'}}},
+};
+
+function inferTipo(cat) {
+    if (cat === 'Cura') return 'Cura';
+    if (['Maldição', 'Maldição Menor', 'Azaração'].includes(cat)) return 'Dano';
+    if (cat === 'Contra-feitiço') return 'Defesa';
+    return null;
+}
+
+function renderCombatPanel(panel, cat, lvlStr, tipoVal) {
+    const lvl  = parseInt(lvlStr) || 1;
+    const ld   = LEVEL_DATA[lvl] || LEVEL_DATA[1];
+    const attr = CONJ_ATTR[cat] || 'Sabedoria';
+
+    // Determina qual linha de efeito mostrar
+    let tipo = (tipoVal && tipoVal !== 'Utilitário' && tipoVal !== '') ? tipoVal : inferTipo(cat);
+
+    const fxCfg = {
+        'Dano':   { key:'dmg',  label:'⚔ Dano',   color:'#c0392b' },
+        'Defesa': { key:'def',  label:'⛊ Defesa', color:'#2980b9' },
+        'Cura':   { key:'cure', label:'❤ Cura',   color:'#27ae60' },
+    };
+    const toShow = tipo ? [tipo] : ['Dano', 'Defesa', 'Cura'];
+
+    const fxRows = toShow.map(t => {
+        if (!fxCfg[t] || !ld.fx[fxCfg[t].key]) return '';
+        const { key, label, color } = fxCfg[t];
+        return `<tr>
+            <td style="color:${color};font-weight:bold;white-space:nowrap;padding:4px 6px;">${label}</td>
+            <td style="padding:4px 6px;">${ld.fx[key].hit}</td>
+            <td style="padding:4px 6px;">${ld.fx[key].crit}</td>
+        </tr>`;
+    }).join('');
+
+    const fxTable = (tipoVal === 'Utilitário') ? '' : `
+        <table class="spell-combat-table" style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-top:8px;">
+            <thead><tr>
+                <th style="text-align:left;padding:4px 6px;border-bottom:1px solid rgba(0,0,0,0.15);font-size:0.75rem;">Tipo</th>
+                <th style="text-align:left;padding:4px 6px;border-bottom:1px solid rgba(0,0,0,0.15);font-size:0.75rem;">✓ Acerto</th>
+                <th style="text-align:left;padding:4px 6px;border-bottom:1px solid rgba(0,0,0,0.15);font-size:0.75rem;">★ Crítico</th>
+            </tr></thead>
+            <tbody>${fxRows}</tbody>
+        </table>`;
+
+    panel.innerHTML = `
+        <div class="spell-combat-badges">
+            <span class="spell-combat-badge">🎲 ${ld.dice}</span>
+            <span class="spell-combat-badge">⚡ ${ld.actions}</span>
+            <span class="spell-combat-badge">✨ ${attr}</span>
+        </div>
+        <div class="spell-dice-grid">
+            <div class="spell-dice-box s-disaster">☠ Desastre<br><strong>${ld.ranges.disaster}</strong></div>
+            <div class="spell-dice-box s-fail">✗ Falha<br><strong>${ld.ranges.fail}</strong></div>
+            <div class="spell-dice-box s-hit">✓ Acerto<br><strong>${ld.ranges.hit}</strong></div>
+            <div class="spell-dice-box s-crit">★ Crítico<br><strong>${ld.ranges.crit}</strong></div>
+        </div>
+        ${fxTable}
+    `;
+}
     // 1. Adicionar Feitiço Manualmente
     if (btnAddSpell) {
         btnAddSpell.addEventListener('click', () => {
@@ -138,34 +216,67 @@ export function addSpellCard(data = null) {
     card.dataset.id = id;
     card.dataset.newlyCreated = 'true';
 
-    card.innerHTML = `
-        <button class="delete-btn" aria-label="Excluir Feitiço" title="Excluir Feitiço">X</button>
-        <div class="wand-grid">
-            <input type="text" class="ink-input spell-name" placeholder="Nome do Feitiço" aria-label="Nome do Feitiço">
-            
-            <select class="ink-select spell-cat" aria-label="Categoria do Feitiço">
-                <option value="Transfiguração">Transfiguração</option>
-                <option value="Feitiço" selected>Charme</option>
-                <option value="Azaração">Azaração</option>
-                <option value="Maldição Menor">Maldição Menor</option>
-                <option value="Maldição">Maldição</option>
-                <option value="Contra-feitiço">Contra-feitiço</option>
-                <option value="Cura">Cura</option>
-            </select>
-            
-            <select class="ink-select spell-lvl" aria-label="Nível do Feitiço">
-                <option value="1">Nível 1</option>
-                <option value="2">Nível 2</option>
-                <option value="3">Nível 3</option>
-                <option value="4">Nível 4</option>
-                <option value="5">Nível 5</option>
-                <option value="6">Nível 6</option>
-                <option value="7">Nível 7</option>
-            </select>
-        </div>
-        
-        <textarea class="ink-textarea spell-desc" placeholder="Descrição do efeito..." aria-label="Descrição do Feitiço"></textarea>
-    `;
+   card.innerHTML = `
+    <button class="delete-btn" aria-label="Excluir Feitiço" title="Excluir Feitiço">X</button>
+    <div class="wand-grid">
+        <input type="text" class="ink-input spell-name" placeholder="Nome do Feitiço" aria-label="Nome do Feitiço">
+
+        <select class="ink-select spell-cat" aria-label="Categoria do Feitiço">
+            <option value="Transfiguração">Transfiguração</option>
+            <option value="Feitiço" selected>Charme</option>
+            <option value="Azaração">Azaração</option>
+            <option value="Maldição Menor">Maldição Menor</option>
+            <option value="Maldição">Maldição</option>
+            <option value="Contra-feitiço">Contra-feitiço</option>
+            <option value="Cura">Cura</option>
+        </select>
+
+        <select class="ink-select spell-lvl" aria-label="Nível do Feitiço">
+            <option value="1">Nível 1</option>
+            <option value="2">Nível 2</option>
+            <option value="3">Nível 3</option>
+            <option value="4">Nível 4</option>
+            <option value="5">Nível 5</option>
+            <option value="6">Nível 6</option>
+            <option value="7">Nível 7</option>
+        </select>
+
+        <select class="ink-select spell-tipo" aria-label="Tipo de Efeito">
+            <option value="">— Tipo —</option>
+            <option value="Dano">Dano</option>
+            <option value="Defesa">Defesa</option>
+            <option value="Cura">Cura</option>
+            <option value="Utilitário">Utilitário</option>
+        </select>
+    </div>
+
+    <textarea class="ink-textarea spell-desc" placeholder="Descrição do efeito..." aria-label="Descrição do Feitiço"></textarea>
+
+    <button type="button" class="btn-combat-toggle btn-teal">⚔ Dados de Combate</button>
+    <div class="spell-combat-panel" style="display:none;"></div>
+`;
+
+// ─── Ainda dentro de addSpellCard(), após o innerHTML, adicione: ──────────
+
+const catSel   = card.querySelector('.spell-cat');
+const lvlSel   = card.querySelector('.spell-lvl');
+const tipoSel  = card.querySelector('.spell-tipo');
+const panel    = card.querySelector('.spell-combat-panel');
+const toggle   = card.querySelector('.btn-combat-toggle');
+
+const updatePanel = () => renderCombatPanel(panel, catSel.value, lvlSel.value, tipoSel.value);
+
+toggle.addEventListener('click', () => {
+    const open = panel.style.display === 'none';
+    panel.style.display = open ? 'block' : 'none';
+    toggle.textContent  = open ? '✕ Fechar Dados' : '⚔ Dados de Combate';
+    if (open) updatePanel();
+});
+
+catSel.addEventListener('change',  () => { if (panel.style.display !== 'none') updatePanel(); });
+lvlSel.addEventListener('change',  () => { if (panel.style.display !== 'none') updatePanel(); });
+tipoSel.addEventListener('change', () => { if (panel.style.display !== 'none') updatePanel(); });
+
 
     // Se estivermos a importar (Load), injeta as informações
     if (data) {

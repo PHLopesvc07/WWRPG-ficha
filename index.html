@@ -109,21 +109,48 @@
 
                     <div class="bureaucracy-box injuries-section">
                         <h3>Prontuário Médico (Injúrias)</h3>
+
                         <div class="injury-row">
                             <label>Leve (Atual/Máx):</label> 
                             <input type="number" id="inj-leve-curr" class="ink-input short-input" aria-label="Injúrias Leves Atuais"> / 
                             <input type="number" id="inj-leve-max" class="ink-input short-input" aria-label="Injúrias Leves Máximas">
                         </div>
+                        <div class="inj-bar-wrap" id="bar-leve">
+                            <span class="inj-bar-type">Leve</span>
+                            <div class="inj-track">
+                                <div class="inj-fill inj-fill--low"></div>
+                            </div>
+                            <span class="inj-bar-label">—</span>
+                        </div>
+
                         <div class="injury-row">
                             <label>Média (Atual/Máx):</label> 
                             <input type="number" id="inj-media-curr" class="ink-input short-input" aria-label="Injúrias Médias Atuais"> / 
                             <input type="number" id="inj-media-max" class="ink-input short-input" aria-label="Injúrias Médias Máximas">
                         </div>
+                        <div class="inj-bar-wrap" id="bar-media">
+                            <span class="inj-bar-type">Média</span>
+                            <div class="inj-track">
+                                <div class="inj-fill inj-fill--low"></div>
+                            </div>
+                            <span class="inj-bar-label">—</span>
+                        </div>
+
                         <div class="injury-row">
                             <label>Pesada (Atual/Máx):</label> 
                             <input type="number" id="inj-pesada-curr" class="ink-input short-input" aria-label="Injúrias Pesadas Atuais"> / 
                             <input type="number" id="inj-pesada-max" class="ink-input short-input" aria-label="Injúrias Pesadas Máximas">
                         </div>
+                        <div class="inj-bar-wrap" id="bar-pesada">
+                            <span class="inj-bar-type">Pesada</span>
+                            <div class="inj-track">
+                                <div class="inj-fill inj-fill--low"></div>
+                            </div>
+                            <span class="inj-bar-label">—</span>
+                        </div>
+
+                        <div id="injury-penalties" class="injury-penalties" style="display:none;"></div>
+
                         <div id="custom-injuries-container"></div>
                         <button id="btn-add-injury" class="btn-teal mt-15">+ Adicionar Condição Médica</button>
                     </div>

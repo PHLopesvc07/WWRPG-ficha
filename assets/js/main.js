@@ -15,6 +15,7 @@ import { setupDynamicLists } from './spells.js';
 import { setupPersistence } from './storage.js';
 import { setupPets } from './pets.js';
 import { setupTheme } from './theme.js';
+import { setupInjuryBars } from './injuries.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inicializa a Interface Básica (UI)
@@ -32,7 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGringottsExchange();
     setupDynamicLists();
     setupPets();
+    setupInjuryBars();
     setupTheme(); 
+    
     
     // 4. Inicializa o Sistema de Persistência (Save/Load)
     setupPersistence();
