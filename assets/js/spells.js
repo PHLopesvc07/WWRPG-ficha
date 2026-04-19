@@ -1,3 +1,4 @@
+
 /**
  * SPELLS.JS - MINISTÉRIO DA MAGIA
  * Gerenciamento de Listas Dinâmicas, Ordenação, Animações e Dados de Combate
@@ -32,31 +33,22 @@ function inferTipo(cat) {
     return null;
 }
 
-function renderCombatPanel(panel, cat, lvlStr, tipoVal) {
+function renderCombatPanel(panel, cat, lvlStr) {
     const lvl  = parseInt(lvlStr) || 1;
     const ld   = LEVEL_DATA[lvl] || LEVEL_DATA[1];
     const attr = CONJ_ATTR[cat] || 'Sabedoria';
 
-    let tipo = (tipoVal && tipoVal !== 'Utilitário' && tipoVal !== '') ? tipoVal : inferTipo(cat);
+    const fxRows = [
+        { key:'dmg',  label:'⚔ Dano',   color:'#c0392b' },
+        { key:'def',  label:'⛊ Defesa', color:'#2980b9' },
+        { key:'cure', label:'❤ Cura',   color:'#27ae60' },
+    ].map(({ key, label, color }) => `<tr>
+        <td style="color:${color};font-weight:bold;white-space:nowrap;padding:4px 6px;">${label}</td>
+        <td style="padding:4px 6px;">${ld.fx[key].hit}</td>
+        <td style="padding:4px 6px;">${ld.fx[key].crit}</td>
+    </tr>`).join('');
 
-    const fxCfg = {
-        'Dano':   { key:'dmg',  label:'⚔ Dano',   color:'#c0392b' },
-        'Defesa': { key:'def',  label:'⛊ Defesa', color:'#2980b9' },
-        'Cura':   { key:'cure', label:'❤ Cura',   color:'#27ae60' },
-    };
-
-    const toShow = tipo ? [tipo] : ['Dano', 'Defesa', 'Cura'];
-    const fxRows = toShow.map(t => {
-        if (!fxCfg[t] || !ld.fx[fxCfg[t].key]) return '';
-        const { key, label, color } = fxCfg[t];
-        return `<tr>
-            <td style="color:${color};font-weight:bold;white-space:nowrap;padding:4px 6px;">${label}</td>
-            <td style="padding:4px 6px;">${ld.fx[key].hit}</td>
-            <td style="padding:4px 6px;">${ld.fx[key].crit}</td>
-        </tr>`;
-    }).join('');
-
-    const fxTable = (tipoVal === 'Utilitário') ? '' : `
+    const fxTable = `
         <table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-top:8px;">
             <thead><tr>
                 <th style="text-align:left;padding:4px 6px;border-bottom:1px solid rgba(0,0,0,0.15);font-size:0.75rem;">Tipo</th>
@@ -232,7 +224,7 @@ export function addSpellCard(data = null) {
     const panel   = card.querySelector('.spell-combat-panel');
     const toggle  = card.querySelector('.btn-combat-toggle');
 
-    const updatePanel = () => renderCombatPanel(panel, catSel.value, lvlSel.value, tipoSel.value);
+    const updatePanel = () => renderCombatPanel(panel, catSel.value, lvlSel.value);
 
     toggle.addEventListener('click', () => {
         const open = panel.style.display === 'none';
@@ -241,9 +233,8 @@ export function addSpellCard(data = null) {
         if (open) updatePanel();
     });
 
-    catSel.addEventListener('change',  () => { if (panel.style.display !== 'none') updatePanel(); });
-    lvlSel.addEventListener('change',  () => { if (panel.style.display !== 'none') updatePanel(); });
-    tipoSel.addEventListener('change', () => { if (panel.style.display !== 'none') updatePanel(); });
+    catSel.addEventListener('change', () => { if (panel.style.display !== 'none') updatePanel(); });
+    lvlSel.addEventListener('change', () => { if (panel.style.display !== 'none') updatePanel(); });
 
     // Remoção com animação
     card.querySelector('.delete-btn').addEventListener('click', () => {
