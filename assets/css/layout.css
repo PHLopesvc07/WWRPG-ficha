@@ -190,7 +190,8 @@
 /* Organiza os recipientes lado a lado. Limitado a 2 colunas no máximo. */
 #inventory-list {
     display: grid;
-    grid-template-columns: 1fr; /* Padrão para telas menores (celular) */
+    grid-template-columns: 1fr;
+    /* Padrão para telas menores (celular) */
     gap: 20px;
     align-items: start;
     margin-top: 15px;
@@ -220,12 +221,25 @@
 }
 
 /* Distribuição de pesos: Qtd (pequeno), Nome (médio), Descrição (grande) */
-.item-row .item-qtd { flex: 0 0 50px; }
-.item-row .item-name { flex: 1.2; min-width: 90px; }
-.item-row .item-desc { flex: 2; min-width: 130px; }
+.item-row .item-qtd {
+    flex: 0 0 50px;
+}
+
+.item-row .item-name {
+    flex: 1.2;
+    min-width: 90px;
+}
+
+.item-row .item-desc {
+    flex: 2;
+    min-width: 130px;
+}
 
 @media (max-width: 600px) {
-    .item-row { flex-wrap: wrap; }
+    .item-row {
+        flex-wrap: wrap;
+    }
+
     .item-row .item-desc {
         flex: 1 1 100%;
         margin-left: 58px;

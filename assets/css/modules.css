@@ -190,8 +190,9 @@
 @keyframes spellSlideEntrance {
     0% {
         opacity: 0;
-        transform: translateY(-50px) scale(0.95) translateZ(0); 
+        transform: translateY(-50px) scale(0.95) translateZ(0);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0) scale(1) translateZ(0);
@@ -200,16 +201,24 @@
 
 .spell-animate-entrance {
     animation: spellSlideEntrance 0.5s ease-out forwards;
-    z-index: 1; 
+    z-index: 1;
     position: relative;
-    pointer-events: none; 
-    will-change: transform, opacity; /* Aviso prévio ao navegador para usar GPU */
+    pointer-events: none;
+    will-change: transform, opacity;
+    /* Aviso prévio ao navegador para usar GPU */
 }
 
 /* Entrada de Itens do Inventário */
 @keyframes slideUpFadeIn {
-    0% { opacity: 0; transform: translateY(20px) translateZ(0); }
-    100% { opacity: 1; transform: translateY(0) translateZ(0); }
+    0% {
+        opacity: 0;
+        transform: translateY(20px) translateZ(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) translateZ(0);
+    }
 }
 
 .animate-entrance {
@@ -219,13 +228,20 @@
 
 /* Saída de Itens do Inventário */
 @keyframes slideDownFadeOut {
-    0% { opacity: 1; transform: translateY(0) translateZ(0); }
-    100% { opacity: 0; transform: translateY(20px) translateZ(0); }
+    0% {
+        opacity: 1;
+        transform: translateY(0) translateZ(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(20px) translateZ(0);
+    }
 }
 
 .animate-exit {
     animation: slideDownFadeOut 0.3s ease-in forwards;
-    pointer-events: none; 
+    pointer-events: none;
     will-change: transform, opacity;
 }
 
@@ -234,11 +250,12 @@
     from {
         opacity: 1;
         transform: scale(1) translateZ(0);
-        max-height: 500px; 
+        max-height: 500px;
         margin-bottom: 15px;
         padding: 20px;
         border-width: 2px;
     }
+
     to {
         opacity: 0;
         transform: scale(0.9) translateZ(0);
@@ -254,7 +271,7 @@
 /* SRP/Manutenibilidade: Aumentada a especificidade em vez de usar !important */
 .spell-card.spell-card-exit {
     animation: spellFadeOut 0.3s ease-in forwards;
-    pointer-events: none; 
-    overflow: hidden; 
+    pointer-events: none;
+    overflow: hidden;
     will-change: transform, opacity, max-height;
 }

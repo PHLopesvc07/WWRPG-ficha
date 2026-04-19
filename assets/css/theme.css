@@ -8,15 +8,22 @@ body.dark-mode {
     --bg-pergaminho: url('../img/FundoPergPreto.jpg');
 
     /* 2. Inversão Semântica com a Nova Paleta */
-    --ink: #A3CCAB;        /* Verde menta claro para os textos e linhas */
-    --parchment: #14140F;  /* Fundo super escuro (quase preto) para as caixas */
-    --muted-teal: #34675C; /* Verde médio para abas inativas e botões base */
-    --magic-gold: #F26800; /* Laranja vibrante para ações principais e magia */
-    --stamp-red: #F26800;  /* Laranja assumindo o papel de alertas/exclusão */
+    --ink: #A3CCAB;
+    /* Verde menta claro para os textos e linhas */
+    --parchment: #14140F;
+    /* Fundo super escuro (quase preto) para as caixas */
+    --muted-teal: #34675C;
+    /* Verde médio para abas inativas e botões base */
+    --magic-gold: #F26800;
+    /* Laranja vibrante para ações principais e magia */
+    --stamp-red: #F26800;
+    /* Laranja assumindo o papel de alertas/exclusão */
 
     /* Variáveis Auxiliares Exclusivas do Modo Escuro (Mantém a Manutenibilidade) */
-    --input-bg-dark: #053D38; /* Verde muito escuro para o fundo dos inputs */
-    --input-border-dark: rgba(163, 204, 171, 0.3); /* --ink com transparência */
+    --input-bg-dark: #053D38;
+    /* Verde muito escuro para o fundo dos inputs */
+    --input-border-dark: rgba(163, 204, 171, 0.3);
+    /* --ink com transparência */
     --placeholder-dark: rgba(163, 204, 171, 0.5);
 }
 
@@ -25,14 +32,14 @@ body.dark-mode {
    ========================================================================== */
 
 /* Ajustes de UI para inputs, caixas de câmbio e logs no Modo Escuro */
-body.dark-mode .ink-input, 
-body.dark-mode .ink-select, 
+body.dark-mode .ink-input,
+body.dark-mode .ink-select,
 body.dark-mode .ink-textarea,
 body.dark-mode .exchange-card,
 body.dark-mode .dice-log-container {
-    background-color: var(--input-bg-dark); 
+    background-color: var(--input-bg-dark);
     color: var(--ink);
-    border-color: var(--input-border-dark); 
+    border-color: var(--input-border-dark);
 }
 
 body.dark-mode .input-col input {
@@ -42,7 +49,7 @@ body.dark-mode .input-col input {
 
 body.dark-mode .ink-input::placeholder,
 body.dark-mode .ink-textarea::placeholder {
-    color: var(--placeholder-dark); 
+    color: var(--placeholder-dark);
 }
 
 /* Adaptação das opções do menu Dropdown (Select) */
