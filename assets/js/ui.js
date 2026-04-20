@@ -22,11 +22,11 @@ export function initTabs() {
                 b.setAttribute('aria-pressed', 'false');
             });
             panels.forEach(p => p.classList.remove('active'));
-
+            
             // Adiciona a classe 'active' apenas na aba clicada
             btn.classList.add('active');
             btn.setAttribute('aria-pressed', 'true');
-
+            
             // Ativa o painel correspondente
             const targetPanel = document.getElementById(btn.dataset.target);
             if (targetPanel) {
@@ -46,23 +46,23 @@ export function setupPhotoUpload() {
 
     if (!photoInput || !preview) return;
 
-    photoInput.addEventListener('change', function (e) {
+    photoInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-
-            reader.onload = function (event) {
+            
+            reader.onload = function(event) {
                 preview.src = event.target.result;
                 // SRP Aplicado: Remove estilos inline e usa classes CSS exclusivas
                 preview.classList.remove('hidden');
                 preview.classList.add('photo-preview-active');
             };
-
+            
             // Tratamento de erro básico
-            reader.onerror = function () {
+            reader.onerror = function() {
                 console.error('Erro ao ler a imagem do ficheiro.');
             };
-
+            
             reader.readAsDataURL(file);
         }
     });
@@ -82,7 +82,7 @@ export function setupNotesEditor() {
         btn.addEventListener('click', (e) => {
             e.preventDefault(); // Evita comportamento padrão de submit/reload da página
             const cmd = btn.dataset.cmd;
-
+            
             // Tratamento de Confiabilidade: document.execCommand está obsoleto.
             // Usamos try/catch para garantir que o sistema não quebra em navegadores novos.
             try {
@@ -90,28 +90,8 @@ export function setupNotesEditor() {
             } catch (error) {
                 console.warn('Comando de formatação não suportado pelo navegador atual.', error);
             }
-
+            
             editor.focus(); // Devolve o cursor para o campo de texto
         });
-    });
-}
-
-export function setupDiceFab() {
-    const fab = document.getElementById('dice-fab');
-    const widget = document.getElementById('dice-widget');
-    if (!fab || !widget) return;
-
-    fab.addEventListener('click', () => {
-        const isOpen = widget.classList.toggle('dice-widget--open');
-        fab.setAttribute('aria-expanded', isOpen);
-        fab.title = isOpen ? 'Fechar Mesa de Rolagem' : 'Mesa de Rolagem';
-    });
-
-    // Fecha ao clicar fora do widget
-    document.addEventListener('click', (e) => {
-        if (!widget.contains(e.target) && e.target !== fab) {
-            widget.classList.remove('dice-widget--open');
-            fab.setAttribute('aria-expanded', 'false');
-        }
     });
 }
