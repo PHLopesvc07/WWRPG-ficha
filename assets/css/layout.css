@@ -1,10 +1,9 @@
 /* ==========================================================================
    LAYOUT.CSS - MINISTÉRIO DA MAGIA
-   Estrutura Principal, Header, Grids e Posicionamento
    ========================================================================== */
 
 /* ==========================================================================
-   CABEÇALHO OFICIAL DO MINISTÉRIO
+   CABEÇALHO
    ========================================================================== */
 .ministry-header {
     text-align: center;
@@ -14,8 +13,6 @@
     position: relative;
     background-color: rgba(255, 255, 255, 0.15);
     box-shadow: 2px 2px 10px rgba(92, 75, 81, 0.1);
-
-    /* Aplicação do Logo do Ministério */
     background-image: url('../img/LogoMinisterio.png');
     background-repeat: no-repeat;
     background-position: calc(100% - 30px) center;
@@ -51,7 +48,6 @@
     flex-wrap: wrap;
 }
 
-/* Padronização absoluta (Tamanho e Altura) dos botões do Header */
 .sys-controls #btn-export,
 .sys-controls label[for="file-import"] {
     width: 250px;
@@ -65,60 +61,10 @@
 }
 
 /* ==========================================================================
-   LAYOUT PRINCIPAL (WRAPPER) E MAIN CONTENT
+   LAYOUT PRINCIPAL
    ========================================================================== */
 .layout-wrapper {
-    display: flex;
-    gap: 30px;
-    align-items: flex-start;
-    margin-top: 20px;
-}
-
-.main-content {
-    flex: 1;
-    background-color: var(--parchment);
-    border: 4px solid var(--ink);
-    padding: 25px;
-    box-shadow: 5px 5px 15px rgba(92, 75, 81, 0.2);
-    position: relative;
-}
-
-/* ==========================================================================
-   WIDGET LATERAL (MESA DE DADOS FLUTUANTE)
-   ========================================================================== */
-
-.dice-widget {
-    position: fixed;
-    bottom: 90px;           /* fica acima do botão flutuante */
-    right: 20px;
-    width: 300px;
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
-    background-color: var(--parchment);
-    border: 4px double var(--ink);
-    padding: 20px;
-    box-shadow: 5px 5px 15px rgba(92, 75, 81, 0.35);
-    z-index: 1000;
-
-    /* Escondido por padrão — JS alterna a classe .dice-widget--open */
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(20px) scale(0.97);
-    transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.dice-widget.dice-widget--open {
-    opacity: 1;
-    pointer-events: all;
-    transform: translateY(0) scale(1);
-}
-
-/* Remove o ::before que dependia do widget estar no aside */
-.dice-widget::before { display: none; }
-
-/* O layout-wrapper volta a ser apenas a área principal, sem aside */
-.layout-wrapper {
-    display: block;   /* sobrescreve o flex anterior */
+    display: block;
     margin-top: 20px;
 }
 
@@ -133,158 +79,45 @@
     position: relative;
 }
 
+/* ==========================================================================
+   WIDGET DE DADOS FLUTUANTE
+   ========================================================================== */
+.dice-widget {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 300px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    background-color: var(--parchment);
+    border: 4px double var(--ink);
+    padding: 20px;
+    box-shadow: 5px 5px 15px rgba(92, 75, 81, 0.35);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px) scale(0.97);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
 
+.dice-widget.dice-widget--open {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0) scale(1);
+}
 
-/* Título superior da mesa de rolagem */
-.dice-widget::before {
-    content: "MESA OFICIAL DE PROBABILIDADES";
-    display: block;
+.dice-widget::before { display: none; }
+
+.dice-widget-title {
     font-family: var(--font-serif);
     font-size: 0.8rem;
     text-align: center;
     border-bottom: 1px dashed var(--ink);
     margin-bottom: 15px;
     padding-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
-
-/* ==========================================================================
-   SISTEMAS DE GRID INTERNOS (COLUNAS E ESTRUTURAS)
-   ========================================================================== */
-.panel-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Grids que se adaptam automaticamente ao tamanho da tela (Responsividade) */
-.wand-grid,
-.coins-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
-}
-
-/* Correção de Responsividade dos Atributos Base (Redundância removida) */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
-}
-
-/* Força os inputs de atributos a encolherem e não "quebrarem" a tela */
-.stats-grid .ink-input {
-    flex: none;
-    width: 55px;
-    text-align: center;
-}
-
-/* Grid fixo de 2 colunas para as perícias */
-.skills-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.skill-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px dashed rgba(92, 75, 81, 0.4);
-    padding-bottom: 5px;
-}
-
-/* Alinhamentos específicos de linhas */
-.status-row,
-.injury-row {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    margin-top: 10px;
-}
-
-/* Estrutura das Regras Pessoais (Extraída do HTML inline) */
-.rules-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 15px;
-}
-
-.rule-label {
-    display: flex;
-    align-items: center;
-}
-
-.rule-input {
-    flex: 1;
-}
-
-/* ==========================================================================
-   GRID DE INVENTÁRIO (COLUNAS) E ITENS
-   ========================================================================== */
-
-/* Organiza os recipientes lado a lado. Limitado a 2 colunas no máximo. */
-#inventory-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    /* Padrão para telas menores (celular) */
-    gap: 20px;
-    align-items: start;
-    margin-top: 15px;
-}
-
-/* Quando a tela tiver espaço, trava em exatas 2 colunas */
-@media (min-width: 800px) {
-    #inventory-list {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Ajustes na mochila para funcionar bem no Grid (Especificidade aumentada para remover o !important) */
-#inventory-list .inventory-container-card {
-    margin-top: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Estrutura flexível para a linha de itens */
-.item-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 8px;
-    flex-wrap: nowrap;
-}
-
-/* Distribuição de pesos: Qtd (pequeno), Nome (médio), Descrição (grande) */
-.item-row .item-qtd {
-    flex: 0 0 50px;
-}
-
-.item-row .item-name {
-    flex: 1.2;
-    min-width: 90px;
-}
-
-.item-row .item-desc {
-    flex: 2;
-    min-width: 130px;
-}
-
-@media (max-width: 600px) {
-    .item-row {
-        flex-wrap: wrap;
-    }
-
-    .item-row .item-desc {
-        flex: 1 1 100%;
-        margin-left: 58px;
-    }
-}
-
 
 /* Botão flutuante (FAB) */
 .dice-fab {
@@ -309,24 +142,106 @@
     letter-spacing: 0;
 }
 
-.dice-fab:hover {
-    transform: scale(1.1);
-    box-shadow: 4px 4px 14px rgba(92, 75, 81, 0.5);
+.dice-fab:hover  { transform: scale(1.1); box-shadow: 4px 4px 14px rgba(92, 75, 81, 0.5); }
+.dice-fab:active { transform: scale(0.95); box-shadow: 1px 1px 5px rgba(92, 75, 81, 0.3); }
+
+/* ==========================================================================
+   GRIDS INTERNOS
+   ========================================================================== */
+.panel-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.dice-fab:active {
-    transform: scale(0.95);
-    box-shadow: 1px 1px 5px rgba(92, 75, 81, 0.3);
+.wand-grid,
+.coins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
 }
 
-/* Rótulo "MESA OFICIAL" dentro do widget flutuante */
-.dice-widget-title {
-    font-family: var(--font-serif);
-    font-size: 0.8rem;
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.stats-grid .ink-input {
+    flex: none;
+    width: 55px;
     text-align: center;
-    border-bottom: 1px dashed var(--ink);
-    margin-bottom: 15px;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.skill-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed rgba(92, 75, 81, 0.4);
     padding-bottom: 5px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+}
+
+.status-row,
+.injury-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.rules-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.rule-label { display: flex; align-items: center; }
+.rule-input { flex: 1; }
+
+/* ==========================================================================
+   INVENTÁRIO
+   ========================================================================== */
+#inventory-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: start;
+    margin-top: 15px;
+}
+
+@media (min-width: 800px) {
+    #inventory-list { grid-template-columns: repeat(2, 1fr); }
+}
+
+#inventory-list .inventory-container-card {
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: nowrap;
+}
+
+.item-row .item-qtd  { flex: 0 0 50px; }
+.item-row .item-name { flex: 1.2; min-width: 90px; }
+.item-row .item-desc { flex: 2; min-width: 130px; }
+
+@media (max-width: 600px) {
+    .item-row { flex-wrap: wrap; }
+    .item-row .item-desc { flex: 1 1 100%; margin-left: 58px; }
 }
