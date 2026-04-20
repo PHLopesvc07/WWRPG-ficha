@@ -1,0 +1,160 @@
+{
+  "profile": {
+    "photo": "https://phlopesvc07.github.io/WWRPG-ficha/",
+    "name": "",
+    "blood": "puro",
+    "school": "",
+    "age": "",
+    "hw": "",
+    "languages": "",
+    "profession": "",
+    "family": ""
+  },
+  "stats": {
+    "corpo": "0",
+    "destreza": "0",
+    "inteligencia": "0",
+    "sabedoria": "0",
+    "vitalidade": "0",
+    "carisma": "0"
+  },
+  "skills": [
+    {
+      "name": "Clarividência",
+      "value": "0"
+    },
+    {
+      "name": "Prática",
+      "value": "0"
+    },
+    {
+      "name": "Intuição",
+      "value": "0"
+    },
+    {
+      "name": "DCAT",
+      "value": "0"
+    },
+    {
+      "name": "Cura",
+      "value": "0"
+    },
+    {
+      "name": "Dificuldade/Lógica",
+      "value": "0"
+    },
+    {
+      "name": "Herbologia",
+      "value": "0"
+    },
+    {
+      "name": "Poções",
+      "value": "0"
+    },
+    {
+      "name": "Astronomia",
+      "value": "0"
+    },
+    {
+      "name": "Estudo dos Trouxas",
+      "value": "0"
+    },
+    {
+      "name": "Percepção",
+      "value": "0"
+    },
+    {
+      "name": "Persistência",
+      "value": "0"
+    },
+    {
+      "name": "Transfiguração",
+      "value": "0"
+    },
+    {
+      "name": "Trato com Criaturas",
+      "value": "0"
+    },
+    {
+      "name": "Furtividade",
+      "value": "0"
+    },
+    {
+      "name": "Voo",
+      "value": "0"
+    },
+    {
+      "name": "Resistência",
+      "value": "0"
+    },
+    {
+      "name": "Esgrima",
+      "value": "0"
+    },
+    {
+      "name": "Avançar/Atletismo",
+      "value": "0"
+    },
+    {
+      "name": "Lábia",
+      "value": "0"
+    },
+    {
+      "name": "Persuasão",
+      "value": "0"
+    }
+  ],
+  "injuries": {
+    "leve": {
+      "c": "",
+      "m": ""
+    },
+    "media": {
+      "c": "",
+      "m": ""
+    },
+    "pesada": {
+      "c": "",
+      "m": ""
+    },
+    "custom": []
+  },
+  "magic": {
+    "wand": {
+      "l": "",
+      "w": "",
+      "c": ""
+    },
+    "rules": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "rulesState": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "traits": "",
+    "spells": []
+  },
+  "inventory": {
+    "coins": {
+      "g": "0",
+      "s": "0",
+      "k": "0"
+    },
+    "containers": [
+      {
+        "name": "Mochila Principal",
+        "items": []
+      }
+    ]
+  },
+  "pets": [],
+  "notes": ""
+}

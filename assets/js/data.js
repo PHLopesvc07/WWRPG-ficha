@@ -77,12 +77,12 @@ export const db = {
         ]
     },
     skills: {
-        sabedoria: ["Clarividência", "Prática", "Intuição", "DCAT", "Cura"],
-        inteligencia: ["Dificuldade/Lógica", "Herbologia", "Poções", "Astronomia", "Estudo dos Trouxas", "Percepção"],
-        vitalidade: ["Persistência", "Transfiguração"],
+        sabedoria: ["Prática", "Intuição", "DCAT", "Percepção"],
+        inteligencia: ["Dificuldade/Lógica", "Herbologia", "Poções", "Astronomia", "Estudo dos Trouxas"],
+        vitalidade: ["Persistência", "Resistência"],
         destreza: ["Trato com Criaturas", "Furtividade", "Voo"],
-        corpo: ["Resistência", "Esgrima", "Avançar/Atletismo"],
-        carisma: ["Lábia", "Persuasão"]
+        corpo: ["Esgrima", "Avançar/Atletismo"],
+        carisma: ["Lábia", "Persuasão", "Transfiguração", "Clarividência", "Cura"]
     },
     proficiencyLevels: [
         { label: "Muito Ruim (-3)", value: -3 },

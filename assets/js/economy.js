@@ -3,18 +3,28 @@
  * Gestão do Cofre Principal e Balcão de Câmbio de Gringotes
  */
 
+/**
+ * Inicializa os sistemas de soma, subtração e padronização do cofre do utilizador.
+ * Implementa a lógica complexa de "Empréstimo em Cascata" do sistema monetário bruxo.
+ */
 export function setupEconomy() {
-    // Funções auxiliares internas para pegar e setar moedas
+    // ========================================================================
+    // FUNÇÕES AUXILIARES (Helpers)
+    // ========================================================================
     const getCoins = () => ({
-        g: parseInt(document.getElementById('coin-g').value) || 0,
-        s: parseInt(document.getElementById('coin-s').value) || 0,
-        k: parseInt(document.getElementById('coin-k').value) || 0
+        g: parseInt(document.getElementById('coin-g')?.value) || 0,
+        s: parseInt(document.getElementById('coin-s')?.value) || 0,
+        k: parseInt(document.getElementById('coin-k')?.value) || 0
     });
     
     const setCoins = (g, s, k) => {
-        document.getElementById('coin-g').value = g;
-        document.getElementById('coin-s').value = s;
-        document.getElementById('coin-k').value = k;
+        const elG = document.getElementById('coin-g');
+        const elS = document.getElementById('coin-s');
+        const elK = document.getElementById('coin-k');
+        
+        if (elG) elG.value = g;
+        if (elS) elS.value = s;
+        if (elK) elK.value = k;
     };
 
     // 1 Galeão = 17 Sicles | 1 Sicle = 29 Nuques | Logo, 1 Galeão = 493 Nuques
@@ -29,146 +39,190 @@ export function setupEconomy() {
         return {g, s, k};
     };
 
-    // Botão "Converter Tudo p/ Padrão"
-    document.getElementById('btn-convert-coins').addEventListener('click', () => {
-        const c = getCoins();
-        const total = toKnuts(c.g, c.s, c.k);
-        const std = toStandard(total);
-        setCoins(std.g, std.s, std.k);
-    });
+    // ========================================================================
+    // EVENTOS DE BOTÕES E LÓGICA DE NEGÓCIO
+    // ========================================================================
+    const btnConvert = document.getElementById('btn-convert-coins');
+    const btnAdd = document.getElementById('btn-add-coin');
+    const btnSub = document.getElementById('btn-sub-coin');
 
-    // LÓGICA CORRIGIDA: Somar Moedas
-    document.getElementById('btn-add-coin').addEventListener('click', () => {
-        const amount = parseInt(document.getElementById('calc-amount').value) || 0;
-        if (amount <= 0) return;
-        
-        const type = document.getElementById('calc-type').value;
-        const current = getCoins();
-        
-        if (type === 'g') current.g += amount;
-        if (type === 's') current.s += amount;
-        if (type === 'k') current.k += amount;
-        
-        setCoins(current.g, current.s, current.k);
-        document.getElementById('calc-amount').value = '';
-    });
+    // Botão: Converter Tudo p/ Padrão (Transforma excessos na maior moeda possível)
+    if (btnConvert) {
+        btnConvert.addEventListener('click', () => {
+            const c = getCoins();
+            const total = toKnuts(c.g, c.s, c.k);
+            const std = toStandard(total);
+            setCoins(std.g, std.s, std.k);
+        });
+    }
 
-    // LÓGICA: Subtrair Moedas com "Empréstimo em Cascata" e Trava de Segurança
-    document.getElementById('btn-sub-coin').addEventListener('click', () => {
-        const amount = parseInt(document.getElementById('calc-amount').value) || 0;
-        if (amount <= 0) return;
-        
-        const type = document.getElementById('calc-type').value;
-        let { g, s, k } = getCoins();
-        let success = true;
+    // Botão: Somar Moedas
+    if (btnAdd) {
+        btnAdd.addEventListener('click', () => {
+            const calcInput = document.getElementById('calc-amount');
+            const calcType = document.getElementById('calc-type');
+            if (!calcInput || !calcType) return;
 
-        if (type === 'k') {
-            if (k >= amount) {
-                // Tem Nuques suficientes, apenas subtrai
-                k -= amount;
-            } else {
-                // Faltam Nuques, precisa pedir emprestado aos Sicles
-                let deficit = amount - k;
-                let s_needed = Math.ceil(deficit / 29); // Quantos Sicles precisa quebrar?
-                
-                if (s >= s_needed) {
-                    s -= s_needed;
-                    k = (k + s_needed * 29) - amount;
+            const amount = parseInt(calcInput.value) || 0;
+            if (amount <= 0) return;
+            
+            const type = calcType.value;
+            const current = getCoins();
+            
+            if (type === 'g') current.g += amount;
+            if (type === 's') current.s += amount;
+            if (type === 'k') current.k += amount;
+            
+            setCoins(current.g, current.s, current.k);
+            calcInput.value = '';
+        });
+    }
+
+    // Botão: Subtrair Moedas (Empréstimo em Cascata e Trava de Segurança)
+    if (btnSub) {
+        btnSub.addEventListener('click', () => {
+            const calcInput = document.getElementById('calc-amount');
+            const calcType = document.getElementById('calc-type');
+            if (!calcInput || !calcType) return;
+
+            const amount = parseInt(calcInput.value) || 0;
+            if (amount <= 0) return;
+            
+            const type = calcType.value;
+            let { g, s, k } = getCoins();
+            let success = true;
+
+            if (type === 'k') {
+                if (k >= amount) {
+                    k -= amount;
                 } else {
-                    // Faltam Sicles, precisa pedir emprestado aos Galeões primeiro
-                    let s_deficit = s_needed - s;
-                    let g_needed = Math.ceil(s_deficit / 17); // Quantos Galeões precisa quebrar?
+                    let deficit = amount - k;
+                    let s_needed = Math.ceil(deficit / 29); 
+                    
+                    if (s >= s_needed) {
+                        s -= s_needed;
+                        k = (k + s_needed * 29) - amount;
+                    } else {
+                        let s_deficit = s_needed - s;
+                        let g_needed = Math.ceil(s_deficit / 17); 
+                        
+                        if (g >= g_needed) {
+                            g -= g_needed;
+                            s = (s + g_needed * 17) - s_needed;
+                            k = (k + s_needed * 29) - amount;
+                        } else {
+                            success = false; 
+                        }
+                    }
+                }
+            } else if (type === 's') {
+                if (s >= amount) {
+                    s -= amount;
+                } else {
+                    let deficit = amount - s;
+                    let g_needed = Math.ceil(deficit / 17);
                     
                     if (g >= g_needed) {
                         g -= g_needed;
-                        s = (s + g_needed * 17) - s_needed;
-                        k = (k + s_needed * 29) - amount;
+                        s = (s + g_needed * 17) - amount;
                     } else {
-                        success = false; // Não tem dinheiro nenhum cobrindo
+                        success = false; 
                     }
                 }
-            }
-        } else if (type === 's') {
-            if (s >= amount) {
-                s -= amount;
-            } else {
-                // Faltam Sicles, precisa pedir emprestado aos Galeões
-                let deficit = amount - s;
-                let g_needed = Math.ceil(deficit / 17);
-                
-                if (g >= g_needed) {
-                    g -= g_needed;
-                    s = (s + g_needed * 17) - amount;
+            } else if (type === 'g') {
+                if (g >= amount) {
+                    g -= amount;
                 } else {
-                    success = false; // Não tem Galeões suficientes
+                    success = false; 
                 }
             }
-        } else if (type === 'g') {
-            if (g >= amount) {
-                g -= amount;
-            } else {
-                success = false; // Galeão é o limite, se faltar aqui, não tem de onde tirar
-            }
-        }
 
-        // Executa a transação ou barra a operação com um alerta
-        if (success) {
-            setCoins(g, s, k);
-            document.getElementById('calc-amount').value = '';
-        } else {
-            alert('Aviso de Gringotes: O seu dinheiro é insuficiente para realizar esta transação!');
-        }
-    });
+            if (success) {
+                setCoins(g, s, k);
+                calcInput.value = '';
+            } else {
+                alert('Aviso de Gringotes: O seu dinheiro é insuficiente para realizar esta transação!');
+            }
+        });
+    }
 }
 
+/**
+ * Inicializa o Balcão de Câmbio de Gringotes, permitindo quebrar moedas maiores
+ * em moedas menores com feedback visual instantâneo.
+ */
 export function setupGringottsExchange() {
     const gVal = document.getElementById('exc-g-val');
     const sRes = document.getElementById('exc-s-res');
     const sVal = document.getElementById('exc-s-val');
     const kRes = document.getElementById('exc-k-res');
 
-    // Atualização visual em tempo real
-    gVal.addEventListener('input', () => {
-        const val = parseInt(gVal.value) || 0;
-        sRes.value = val * 17;
-    });
+    // Atualização visual em tempo real (Galeões -> Sicles)
+    if (gVal && sRes) {
+        gVal.addEventListener('input', () => {
+            const val = parseInt(gVal.value) || 0;
+            sRes.value = val * 17;
+        });
+    }
 
-    sVal.addEventListener('input', () => {
-        const val = parseInt(sVal.value) || 0;
-        kRes.value = val * 29;
-    });
+    // Atualização visual em tempo real (Sicles -> Nuques)
+    if (sVal && kRes) {
+        sVal.addEventListener('input', () => {
+            const val = parseInt(sVal.value) || 0;
+            kRes.value = val * 29;
+        });
+    }
+
+    const btnExcGS = document.getElementById('btn-exc-gs');
+    const btnExcSK = document.getElementById('btn-exc-sk');
 
     // Lógica: Quebrar Galeões em Sicles
-    document.getElementById('btn-exc-gs').addEventListener('click', () => {
-        const costG = parseInt(gVal.value) || 0;
-        const gainS = costG * 17;
-        
-        const currentG = parseInt(document.getElementById('coin-g').value) || 0;
-        const currentS = parseInt(document.getElementById('coin-s').value) || 0;
+    if (btnExcGS && gVal && sRes) {
+        btnExcGS.addEventListener('click', () => {
+            const costG = parseInt(gVal.value) || 0;
+            const gainS = costG * 17;
+            
+            const coinGEl = document.getElementById('coin-g');
+            const coinSEl = document.getElementById('coin-s');
+            
+            if (!coinGEl || !coinSEl) return;
 
-        if (currentG >= costG && costG > 0) {
-            document.getElementById('coin-g').value = currentG - costG;
-            document.getElementById('coin-s').value = currentS + gainS;
-            gVal.value = 1; sRes.value = 17;
-        } else {
-            alert('Aviso de Gringotes: Não tem Galeões suficientes no cofre!');
-        }
-    });
+            const currentG = parseInt(coinGEl.value) || 0;
+            const currentS = parseInt(coinSEl.value) || 0;
+
+            if (currentG >= costG && costG > 0) {
+                coinGEl.value = currentG - costG;
+                coinSEl.value = currentS + gainS;
+                gVal.value = 1; 
+                sRes.value = 17;
+            } else {
+                alert('Aviso de Gringotes: Não tem Galeões suficientes no cofre!');
+            }
+        });
+    }
 
     // Lógica: Quebrar Sicles em Nuques
-    document.getElementById('btn-exc-sk').addEventListener('click', () => {
-        const costS = parseInt(sVal.value) || 0;
-        const gainK = costS * 29;
-        
-        const currentS = parseInt(document.getElementById('coin-s').value) || 0;
-        const currentK = parseInt(document.getElementById('coin-k').value) || 0;
+    if (btnExcSK && sVal && kRes) {
+        btnExcSK.addEventListener('click', () => {
+            const costS = parseInt(sVal.value) || 0;
+            const gainK = costS * 29;
+            
+            const coinSEl = document.getElementById('coin-s');
+            const coinKEl = document.getElementById('coin-k');
 
-        if (currentS >= costS && costS > 0) {
-            document.getElementById('coin-s').value = currentS - costS;
-            document.getElementById('coin-k').value = currentK + gainK;
-            sVal.value = 1; kRes.value = 29;
-        } else {
-            alert('Aviso de Gringotes: Não tem Sicles suficientes no cofre!');
-        }
-    });
+            if (!coinSEl || !coinKEl) return;
+
+            const currentS = parseInt(coinSEl.value) || 0;
+            const currentK = parseInt(coinKEl.value) || 0;
+
+            if (currentS >= costS && costS > 0) {
+                coinSEl.value = currentS - costS;
+                coinKEl.value = currentK + gainK;
+                sVal.value = 1; 
+                kRes.value = 29;
+            } else {
+                alert('Aviso de Gringotes: Não tem Sicles suficientes no cofre!');
+            }
+        });
+    }
 }

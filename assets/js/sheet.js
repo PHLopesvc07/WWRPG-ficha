@@ -3,28 +3,25 @@
  * Lógica central da Ficha (Famílias, Perícias e Cálculos de Atributos)
  */
 
-// Precisamos importar o banco de dados estático que criamos antes
-import { db } from './data.js';
-
-export function populateFamilies() {
+export function populateFamilies(database) {
     const select = document.getElementById('family-select');
+    if (!select) return;
+
     select.innerHTML = '<option value="">Selecione uma Linhagem...</option>';
 
-    // Varre o banco de dados e cria os grupos de nacionalidade
-    for (const [nationality, families] of Object.entries(db.families)) {
+    for (const [nationality, families] of Object.entries(database.families)) {
         const optgroup = document.createElement('optgroup');
         optgroup.label = nationality;
         
         families.forEach(fam => {
             const option = document.createElement('option');
-            option.value = JSON.stringify(fam); // Salva os dados como string no value
+            option.value = JSON.stringify(fam);
             option.textContent = fam.name;
             optgroup.appendChild(option);
         });
         select.appendChild(optgroup);
     }
 
-    // Atualiza Influência e Preconceito ao selecionar a família
     select.addEventListener('change', (e) => {
         const prejudiceInput = document.getElementById('prejudice');
         const influenceInput = document.getElementById('influence');
@@ -39,40 +36,56 @@ export function populateFamilies() {
     });
 }
 
-export function populateSkills() {
+export function populateSkills(database) {
     const container = document.getElementById('skills-container');
-    container.innerHTML = ''; // Limpa antes de injetar
+    if (!container) return;
 
-    const profOptions = db.proficiencyLevels.map(p => 
+    container.innerHTML = ''; 
+
+    const profOptions = database.proficiencyLevels.map(p => 
         `<option value="${p.value}" ${p.default ? 'selected' : ''}>${p.label}</option>`
     ).join('');
 
-    for (const [stat, skills] of Object.entries(db.skills)) {
+    // Cria a lista de perícias baseada no data.js
+    for (const [stat, skills] of Object.entries(database.skills)) {
         skills.forEach(skillName => {
             const div = document.createElement('div');
             div.className = 'skill-item';
             
-            // Correção Aplicada: O bônus (.skill-total) foi retirado de dentro do (.rollable)
-            // e colocado ao lado usando um container flexível.
             div.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 6px;">
+                <div class="skill-label-group">
                     <span class="rollable skill-roll" data-stat="${stat}" data-skill="${skillName}">${skillName}</span> 
-                    <span class="skill-total" data-skill="${skillName}" style="color:var(--stamp-red); font-family:var(--font-typewriter); font-weight:bold; font-size:0.9em;">(+0)</span>
+                    <span class="skill-total skill-total-val" data-skill="${skillName}">(+0)</span>
                 </div>
-                <select class="ink-select short-input skill-prof" data-skill="${skillName}">
+                <select class="ink-select short-input skill-prof" data-skill="${skillName}" aria-label="Nível de Proficiência em ${skillName}">
                     ${profOptions}
                 </select>
             `;
             container.appendChild(div);
             
-            // Adiciona o ouvinte de evento diretamente no select recém-criado
+            // Recalcula quando a proficiência muda
             const selectElement = div.querySelector('.skill-prof');
             selectElement.addEventListener('change', updateSkillBonuses);
         });
     }
 
-    // Calcula os bônus iniciais logo após criar a lista
+    // NOVA FUNÇÃO: Garante que alterar o atributo base também recalcule as perícias
+    setupStatListeners();
+    
+    // Calcula os bônus iniciais ao carregar a página
     updateSkillBonuses();
+}
+
+/**
+ * Adiciona listeners nos inputs de atributos base (Corpo, Destreza, etc.)
+ */
+function setupStatListeners() {
+    // Pega todos os inputs numéricos dentro da seção de atributos
+    const statInputs = document.querySelectorAll('.stats-grid input[type="number"]');
+    statInputs.forEach(input => {
+        // Toda vez que o jogador digitar um número ou usar as setinhas, atualiza as perícias
+        input.addEventListener('input', updateSkillBonuses);
+    });
 }
 
 export function updateSkillBonuses() {
@@ -82,15 +95,17 @@ export function updateSkillBonuses() {
         const skillName = select.dataset.skill;
         const statElement = document.querySelector(`.skill-roll[data-skill="${skillName}"]`);
         
-        if (!statElement) return; // Evita erros se a DOM não renderizou ainda
+        if (!statElement) return;
         
         const statName = statElement.dataset.stat;
+        // Busca o valor atualizado do atributo base que corresponde a esta perícia
         const statInput = document.getElementById(`stat-${statName}`);
         
         const statValue = statInput ? (parseInt(statInput.value) || 0) : 0;
         const profValue = parseInt(select.value) || 0;
         
         const total = statValue + profValue;
+        
         const formattedTotal = total >= 0 ? `+${total}` : `${total}`;
         
         const displaySpan = document.querySelector(`.skill-total[data-skill="${skillName}"]`);

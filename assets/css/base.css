@@ -1,13 +1,13 @@
 /* ==========================================================================
    BASE.CSS - MINISTÉRIO DA MAGIA
-   Variáveis Globais, Reset e Tipografia
+   Variáveis Globais, Reset, Tipografia e Acessibilidade Base
    ========================================================================== */
 
 /* Importação das Fontes Oficiais do Ministério */
 @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:wght@700&display=swap');
 
 :root {
-    /* Paleta Oficial Obrigatória (Restaurada do seu código original) */
+    /* Paleta Oficial Obrigatória */
     --parchment: #F2EBBF;
     /* Fundo principal / Papel envelhecido (Fallback) */
     --ink: #5C4B51;
@@ -32,26 +32,29 @@
 /* ==========================================================================
    RESET E CONFIGURAÇÕES GLOBAIS
    ========================================================================== */
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+/* Acessibilidade: Navegação por Teclado (Visibilidade de Foco) */
+:focus-visible {
+    outline: 2px dashed var(--stamp-red);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+
 body {
     /* Configuração de Fundo */
     background-color: var(--parchment);
-    /* Fallback caso a imagem não carregue rápido */
     background-image: var(--bg-pergaminho);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     /* O fundo fica estático enquanto a ficha rola */
-
-    /* Para dar um leve escurecimento e misturar melhor o texto com a imagem, 
-       podemos sobrepor um leve gradiente caso a imagem seja muito clara:
-       background-image: linear-gradient(rgba(242, 235, 191, 0.4), rgba(242, 235, 191, 0.4)), var(--bg-pergaminho); 
-    */
 
     /* Tipografia e Espaçamento Base */
     color: var(--ink);
@@ -60,6 +63,10 @@ body {
     line-height: 1.6;
     padding: 20px;
     min-height: 100vh;
+
+    /* Suavização para melhor legibilidade no ecrã (Usabilidade) */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* ==========================================================================
@@ -68,9 +75,13 @@ body {
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
     font-family: var(--font-serif);
     color: var(--ink);
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: 700;
+    line-height: 1.2;
 }

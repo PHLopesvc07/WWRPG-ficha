@@ -8,42 +8,59 @@ body.dark-mode {
     --bg-pergaminho: url('../img/FundoPergPreto.jpg');
 
     /* 2. Inversão Semântica com a Nova Paleta */
-    --ink: #A3CCAB;        /* Verde menta claro para os textos e linhas */
-    --parchment: #14140F;  /* Fundo super escuro (quase preto) para as caixas */
-    --muted-teal: #34675C; /* Verde médio para abas inativas e botões base */
-    --magic-gold: #F26800; /* Laranja vibrante para ações principais e magia */
-    --stamp-red: #F26800;  /* Laranja assumindo o papel de alertas/exclusão */
+    --ink: #A3CCAB;
+    /* Verde menta claro para os textos e linhas */
+    --parchment: #14140F;
+    /* Fundo super escuro (quase preto) para as caixas */
+    --muted-teal: #34675C;
+    /* Verde médio para abas inativas e botões base */
+    --magic-gold: #F26800;
+    /* Laranja vibrante para ações principais e magia */
+    --stamp-red: #F26800;
+    /* Laranja assumindo o papel de alertas/exclusão */
 
-    /* 3. Ajustes Base */
-    background-color: #14140F; /* Fallback atrás da imagem */
-    color: var(--ink);
+    /* Variáveis Auxiliares Exclusivas do Modo Escuro (Mantém a Manutenibilidade) */
+    --input-bg-dark: #053D38;
+    /* Verde muito escuro para o fundo dos inputs */
+    --input-border-dark: rgba(163, 204, 171, 0.3);
+    /* --ink com transparência */
+    --placeholder-dark: rgba(163, 204, 171, 0.5);
 }
 
-/* Ajustes de UI para inputs e caixas no Modo Escuro */
-body.dark-mode .ink-input, 
-body.dark-mode .ink-select, 
+/* ==========================================================================
+   APLICAÇÃO DO TEMA NAS ESTRUTURAS
+   ========================================================================== */
+
+/* Ajustes de UI para inputs, caixas de câmbio e logs no Modo Escuro */
+body.dark-mode .ink-input,
+body.dark-mode .ink-select,
 body.dark-mode .ink-textarea,
 body.dark-mode .exchange-card,
 body.dark-mode .dice-log-container {
-    background-color: #053D38 !important; /* Verde muito escuro para o fundo dos inputs */
-    color: var(--ink) !important;
-    border-color: rgba(163, 204, 171, 0.3) !important; /* #A3CCAB com transparência */
+    background-color: var(--input-bg-dark);
+    color: var(--ink);
+    border-color: var(--input-border-dark);
 }
 
 body.dark-mode .input-col input {
     color: var(--ink);
-    border-color: rgba(163, 204, 171, 0.3);
+    border-color: var(--input-border-dark);
 }
 
 body.dark-mode .ink-input::placeholder,
 body.dark-mode .ink-textarea::placeholder {
-    color: rgba(163, 204, 171, 0.5); /* #A3CCAB com transparência */
+    color: var(--placeholder-dark);
 }
 
+/* Adaptação das opções do menu Dropdown (Select) */
 body.dark-mode select option {
-    background-color: #14140F;
+    background-color: var(--parchment);
     color: var(--ink);
 }
+
+/* ==========================================================================
+   FILTROS DE IMAGEM E CARIMBOS
+   ========================================================================== */
 
 /* Inversão dos brasões e carimbos para combinar com o tom verde/mint da tinta */
 body.dark-mode .ministry-header,
@@ -51,7 +68,7 @@ body.dark-mode .bureaucracy-box.stamped::after {
     filter: invert(85%) sepia(15%) saturate(400%) hue-rotate(85deg) brightness(105%);
 }
 
-/* Reverte o filtro nos botões e inputs dentro do header para manter a paleta */
+/* Reverte o filtro nos botões e textos dentro do header para manter a legibilidade */
 body.dark-mode .ministry-header .sys-controls,
 body.dark-mode .ministry-header h1,
 body.dark-mode .ministry-header h2,
@@ -59,7 +76,7 @@ body.dark-mode .ministry-header p {
     filter: invert(100%) hue-rotate(-85deg);
 }
 
-/* Garante que a aba ativa se mescle perfeitamente ao fundo escuro */
+/* Garante que a aba ativa se mescle perfeitamente ao fundo escuro da Ficha */
 body.dark-mode .tab-btn.active {
     background-color: var(--parchment);
     color: var(--ink);
