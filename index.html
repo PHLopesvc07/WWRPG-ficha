@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="assets/css/main.css">
 </head>
 
+<button id="dice-fab" class="dice-fab" aria-label="Abrir Mesa de Rolagem" title="Mesa de Rolagem">⚅</button>
+
 <body>
     <script>
         // Lógica de tema baseada na preferência do sistema/utilizador
@@ -390,58 +392,66 @@
 
         </main>
 
-        <aside class="dice-widget bureaucracy-box">
-            <h3 class="stamp-title">Mesa de Rolagem</h3>
+    </div><!-- fecha layout-wrapper -->
 
-            <div class="dice-controls dice-margin-bottom">
-                <div id="dice-groups-container">
-                    <div class="dice-group primary-dice dice-group-flex">
-                        <input type="number" class="ink-input short-input dice-qty dice-text-center" value="1" min="1"
-                            max="20" aria-label="Quantidade de Dados">
-                        <span class="dice-d-label">d</span>
-                        <select class="ink-select dice-type flex-1" aria-label="Tipo de Dado">
-                            <option value="2">2</option>
-                            <option value="4">4</option>
-                            <option value="6">6</option>
-                            <option value="8">8</option>
-                            <option value="10">10</option>
-                            <option value="12">12</option>
-                            <option value="20" selected>20</option>
-                            <option value="30">30</option>
-                            <option value="40">40</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                        <div class="dice-spacer"></div>
-                    </div>
-                </div>
-                <button id="btn-add-dice" class="btn-format btn-dashed-full mt-15">
-                    + Adicionar Dado Combinado (Máx 2)
-                </button>
-            </div>
 
-            <div class="dice-modifiers">
-                <label>Modificador: <input type="number" id="dice-mod" class="ink-input short-input" value="0"
-                        aria-label="Modificador da rolagem"></label>
-                <div class="adv-disadv-toggles" role="radiogroup" aria-label="Vantagem ou Desvantagem">
-                    <label><input type="radio" name="adv-disadv" value="normal" checked> Normal</label>
-                    <label><input type="radio" name="adv-disadv" value="adv"> Vantagem</label>
-                    <label><input type="radio" name="adv-disadv" value="disadv"> Desvantagem</label>
+    <!-- ... conteúdo interno do widget permanece igual ... -->
+
+
+    <div class="dice-widget bureaucracy-box" id="dice-widget">
+        <div class="dice-widget-title">Mesa Oficial de Probabilidades</div>
+
+        <div class="dice-controls dice-margin-bottom">
+            <div id="dice-groups-container">
+                <div class="dice-group primary-dice dice-group-flex">
+                    <input type="number" class="ink-input short-input dice-qty dice-text-center" value="1" min="1"
+                        max="20" aria-label="Quantidade de Dados">
+                    <span class="dice-d-label">d</span>
+                    <select class="ink-select dice-type flex-1" aria-label="Tipo de Dado">
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                        <option value="6">6</option>
+                        <option value="8">8</option>
+                        <option value="10">10</option>
+                        <option value="12">12</option>
+                        <option value="20" selected>20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <div class="dice-spacer"></div>
                 </div>
             </div>
+            <button id="btn-add-dice" class="btn-format btn-dashed-full mt-15">
+                + Adicionar Dado Combinado (Máx 2)
+            </button>
+        </div>
 
-            <button id="btn-roll" class="btn-gold roll-action-btn" aria-label="Lançar Dados">Lançar Dados</button>
-
-            <div class="dice-log-container">
-                <div class="log-header">
-                    <h4>Registro Oficial</h4>
-                    <button id="btn-clear-log" class="btn-clear-log" title="Apagar histórico"
-                        aria-label="Limpar histórico de rolagem">Limpar</button>
-                </div>
-                <ul id="dice-log" aria-live="polite"></ul>
+        <div class="dice-modifiers">
+            <label>Modificador: <input type="number" id="dice-mod" class="ink-input short-input" value="0"
+                    aria-label="Modificador da rolagem"></label>
+            <div class="adv-disadv-toggles" role="radiogroup" aria-label="Vantagem ou Desvantagem">
+                <label><input type="radio" name="adv-disadv" value="normal" checked> Normal</label>
+                <label><input type="radio" name="adv-disadv" value="adv"> Vantagem</label>
+                <label><input type="radio" name="adv-disadv" value="disadv"> Desvantagem</label>
             </div>
+        </div>
+
+        <button id="btn-roll" class="btn-gold roll-action-btn" aria-label="Lançar Dados">Lançar Dados</button>
+
+        <div class="dice-log-container">
+            <div class="log-header">
+                <h4>Registro Oficial</h4>
+                <button id="btn-clear-log" class="btn-clear-log" title="Apagar histórico"
+                    aria-label="Limpar histórico de rolagem">Limpar</button>
+            </div>
+            <ul id="dice-log" aria-live="polite"></ul>
+        </div>
         </aside>
     </div>
+
+    <button id="dice-fab" class="dice-fab" aria-label="Abrir Mesa de Rolagem" title="Mesa de Rolagem">⚅</button>
 
     <script type="module" src="assets/js/main.js"></script>
 </body>

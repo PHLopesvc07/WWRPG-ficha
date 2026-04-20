@@ -7,7 +7,7 @@
 import { db } from './data.js';
 
 // 2. Importações dos Módulos Funcionais
-import { initTabs, setupPhotoUpload, setupNotesEditor } from './ui.js';
+import { initTabs, setupPhotoUpload, setupNotesEditor, setupDiceFab } from './ui.js';
 import { populateFamilies, populateSkills, updateSkillBonuses } from './sheet.js';
 import { setupDiceRoller } from './dice.js';
 import { setupEconomy, setupGringottsExchange } from './economy.js';
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTabs();
     setupPhotoUpload();
     setupNotesEditor();
+    setupDiceFab();
 
     // 2. Preenche os Dados da Ficha (Injetando a dependência 'db' - Princípio DIP do SOLID)
     populateFamilies(db);
